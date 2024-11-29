@@ -187,7 +187,8 @@ export type GraphDataPoint = {
 }
 
 // Graph range in months
-export type GraphRange = 1 | 3 | 6 | 12 | 60;
+export const graphRanges = [1, 3, 6, 12, 60] as const;
+export type GraphRange = typeof graphRanges[number];
 
 // Prop types for portfolio value text component
 export interface PortfolioText {
