@@ -1,28 +1,28 @@
-import { currencyFormat, dayjsDate, precentFormat } from '../../../electron/api/format';
-import { useEffect, useState } from 'react';
-import clsx from 'clsx';
+import { currencyFormat, dayjsDate, precentFormat } from "../../../electron/api/format";
+import { useEffect, useState } from "react";
+import clsx from "clsx";
 
 // Components
-import FilterOptionsDialog from './filterOptionsDialog';
-import ToggleColumnsDialog from './toggleColumnsDialog';
+import FilterOptionsDialog from "./filterOptionsDialog";
+import ToggleColumnsDialog from "./toggleColumnsDialog";
 
 // Material UI
 import {
   DataGrid,
   GridColDef,
   GridCellParams
-} from '@mui/x-data-grid';
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
+} from "@mui/x-data-grid";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
 
 // Material UI Icons
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import ViewWeekIcon from '@mui/icons-material/ViewWeek';
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import ViewWeekIcon from "@mui/icons-material/ViewWeek";
 
 // Types
-import { Option, PortfolioTableRow } from '../../../electron/types';
+import { Option, PortfolioTableRow } from "../../../electron/types";
 
 interface Props {
   loading: boolean;
@@ -36,9 +36,9 @@ interface Props {
 
 // A helper function that assigns a class whether it is a positive/negative value
 const colorValue = (params: GridCellParams<any, number>) => {
-  // Don't assign class if no value
+  // Don"t assign class if no value
   if (params.value == null) return "";
-  return clsx('color-cell', {
+  return clsx("color-cell", {
     negative: params.value < 0,
     positive: params.value > 0,
   });
@@ -318,46 +318,46 @@ const PortfolioTable = (props: Props) => {
         sx={{
           height: 385, 
           border: 0,
-          '& .MuiDataGrid-columnHeaderTitle': {
+          "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: 500,
             fontSize: 16,
             color: "secondary.main",
           },
-          '& .MuiDataGrid-cell': {
+          "& .MuiDataGrid-cell": {
             fontSize: 14,
             borderColor: "#ffffff1f",
           },
-          '& .MuiDataGrid-cell:focus': {
-            outline: 'none',
+          "& .MuiDataGrid-cell:focus": {
+            outline: "none",
           },
-          '.MuiDataGrid-columnHeader:focus': {
-            outline: 'none',
+          ".MuiDataGrid-columnHeader:focus": {
+            outline: "none",
           },
-          '& .MuiDataGrid-columnHeader .MuiDataGrid-columnSeparator': {
+          "& .MuiDataGrid-columnHeader .MuiDataGrid-columnSeparator": {
             opacity: 0,
           },
-          '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnSeparator': {
+          "& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnSeparator": {
             display: "none",
           },
-          '& .MuiDataGrid-columnHeaders:hover .MuiDataGrid-columnSeparator': {
+          "& .MuiDataGrid-columnHeaders:hover .MuiDataGrid-columnSeparator": {
             opacity: 1,
           },
-          '& .MuiDataGrid-row--borderBottom .MuiDataGrid-columnHeader': {
+          "& .MuiDataGrid-row--borderBottom .MuiDataGrid-columnHeader": {
             borderBottom: "none",
           },
-          '& .MuiDataGrid-filler': {
-            '& > *': {
+          "& .MuiDataGrid-filler": {
+            "& > *": {
               borderTopColor: "#ffffff1f",
             },
           },
-          '& .MuiDataGrid-overlay': {
+          "& .MuiDataGrid-overlay": {
             fontSize: 14, 
           },
-          '& .color-cell.positive': {
+          "& .color-cell.positive": {
             color: "#049104",
             fontWeight: 600,
           },
-          '& .color-cell.negative': {
+          "& .color-cell.negative": {
             color: "#e32020",
             fontWeight: 600,
           }

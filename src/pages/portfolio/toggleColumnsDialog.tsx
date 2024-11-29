@@ -1,19 +1,19 @@
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef } from "@mui/x-data-grid";
 
 // Material UI
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Typography from '@mui/material/Typography';
-import FormGroup from '@mui/material/FormGroup';
-import Switch from '@mui/material/Switch';
-import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
+import FormGroup from "@mui/material/FormGroup";
+import Switch from "@mui/material/Switch";
+import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 // Types
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   open: boolean;

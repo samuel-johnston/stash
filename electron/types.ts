@@ -3,7 +3,6 @@ import { AddTradeFormValues } from "../src/pages/addTrade";
 export { PortfolioFormValues as PortfolioFilterValues } from "../src/pages/portfolio";
 
 // Yahoo-finance2 types
-export { HistoricalOptionsEventsHistory } from "yahoo-finance2/dist/esm/src/modules/historical";
 import { ChartResultArrayQuote } from "yahoo-finance2/dist/esm/src/modules/chart";
 
 // Valid option keys, used for company details

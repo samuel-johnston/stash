@@ -34,7 +34,7 @@ const handleFormSubmit = async (
     setSeverity("error");
 
     // Split message since Electron wraps the original error message with additional text.
-    const splitMsg = error.message.split('Error: ');
+    const splitMsg = error.message.split("Error: ");
     const msg = (splitMsg.length === 2) ? splitMsg[1] : error.message;
 
     // Display error message in both console and accordion

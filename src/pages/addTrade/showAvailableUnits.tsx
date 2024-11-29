@@ -4,7 +4,7 @@ import { useFormikContext } from "formik";
 
 // Material UI
 import Typography from "@mui/material/Typography";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 import Box from "@mui/material/Box";
 
 const ShowAvailableUnits = () => {

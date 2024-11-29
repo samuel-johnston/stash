@@ -13,9 +13,9 @@ import dayjs from "dayjs";
  */
 export const currencyFormat = (value: number | null, decimals = 2) => {
   if (value === null) return "-";
-  return Intl.NumberFormat('en-US', { 
-    style: 'currency', 
-    currency: 'USD',
+  return Intl.NumberFormat("en-US", { 
+    style: "currency", 
+    currency: "USD",
     minimumFractionDigits: decimals,
   }).format(value);
 };

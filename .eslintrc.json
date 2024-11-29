@@ -4,7 +4,8 @@
     "es6": true,
     "node": true
   },
-  "rules": {   
+  "rules": {
+    "quotes": ["error", "double"],
     "@typescript-eslint/no-explicit-any": "off",
     "import/namespace": ["error", { "allowComputed": true }]
   },

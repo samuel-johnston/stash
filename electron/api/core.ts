@@ -35,8 +35,8 @@ export function getData(key: Key) {
   // If data is empty (ie. data = {}), set data using default values
   if (data.constructor !== Array && Object.keys(data).length === 0) {
     const fileName = (app.isPackaged)
-      ? path.join(process.resourcesPath, 'data', `${key}.json`)
-      : path.join(app.getAppPath(), 'src', 'assets', 'data', `${key}.json`);
+      ? path.join(process.resourcesPath, "data", `${key}.json`)
+      : path.join(app.getAppPath(), "src", "assets", "data", `${key}.json`);
 
     if (fs.existsSync(fileName)) {
       // Read default values from file

@@ -319,32 +319,32 @@ export const themeSettings = (mode: PaletteMode) => {
             width: 42,
             height: 24,
             padding: 0,
-            '& .MuiSwitch-switchBase': {
+            "& .MuiSwitch-switchBase": {
               padding: 0,
               margin: 2,
-              transitionDuration: '160ms',
-              '&.Mui-checked': {
-                transform: 'translateX(18px)',
-                '& + .MuiSwitch-track': {
+              transitionDuration: "160ms",
+              "&.Mui-checked": {
+                transform: "translateX(18px)",
+                "& + .MuiSwitch-track": {
                   backgroundColor: colors.grey[100],
                   opacity: 1,
                   border: 0,
                 },
-                '&.Mui-disabled + .MuiSwitch-track': {
+                "&.Mui-disabled + .MuiSwitch-track": {
                   opacity: 0.5,
                 },
               },
-              '&.Mui-disabled + .MuiSwitch-track': {
+              "&.Mui-disabled + .MuiSwitch-track": {
                 opacity: 0.7,
               },
             },
-            '& .MuiSwitch-thumb': {
+            "& .MuiSwitch-thumb": {
               color: colors.grey[900],
-              boxSizing: 'border-box',
+              boxSizing: "border-box",
               width: 20,
               height: 20,
             },
-            '& .MuiSwitch-track': {
+            "& .MuiSwitch-track": {
               borderRadius: 24 / 2,
               backgroundColor: colors.grey[500],
               opacity: 1,

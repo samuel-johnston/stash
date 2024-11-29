@@ -27,7 +27,7 @@ const UpdateData = (props: Props): null => {
         }
       } catch (error) {
         // Split message since Electron wraps the original error message with additional text.
-        const splitMsg = error.message.split('Error: ');
+        const splitMsg = error.message.split("Error: ");
         const msg = (splitMsg.length === 2) ? splitMsg[1] : error.message;
         console.error(msg);
       }

@@ -32,7 +32,7 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Icons
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 // Components
 import { PerformantTextField } from "../../components/PerformantTextField";

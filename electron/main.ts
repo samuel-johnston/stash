@@ -52,7 +52,7 @@ app.on("activate", () => {
 
 // Expose all exported functions from ./api so that the frontend can call them.
 Object.keys(api).forEach((key) => {
-  if (typeof api[key] === 'function') {
+  if (typeof api[key] === "function") {
     ipcMain.handle(key, (event: IpcMainInvokeEvent, ...args: any[]) => {
       return api[key](...args);
     });

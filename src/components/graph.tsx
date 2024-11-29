@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 
 // Types
-import { GraphDataPoint, GraphRange } from "../../electron/types";
+import { GraphDataPoint, GraphRange, graphRanges } from "../../electron/types";
 
 interface Props {
   loading: boolean;
@@ -31,7 +31,6 @@ const Graph = (props: Props) => {
 
   // Graph range state
   const [range, setRange] = useState<GraphRange>(6);
-  const rangeValues: GraphRange[] = [1, 3, 6, 12, 60];
   
   // Set width of rect manually
   // Fixes an issue where lines are not rendered when window is resized larger
@@ -68,12 +67,12 @@ const Graph = (props: Props) => {
     const tickNumber = Math.floor(Math.abs(drawAreaRange[1] - drawAreaRange[0]) / 50);
 
     // Use d3 to calculate a nice domain
-    const niceDomain = scaleLinear(extremums, drawAreaRange).nice(tickNumber).domain();
+    const niceDomain = scaleLinear(extremums, drawAreaRange).nice(tickNumber).domain() as [number, number];
     const bottomOffset = 0.9 * (niceDomain[1] - niceDomain[0]) / niceDomain[1];
     
     // Update states
     setBottomOffset(bottomOffset);
-    setYAxis(niceDomain as [number, number]);
+    setYAxis(niceDomain);
     setDataset(data[range]);
   }, [data, range]);
 
@@ -81,7 +80,7 @@ const Graph = (props: Props) => {
    * Currency formatter helper function.
    * Note use USD format "$" instead of AUD format "A$"
    */
-  const currencyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
+  const currencyFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format;
 
   /**
    * Formats the values for the x-axis (ie. dates).
@@ -130,13 +129,13 @@ const Graph = (props: Props) => {
   /**
    * Custom style for overlay text.
    */
-  const OverlayText = styled('text')(({ theme }) => ({
-    transform: 'translateX(-28px)',
+  const OverlayText = styled("text")(({ theme }) => ({
+    transform: "translateX(-28px)",
     fill: theme.palette.text.primary,
     fontFamily: theme.typography.fontFamily,
     fontSize: 15,
-    textAnchor: 'middle',
-    dominantBaseline: 'middle',
+    textAnchor: "middle",
+    dominantBaseline: "middle",
   }));
 
   /**
@@ -188,7 +187,7 @@ const Graph = (props: Props) => {
         mb="-40px"
       >
         {data[range].length !== 0 && <ButtonGroup>
-          {rangeValues.map(value => {
+          {graphRanges.map(value => {
             return (
               <Button
                 disableRipple
@@ -197,8 +196,8 @@ const Graph = (props: Props) => {
                 sx={{ 
                   color: range === value ? "white" : colors.blueAccent[600],
                   zIndex: 1,
-                  '&:hover': {
-                    backgroundColor: 'transparent',
+                  "&:hover": {
+                    backgroundColor: "transparent",
                   },
                 }}
               >
@@ -220,7 +219,7 @@ const Graph = (props: Props) => {
           {
             dataKey: "id",
             valueFormatter: xAxisValueFormatter,
-            scaleType: 'point',
+            scaleType: "point",
             tickInterval: xAxisTickInterval,
           }
         ]}
@@ -246,28 +245,28 @@ const Graph = (props: Props) => {
           loadingOverlay: Overlay("Loading data..."),
         }}
         sx={{
-          '& rect': {
+          "& rect": {
             width: rectWidth,
           },
-          '& .MuiChartsAxis-directionY .MuiChartsAxis-tick': {
+          "& .MuiChartsAxis-directionY .MuiChartsAxis-tick": {
             stroke: "none",
           },
-          '& .MuiChartsAxis-directionY .MuiChartsAxis-line': {
+          "& .MuiChartsAxis-directionY .MuiChartsAxis-line": {
             stroke: "none",
           },
-          '& .MuiChartsAxis-directionX .MuiChartsAxis-tick': {
+          "& .MuiChartsAxis-directionX .MuiChartsAxis-tick": {
             stroke: "none",
           },
-          '& .MuiChartsAxis-directionX .MuiChartsAxis-line': {
+          "& .MuiChartsAxis-directionX .MuiChartsAxis-line": {
             stroke: "none",
           },
-          '& .MuiChartsAxis-directionY .MuiChartsAxis-tickLabel': {
+          "& .MuiChartsAxis-directionY .MuiChartsAxis-tickLabel": {
             fill: "#ffffff6f",
           },
-          '& .MuiChartsAxis-directionX .MuiChartsAxis-tickLabel': {
+          "& .MuiChartsAxis-directionX .MuiChartsAxis-tickLabel": {
             fill: "#ffffff6f",
           },
-          '& .MuiAreaElement-root': {
+          "& .MuiAreaElement-root": {
             fill: "url('#areaGradient')",
           },
         }}
