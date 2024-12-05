@@ -5,10 +5,10 @@ import { getData } from "./core";
 /**
  * Validates the ASX code without sending any requests to yahoo-finance. Used for
  * the "Add Company" page when the submit button is pressed. Faster, but has more
- * basic checking than validateASXCode().
+ * basic checking than `validateASXCode()`.
  * 
  * @param asxcode ASX code to check
- * @returns "Valid" or an error message
+ * @returns A string that is either `"Valid"` or a description of the error
  */
 export const quickValidateASXCode = (asxcode: string) => {
   // ASX Code must be 3-5 characters long
@@ -31,13 +31,13 @@ export const quickValidateASXCode = (asxcode: string) => {
 }
 
 /**
- * Validates the given asxcode. If existing is true, then the provided asxcode
- * must be existing in the data. Otherwise, if existing is false, then the 
+ * Validates the given asxcode. If `existing` is true, then the provided asxcode
+ * must be existing in the data. Otherwise, if `existing` is false, then the 
  * provided asxcode must not be existing (ie. a new asxcode).
  * 
  * @param asxcode ASX code to check
  * @param existing Should the ASX code already exist in the data?
- * @returns Status of the validation with the unitPrice (only if valid)
+ * @returns Status of the validation with the `unitPrice` (only if valid)
  */
 export const validateASXCode = async (asxcode: string, existing: boolean) => {
   // ASX Code must be 3-5 characters long
