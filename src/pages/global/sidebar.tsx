@@ -8,9 +8,14 @@ import {
   SidebarFooter,
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
+
+// Material UI
+import useTheme from "@mui/material/styles/useTheme";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 // Material UI Icons
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
@@ -40,9 +45,8 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Portfolio");
 
   /**
-   * A helper function for menu items.
+   * A helper function for displaying menu items.
    * @param props Item props
-   * @returns 
    */
   const Item = (props: ItemProps) => {
     const { title, to, icon, selected, setSelected } = props;
@@ -59,7 +63,6 @@ const Sidebar = () => {
     );
   };
 
-  // Override specific themes
   const overrideTheme = {
     "& .pro-sidebar-inner": {
       borderRight: `1px solid ${colors.grey[500]}`,
@@ -95,7 +98,7 @@ const Sidebar = () => {
       background: `${colors.grey[600]} !important`,
     },
     "& .pro-sidebar-header .pro-menu .pro-inner-item:hover": {
-      background: "transparent !important", // Don"t change bg color on logo
+      background: "transparent !important",
     }
   };
 
@@ -104,7 +107,7 @@ const Sidebar = () => {
       <ProSidebar collapsed={isCollapsed} width={240}>
         <SidebarHeader>
           <Menu>
-            {/* STASH Logo & Collapse Menu Button */}
+            {/* Logo & Collapse Menu Button */}
             <MenuItem
               onClick={() => setIsCollapsed(!isCollapsed)}
               icon={isCollapsed ? <KeyboardDoubleArrowRightIcon /> : undefined}
