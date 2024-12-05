@@ -1,9 +1,12 @@
 import { InputAdornment, TextField, TextFieldProps } from "@mui/material";
 import { NumericFormat } from "react-number-format";
 
-type Props = Omit<TextFieldProps, "defaultValue"> & {
+type Props = Omit<TextFieldProps, "defaultValue" | "type"> & {
   value: string;
-  type: "currency" | "percent";
+  /**
+   * The type of the `CustomTextField`.
+  */
+  type: "currency" | "percent" | "number";
 };
 
 /**

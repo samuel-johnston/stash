@@ -268,7 +268,7 @@ const AddTrade = () => {
               <ShowAvailableUnits/>
               {/* Quantity Input */}
               <CustomTextField
-                type="currency"
+                type="number"
                 name="quantity"
                 label="Quantity"
                 value={values.quantity}
