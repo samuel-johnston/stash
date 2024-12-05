@@ -36,7 +36,7 @@ interface Props {
 
 // A helper function that assigns a class whether it is a positive/negative value
 const colorValue = (params: GridCellParams<any, number>) => {
-  // Don"t assign class if no value
+  // Don't assign class if no value
   if (params.value == null) return "";
   return clsx("color-cell", {
     negative: params.value < 0,
