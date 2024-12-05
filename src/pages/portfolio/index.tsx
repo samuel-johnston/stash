@@ -14,10 +14,10 @@ import SelectInput from "../../components/select";
 import Graph from "../../components/graph";
 
 // Types
-import { Option, PortfolioData } from "../../../electron/types";
+import { AccountOption, Option, PortfolioData } from "../../../electron/types";
 
 export interface PortfolioFormValues {
-  account: Option;
+  account: AccountOption;
   financialStatus: Option[];
   miningStatus: Option[];
   resources: Option[];

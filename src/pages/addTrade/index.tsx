@@ -30,7 +30,7 @@ import SelectInput from "../../components/select";
 import Header from "../../components/header";
 
 // Types
-import { Option } from "../../../electron/types";
+import { AccountOption, Option } from "../../../electron/types";
 
 interface Settings {
   unitPriceAutoFill: boolean;
@@ -41,7 +41,7 @@ interface Settings {
 export interface AddTradeFormValues {
   asxcode: Option;
   type: "BUY" | "SELL";
-  account: Option;
+  account: AccountOption;
   date: dayjs.Dayjs;
   quantity: string;
   unitPrice: string;

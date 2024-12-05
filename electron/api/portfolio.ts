@@ -14,6 +14,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 
 // Types
 import { 
+  AccountOption,
   CompanyData, 
   GraphDataPoint, 
   Option, 
@@ -282,7 +283,7 @@ const getFilteredData = (filterValues: PortfolioFilterValues): CompanyData[] => 
  * @param time dayjs object of the required time (assumed to be in the past)
  * @returns Number of units
  */
-const countUnitsAtTime = (company: CompanyData, account: Option, time: Dayjs) => {
+const countUnitsAtTime = (company: CompanyData, account: AccountOption, time: Dayjs) => {
   // Calculate the number of units brought before the given time
   const unitsBrought = company.buyHistory.reduce((total, entry) => {
     // If the account id is correct

@@ -1,9 +1,8 @@
+import { ChartResultArrayQuote } from "yahoo-finance2/dist/esm/src/modules/chart";
 import { AddCompanyFormValues } from "../src/pages/addCompany";
 import { AddTradeFormValues } from "../src/pages/addTrade";
-export { PortfolioFormValues as PortfolioFilterValues } from "../src/pages/portfolio";
 
-// Yahoo-finance2 types
-import { ChartResultArrayQuote } from "yahoo-finance2/dist/esm/src/modules/chart";
+export { PortfolioFormValues as PortfolioFilterValues } from "../src/pages/portfolio";
 
 // Valid option keys, used for company details
 export type OptionKey =
@@ -25,9 +24,12 @@ export type Key =
 
 // Dropdown option type
 export interface Option {
-  label: string;        // Displayed on dropdown
+  label: string;        // Text that is displayed for the option
   inputValue?: string;  // For dynamically made options "Add [inputValue]"
-  accountId?: string;   // Optional for account dropdown
+}
+
+export interface AccountOption extends Option {
+  accountId?: string;
 }
 
 // Dropdown country type

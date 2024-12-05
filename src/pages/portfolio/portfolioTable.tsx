@@ -2,7 +2,7 @@ import { currencyFormat, dayjsDate, precentFormat } from "../../../electron/api/
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 
-// Components
+// Helper files
 import FilterOptionsDialog from "./filterOptionsDialog";
 import ToggleColumnsDialog from "./toggleColumnsDialog";
 
