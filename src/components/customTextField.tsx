@@ -1,57 +1,31 @@
 import { InputAdornment, TextField, TextFieldProps } from "@mui/material";
-import { NumericFormat, NumericFormatProps } from "react-number-format";
-import { forwardRef } from "react";
+import { NumericFormat } from "react-number-format";
 
-type Props = TextFieldProps & {
-  currencyInput?: boolean;
-  numberInput?: boolean;
-  percentInput?: boolean;
+type Props = Omit<TextFieldProps, "defaultValue"> & {
+  value: string;
+  type: "currency" | "percent";
 };
 
-interface CustomProps {
-  onChange: (event: { target: { name: string; value: string } }) => void;
-  name: string;
-}
-
-const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
-  function NumericFormatCustom(props, ref) {
-    const { onChange, ...other } = props;
-    return (
-      <NumericFormat
-        {...other}
-        allowNegative={false}
-        getInputRef={ref}
-        onValueChange={(values) => {
-          onChange({
-            target: {
-              name: props.name,
-              value: values.value,
-            },
-          });
-        }}
-      />
-    );
-  }
-);
-
 /**
- * Material UI's TextField component with an added 'currencyInput' and 'numberInput' props.
- * Used since setFieldValue() does not work with PerformantTextField.
+ * Wrapper around Material UI's TextField component adding percent/currency adornments,
+ * and restricting inputs to numerical.
  */
-const CurrencyTextField = (props: Props) => {
-  const { currencyInput, numberInput, percentInput, ...otherProps } = props;
+const CustomTextField = (props: Props) => {
+  const { type, value, ...otherProps } = props;
   return (
-    <TextField
-      {...otherProps}
+    <NumericFormat
+      value={value}
+      customInput={TextField}
+      type="text"
       slotProps={{
         input: {
-          startAdornment: currencyInput && <InputAdornment position="start">$</InputAdornment>,
-          endAdornment: percentInput && <InputAdornment position="end">%</InputAdornment>,
-          inputComponent: (currencyInput || numberInput || percentInput) && (NumericFormatCustom as any),
+          startAdornment: type === "currency" && <InputAdornment position="start">$</InputAdornment>,
+          endAdornment: type === "percent" && <InputAdornment position="end">%</InputAdornment>,
         }
       }}
+      {...otherProps}
     />
   );
 };
 
-export default CurrencyTextField;
+export default CustomTextField;

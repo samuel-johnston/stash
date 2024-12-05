@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import { Settings } from "../../../electron/types";
+// Helper files
 import handleFormSubmit from "./handleFormSubmit";
 import LoadSettings from "./loadSettings";
 import RowLabel from "./rowLabel";
@@ -19,6 +19,9 @@ import Box from "@mui/material/Box";
 // Components
 import CustomTextField from "../../components/customTextField";
 import Header from "../../components/header";
+
+// Types
+import { Settings } from "../../../electron/types";
 
 const Settings = () => {
   const [storagePath, setStoragePath] = useState<string>("");
@@ -126,8 +129,7 @@ const Settings = () => {
               />
               {/* Right Side */}
               <CustomTextField
-                percentInput
-                type="text"
+                type="percent"
                 name="gstPercent"
                 size="small"
                 value={values.gstPercent}
@@ -151,8 +153,7 @@ const Settings = () => {
               />
               {/* Right Side */}
               <CustomTextField
-                currencyInput
-                type="text"
+                type="currency"
                 name="brokerageAutoFill"
                 size="small"
                 value={values.brokerageAutoFill}

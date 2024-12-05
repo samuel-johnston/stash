@@ -1,6 +1,11 @@
 import { tokens } from "../../theme";
 import { useEffect, useState } from "react";
 
+// Helper files
+import RenameAccountDialog from "./renameAccountDialog";
+import DeleteAccountDialog from "./deleteAccountDialog";
+import AddAccountDialog from "./addAccountDialog";
+
 // Material UI
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
@@ -14,13 +19,10 @@ import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
 // Components
-import DeleteAccountDialog from "./deleteAccountDialog";
-import AddAccountDialog from "./addAccountDialog";
 import Header from "../../components/header";
 
 // Types
 import { Account } from "../../../electron/types";
-import RenameAccountDialog from "./renameAccountDialog";
 
 const Accounts = () => {
   const theme = useTheme();

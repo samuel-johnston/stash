@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
+// Helper files
 import { cleanUpValidation, validateASXCode } from "./validation";
 import AutoUpdateUnitPrice from "./autoUpdateUnitPrice";
 import ShowAvailableUnits from "./showAvailableUnits";
@@ -267,8 +268,7 @@ const AddTrade = () => {
               <ShowAvailableUnits/>
               {/* Quantity Input */}
               <CustomTextField
-                numberInput
-                type="text"
+                type="currency"
                 name="quantity"
                 label="Quantity"
                 value={values.quantity}
@@ -280,8 +280,7 @@ const AddTrade = () => {
               />
               {/* Unit Price Input */}
               <CustomTextField
-                currencyInput
-                type="text"
+                type="currency"
                 name="unitPrice"
                 label="Unit Price"
                 value={values.unitPrice}
@@ -293,8 +292,7 @@ const AddTrade = () => {
               />
               {/* Brokerage Input */}
               <CustomTextField
-                currencyInput
-                type="text"
+                type="currency"
                 name="brokerage"
                 label="Brokerage"
                 value={values.brokerage}

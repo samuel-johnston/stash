@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { Formik } from "formik";
 
-// Components
-import SelectInput from "../../components/select";
+// Helper files
+import PortfolioValueText from "./portfolioValueText";
 import PortfolioTable from "./portfolioTable";
-import Graph from "../../components/graph";
 import UpdateData from "./updateData";
 
 // Material UI
 import Box from "@mui/material/Box";
 
+// Components
+import SelectInput from "../../components/select";
+import Graph from "../../components/graph";
+
 // Types
 import { Option, PortfolioData } from "../../../electron/types";
-import PortfolioValueText from "./portfolioValueText";
 
 export interface PortfolioFormValues {
   account: Option;

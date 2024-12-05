@@ -3,10 +3,9 @@ import { useEffect, useState } from "react";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
+// Helper files
 import OperatingCountriesInput from "./operatingCountries";
 import handleFormSubmit from "./handleFormSubmit";
-
-// Yup validation functions
 import {
   cleanUpValidation,
   greaterThanHighPrice,
@@ -31,7 +30,7 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
-// Icons
+// Material UI Icons
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 // Components
