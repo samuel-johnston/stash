@@ -24,7 +24,7 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Components
-import CustomTextField from "../../components/customTextField";
+import NumericTextField from "../../components/numericTextField";
 import DatePicker from "../../components/datePicker";
 import SelectInput from "../../components/select";
 import Header from "../../components/header";
@@ -267,8 +267,7 @@ const AddTrade = () => {
               {/* Show available units if type is SELL */}
               <ShowAvailableUnits/>
               {/* Quantity Input */}
-              <CustomTextField
-                type="number"
+              <NumericTextField
                 name="quantity"
                 label="Quantity"
                 value={values.quantity}
@@ -279,7 +278,7 @@ const AddTrade = () => {
                 sx={{ gridColumn: "span 4" }}
               />
               {/* Unit Price Input */}
-              <CustomTextField
+              <NumericTextField
                 type="currency"
                 name="unitPrice"
                 label="Unit Price"
@@ -291,7 +290,7 @@ const AddTrade = () => {
                 sx={{ gridColumn: "span 4" }}
               />
               {/* Brokerage Input */}
-              <CustomTextField
+              <NumericTextField
                 type="currency"
                 name="brokerage"
                 label="Brokerage"

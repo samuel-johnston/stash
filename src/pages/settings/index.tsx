@@ -17,7 +17,7 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Components
-import CustomTextField from "../../components/customTextField";
+import NumericTextField from "../../components/numericTextField";
 import Header from "../../components/header";
 
 // Types
@@ -128,7 +128,7 @@ const Settings = () => {
                 subtitle="% of brokerage used to calculate GST"
               />
               {/* Right Side */}
-              <CustomTextField
+              <NumericTextField
                 type="percent"
                 name="gstPercent"
                 size="small"
@@ -152,7 +152,7 @@ const Settings = () => {
                 subtitle="Automatically prefill forms with this brokerage"
               />
               {/* Right Side */}
-              <CustomTextField
+              <NumericTextField
                 type="currency"
                 name="brokerageAutoFill"
                 size="small"
