@@ -1,6 +1,5 @@
 import { createContext, useState, useMemo } from "react";
-import { createTheme } from "@mui/material/styles";
-import { PaletteMode } from "@mui/material";
+import { PaletteMode, createTheme } from "@mui/material";
 
 interface Color {
   100: string;
@@ -357,13 +356,11 @@ export const themeSettings = (mode: PaletteMode) => {
 };
 
 export const ColorModeContext = createContext({
-  toggleColorMode: () => {
-    // This is deliberately empty
-  },
+  toggleColorMode: () => {},
 });
 
 export const useMode = () => {
-  const [mode, setMode] = useState("dark" as PaletteMode);
+  const [mode, setMode] = useState<PaletteMode>("dark");
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => setMode((prev) => (prev === "light" ? "dark" : "light")),
