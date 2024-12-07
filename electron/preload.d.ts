@@ -2,9 +2,9 @@ import {
   Account,
   AddCompanyValues, 
   AddTradeValues,
-  CompanyData, 
+  Company, 
   Country, 
-  HistoricalEntry,
+  Historical,
   Option, 
   OptionKey, 
   PortfolioFilterValues, 
@@ -18,16 +18,16 @@ export interface IElectronAPI {
     (key: OptionKey): Promise<Option[]>;
     (key: "countries"): Promise<Country[]>;
     (key: "accounts"): Promise<Account[]>;
-    (key: "companies"): Promise<CompanyData[]>;
-    (key: "historicals"): Promise<HistoricalEntry[]>;
+    (key: "companies"): Promise<Company[]>;
+    (key: "historicals"): Promise<Historical[]>;
     (key: "settings"): Promise<Settings>;
   };
   setData: {
     (key: OptionKey, data: Option[]): Promise<void>;
     (key: "countries", data: Country[]): Promise<void>;
     (key: "accounts", data: Account[]): Promise<void>;
-    (key: "companies", data: CompanyData[]): Promise<void>;
-    (key: "historicals", data: HistoricalEntry[]): Promise<void>;
+    (key: "companies", data: Company[]): Promise<void>;
+    (key: "historicals", data: Historical[]): Promise<void>;
     (key: "settings", data: Settings): Promise<void>;
   };
   getStoragePath: () => Promise<string>;

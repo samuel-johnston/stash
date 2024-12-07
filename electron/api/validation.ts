@@ -1,3 +1,4 @@
+import { QuoteField } from "yahoo-finance2/dist/esm/src/modules/quote";
 import yahooFinance from "yahoo-finance2";
 import { writeLog } from "./logs";
 import { getData } from "./core";
@@ -63,7 +64,11 @@ export const validateASXCode = async (asxcode: string, existing: boolean) => {
 
   try {
     // Send request to yahoo-finance using asxcode
-    const fields = ["longName", "shortName", "regularMarketPrice"];
+    const fields: QuoteField[] = [
+      "longName", 
+      "shortName", 
+      "regularMarketPrice",
+    ]
     const quote = await yahooFinance.quote(`${asxcode}.AX`, { fields });
   
     // Ensure company name & share price does exist

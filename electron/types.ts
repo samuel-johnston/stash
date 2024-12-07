@@ -1,4 +1,3 @@
-import { ChartResultArrayQuote } from "yahoo-finance2/dist/esm/src/modules/chart";
 import { AddCompanyFormValues } from "../src/pages/addCompany";
 import { AddTradeFormValues } from "../src/pages/addTrade";
 
@@ -32,7 +31,6 @@ export interface AccountOption extends Option {
   accountId?: string;
 }
 
-// Dropdown country type
 export interface Country {
   label: string;
   code: string;
@@ -40,27 +38,23 @@ export interface Country {
   suggested?: boolean;
 }
 
-// Account type
 export interface Account {
   name: string;
   accountId: string;
   created: string;
 }
 
-// Written note type
 export interface Note {
   title: string;
   date: string;
   description: string;
 }
 
-// Date notification type
 export interface DateNotification {
   title: string;
   date: string;
 }
 
-// Price notification type
 export interface PriceNotification {
   title: string;
   highPrice: string;
@@ -74,7 +68,6 @@ export interface ValidateASXReturn {
   unitPrice: string,
 }
 
-// CURRENT share entry type
 export interface CurrentShareEntry {
   accountId: string;            // Account id that owns the share
   date: string;                 // Date of when the shares were originally brought
@@ -84,7 +77,6 @@ export interface CurrentShareEntry {
   gst: string;                  // Remaining GST for the trade
 }
 
-// BUY history entry type
 export interface BuyHistoryEntry {
   accountId: string;            // Account id that brought the share
   date: string;                 // Date of when the shares were brought
@@ -95,7 +87,6 @@ export interface BuyHistoryEntry {
   total: string;                // Total amount paid for the trade
 }
 
-// SELL history entry type
 export interface SellHistoryEntry {
   accountId: string;            // Account id that sold the share
   buyDate: string;              // Date of when the shares were brought
@@ -113,8 +104,7 @@ export interface SellHistoryEntry {
   cgtDiscount: boolean;         // Whether the CGT discount (50%) was applied to the capital gain.
 }
 
-// All data for a given company
-export interface CompanyData {
+export interface Company {
   asxcode: string;
   operatingCountries: Country[];
   financialStatus: Option[];
@@ -135,18 +125,21 @@ export interface CompanyData {
   sellHistory: SellHistoryEntry[];
 }
 
-// Settings type
 export interface Settings {
   unitPriceAutoFill: boolean;
   gstPercent: string;
   brokerageAutoFill: string;
 }
 
-// Historical entry type
 export interface HistoricalEntry {
+  adjClose: number;
+  date: Date;
+}
+
+export interface Historical {
   asxcode: string;
   lastUpdated: string;
-  historical: ChartResultArrayQuote[];
+  historical: HistoricalEntry[];
 }
 
 // Values type for AddCompany()
@@ -162,7 +155,6 @@ export interface AddTradeValues extends Omit<AddTradeFormValues, "date"> {
   date: string;
 }
 
-// Table row type for the portfolio page
 export interface PortfolioTableRow {
   id: number;                // ID, eg. 1, 2, 3, ...
   asxcode: string;           // ASX code of the company
@@ -180,7 +172,6 @@ export interface PortfolioTableRow {
   weightPerc: number;        // Weight % using market value
 }
 
-// Data point type for the portfolio graph
 export type GraphDataPoint = {
   id: number;
   date: Date;
@@ -191,18 +182,17 @@ export type GraphDataPoint = {
 export const graphRanges = [1, 3, 6, 12, 60] as const;
 export type GraphRange = typeof graphRanges[number];
 
-// Prop types for portfolio value text component
+// Return type of getPortfolioData()
+export interface PortfolioData {
+  graph: Record<GraphRange, GraphDataPoint[]>;
+  table: PortfolioTableRow[];
+  text: PortfolioText;
+}
+
 export interface PortfolioText {
   totalValue: string,      // Total value of the portfolio (as of today)
   dailyChange: string,     // Today's change in portfolio value
   dailyChangePerc: string, // Today's change in portfolio value %
   totalChange: string,     // Total change in portfolio value
   totalChangePerc: string, // Total change in portfolio value %
-}
-
-// Return type of getPortfolioData()
-export interface PortfolioData {
-  graph: Record<GraphRange, GraphDataPoint[]>;
-  table: PortfolioTableRow[];
-  text: PortfolioText;
 }
