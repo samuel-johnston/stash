@@ -27,4 +27,9 @@ export default [
   {
     ignores: ["node_modules/", ".webpack/"],
   },
+  {
+    rules: {
+      "@stylistic/jsx-one-expression-per-line": "off",
+    },
+  },
 ];

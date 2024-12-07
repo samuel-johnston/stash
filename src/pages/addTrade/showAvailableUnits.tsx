@@ -49,14 +49,7 @@ const ShowAvailableUnits = () => {
       >
         <InfoIcon color="primary" />
         <Typography color="primary" variant="h5">
-          {values.account.label}
-          {" "}
-          has
-          {units.toString()}
-          {" "}
-          units of
-          {values.asxcode.label}
-          .
+          {values.account.label} has {units.toString()} units of {values.asxcode.label}.
         </Typography>
       </Box>
     )
