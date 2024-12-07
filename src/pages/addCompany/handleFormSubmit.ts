@@ -1,12 +1,7 @@
-import { Dispatch, SetStateAction } from "react";
 import { AddCompanyFormValues } from "./index";
-import Slide from "@mui/material/Slide";
+import { enqueueSnackbar } from "notistack";
 
-const handleFormSubmit = async (
-  values: AddCompanyFormValues,
-  setOpenSnackbar: Dispatch<SetStateAction<boolean>>,
-  setTransition: Dispatch<any>,
-) => {
+const handleFormSubmit = async (values: AddCompanyFormValues) => {
   // Convert Dayjs objects to strings (since can't send "Dayjs" types over IPC)
   const sendValues = {
     ...values,
@@ -14,12 +9,8 @@ const handleFormSubmit = async (
     notificationDate: values.notificationDate.format("DD/MM/YYYY hh:mm A"),
   };
 
-  // Save new company form values
   await window.electronAPI.addCompany(sendValues);
-
-  // Open accordion to show success message
-  setOpenSnackbar(true);
-  setTransition(() => Slide);
+  enqueueSnackbar(`${values.asxcode.toUpperCase()} successfully added!`, { variant: "success" });
 };
 
 export default handleFormSubmit;

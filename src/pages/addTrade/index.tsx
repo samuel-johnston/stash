@@ -17,10 +17,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import Typography from "@mui/material/Typography";
-import Snackbar from "@mui/material/Snackbar";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Components
@@ -74,12 +72,6 @@ const AddTrade = () => {
   const [brokerage, setBrokerage] = useState<number>(0);
   const [gst, setGst] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
-
-  // Alert states
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [transition, setTransition] = useState(undefined);
-  const [severity, setSeverity] = useState<"success" | "error">("success");
-  const [alertMessage, setAlertMessage] = useState<string>("");
 
   // A helper function. Used to sort an array by label, alphabetically.
   const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label);
@@ -141,14 +133,7 @@ const AddTrade = () => {
       <Header title="Add Trade" subtitle="Record a new trade for an existing company" />
       <Formik
         onSubmit={(values: AddTradeFormValues) => {
-          handleFormSubmit(
-            values,
-            settings.gstPercent,
-            setOpenSnackbar,
-            setTransition,
-            setSeverity,
-            setAlertMessage,
-          );
+          handleFormSubmit(values, settings.gstPercent);
         }}
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -364,18 +349,6 @@ const AddTrade = () => {
             <LoadBrokerage />
             {/* Automatically set unit price using current market price */}
             {settings.unitPriceAutoFill && <AutoUpdateUnitPrice unitPrice={unitPrice} />}
-            {/* Snackbar shown on success/error */}
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={() => setOpenSnackbar(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              TransitionComponent={transition}
-            >
-              <Alert severity={severity} onClose={() => setOpenSnackbar(false)}>
-                {alertMessage}
-              </Alert>
-            </Snackbar>
           </form>
         )}
       </Formik>

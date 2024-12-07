@@ -14,13 +14,13 @@ import Button from "@mui/material/Button";
 // Types
 import { Account } from "../../../electron/types";
 import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   accountsList: Account[];
   accountToRename: Account;
   open: boolean;
-  handleClose: () => void;
-  handleSuccess: () => void;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   setAccountsList: Dispatch<SetStateAction<Account[]>>;
 }
 
@@ -33,8 +33,7 @@ const RenameAccountDialog = (props: Props) => {
     accountsList,
     accountToRename,
     open,
-    handleClose,
-    handleSuccess,
+    setOpen,
     setAccountsList,
   } = props;
 
@@ -51,7 +50,7 @@ const RenameAccountDialog = (props: Props) => {
   });
 
   return (
-    <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+    <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
       <DialogTitle variant="h3" fontWeight={600}>
         Rename Account
       </DialogTitle>
@@ -60,7 +59,8 @@ const RenameAccountDialog = (props: Props) => {
         validationSchema={validationSchema}
         onSubmit={async (values: RenameAccountFormValues) => {
           setAccountsList(await window.electronAPI.renameAccount(values.name, accountToRename.accountId));
-          handleSuccess();
+          setOpen(false);
+          enqueueSnackbar(`${values.name} successfully renamed!`, { variant: "success" });
         }}
       >
         {({ values, handleChange, touched, errors }) => (
@@ -85,7 +85,7 @@ const RenameAccountDialog = (props: Props) => {
               />
             </DialogContent>
             <DialogActions sx={{ pt: "10px" }}>
-              <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+              <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit" variant="contained">Save</Button>
             </DialogActions>
           </Form>

@@ -15,12 +15,12 @@ import Button from "@mui/material/Button";
 // Types
 import { Account } from "../../../electron/types";
 import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   accountToDelete: Account;
   open: boolean;
-  handleClose: () => void;
-  handleSuccess: () => void;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   setAccountsList: Dispatch<SetStateAction<Account[]>>;
 }
 
@@ -34,8 +34,7 @@ const DeleteAccountDialog = (props: Props) => {
   const {
     accountToDelete,
     open,
-    handleClose,
-    handleSuccess,
+    setOpen,
     setAccountsList,
   } = props;
 
@@ -51,7 +50,7 @@ const DeleteAccountDialog = (props: Props) => {
   });
 
   return (
-    <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+    <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
       <DialogTitle variant="h3" fontWeight={600}>
         Are You Sure?
       </DialogTitle>
@@ -60,7 +59,8 @@ const DeleteAccountDialog = (props: Props) => {
         validationSchema={validationSchema}
         onSubmit={async () => {
           setAccountsList(await window.electronAPI.deleteAccount(accountToDelete.accountId));
-          handleSuccess();
+          setOpen(false);
+          enqueueSnackbar(`${accountToDelete.name} successfully deleted!`, { variant: "success" });
         }}
       >
         {({ values, handleChange, touched, errors }) => (
@@ -89,7 +89,7 @@ const DeleteAccountDialog = (props: Props) => {
               />
             </DialogContent>
             <DialogActions sx={{ pt: "10px" }}>
-              <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+              <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit" variant="contained" color="error">Delete</Button>
             </DialogActions>
           </Form>

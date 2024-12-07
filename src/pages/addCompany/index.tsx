@@ -25,9 +25,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import TextField from "@mui/material/TextField";
-import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Material UI Icons
@@ -70,10 +68,6 @@ const AddCompany = () => {
   const isNonMobile = useMediaQuery("(min-width:800px)");
   const [companyName, setCompanyName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Success alert states
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [transition, setTransition] = useState(undefined);
 
   // Accordion Expanded States
   const [noteExpanded, setNoteExpanded] = useState<boolean>(false);
@@ -200,9 +194,7 @@ const AddCompany = () => {
         subtitle="Add details, notes and notifications for a new company"
       />
       <Formik
-        onSubmit={(values: AddCompanyFormValues) => {
-          handleFormSubmit(values, setOpenSnackbar, setTransition);
-        }}
+        onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={validationSchema}
       >
@@ -546,18 +538,6 @@ const AddCompany = () => {
                 Confirm
               </Button>
             </Box>
-            {/* Snackbar shown on success */}
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={() => setOpenSnackbar(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              TransitionComponent={transition}
-            >
-              <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
-                Successfully saved!
-              </Alert>
-            </Snackbar>
           </form>
         )}
       </Formik>

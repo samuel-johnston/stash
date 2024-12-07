@@ -12,10 +12,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import useTheme from "@mui/material/styles/useTheme";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
-import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
 // Components
@@ -62,10 +59,6 @@ const Accounts = () => {
     created: "",
   });
 
-  // Snackbar states & functions
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>("");
-
   return (
     <Box m="25px 30px 15px 30px">
       {/* Dialogs */}
@@ -74,35 +67,20 @@ const Accounts = () => {
         setAccountsList={setAccountsList}
         newAccountId={newAccountId}
         open={openAddAccountDialog}
-        handleClose={() => setOpenAddAccountDialog(false)}
-        handleSuccess={() => {
-          setOpenAddAccountDialog(false);
-          setAlertMessage("Account successfully added");
-          setOpenSnackbar(true);
-        }}
+        setOpen={setOpenAddAccountDialog}
       />
       <RenameAccountDialog
         accountsList={accountsList}
         accountToRename={accountToRename}
         setAccountsList={setAccountsList}
         open={openRenameAccountDialog}
-        handleClose={() => setOpenRenameAccountDialog(false)}
-        handleSuccess={() => {
-          setOpenRenameAccountDialog(false);
-          setAlertMessage("Account successfull edited");
-          setOpenSnackbar(true);
-        }}
+        setOpen={setOpenRenameAccountDialog}
       />
       <DeleteAccountDialog
         accountToDelete={accountToDelete}
         setAccountsList={setAccountsList}
         open={openDeleteAccountDialog}
-        handleClose={() => setOpenDeleteAccountDialog(false)}
-        handleSuccess={() => {
-          setOpenDeleteAccountDialog(false);
-          setAlertMessage("Account successfully deleted");
-          setOpenSnackbar(true);
-        }}
+        setOpen={setOpenDeleteAccountDialog}
       />
       <Header
         title="Accounts"
@@ -188,18 +166,6 @@ const Accounts = () => {
           </Button>
         </Box>
       </Box>
-      {/* Show snackbar on action success */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={5000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        TransitionComponent={Slide}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)}>
-          {alertMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

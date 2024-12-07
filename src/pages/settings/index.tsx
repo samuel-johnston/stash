@@ -3,17 +3,14 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 // Helper files
-import handleFormSubmit from "./handleFormSubmit";
 import LoadSettings from "./loadSettings";
 import RowLabel from "./rowLabel";
 
 // Material UI
 import Typography from "@mui/material/Typography";
-import Snackbar from "@mui/material/Snackbar";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Components
@@ -22,13 +19,10 @@ import Header from "../../components/header";
 
 // Types
 import { Settings } from "../../../electron/types";
+import { enqueueSnackbar } from "notistack";
 
 const Settings = () => {
   const [storagePath, setStoragePath] = useState<string>("");
-
-  // Success alert states
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [transition, setTransition] = useState(undefined);
 
   // On page render, get data from API
   useEffect(() => {
@@ -57,8 +51,9 @@ const Settings = () => {
   return (
     <Box m="25px 30px 15px 30px">
       <Formik
-        onSubmit={(values: Settings) => {
-          handleFormSubmit(values, setOpenSnackbar, setTransition);
+        onSubmit={async (values: Settings) => {
+          await window.electronAPI.setData("settings", values);
+          enqueueSnackbar("Successfully saved!", { variant: "success" });
         }}
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -170,18 +165,6 @@ const Settings = () => {
                 Save Changes
               </Button>
             </Box>
-            {/* Snackbar shown on success */}
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={() => setOpenSnackbar(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              TransitionComponent={transition}
-            >
-              <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
-                Successfully saved!
-              </Alert>
-            </Snackbar>
           </form>
         )}
       </Formik>
