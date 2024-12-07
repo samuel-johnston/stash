@@ -110,11 +110,17 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
       const units = countUnitsAtTime(company, filterValues.account, time);
       const value = units * historical.adjClose;
 
-      graphData.push({
-        id: graphId++,
-        date: time.toDate(),
-        value,
-      });
+      const graphEntry = graphData.find((entry) => time.isSame(entry.date, "day"));
+      if (graphEntry === undefined) {
+        graphData.push({
+          id: graphId++,
+          date: time.toDate(),
+          value,
+        });
+      }
+      else {
+        graphEntry.value += value;
+      }
     }
 
     let totalQuantity = 0;
@@ -162,7 +168,6 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
       const profitOrLossPerc = profitOrLoss / totalCost * 100;
       const dailyProfit = totalQuantity * (currentPrice - previousPrice);
 
-      // Add row to table data
       tableData.push({
         id: tableId++,
         asxcode: company.asxcode,
@@ -180,7 +185,6 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
         weightPerc: null, // Calculated after all rows are done
       });
 
-      // Add today's value to the graph data
       const graphEntry = graphData.find((entry) => dayjs().isSame(entry.date, "day"));
       if (graphEntry === undefined) {
         graphData.push({
