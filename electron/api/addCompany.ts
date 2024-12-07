@@ -3,7 +3,7 @@ import { getData, setData } from "./core";
 // Types
 import { 
   AddCompanyValues, 
-  CompanyData, 
+  Company, 
   Option, 
   OptionKey,
 } from "../types";
@@ -23,7 +23,7 @@ export const addCompany = (values: AddCompanyValues) => {
   saveNewOptions("monitor", values.monitor);
 
   // Construct new company data object
-  const newCompany: CompanyData = {
+  const newCompany: Company = {
     asxcode: values.asxcode.toUpperCase(),
     operatingCountries: values.operatingCountries,
     financialStatus: values.financialStatus,

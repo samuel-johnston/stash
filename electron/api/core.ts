@@ -7,9 +7,9 @@ import fs from "fs";
 // Types
 import { 
   Account,
-  CompanyData, 
+  Company, 
   Country, 
-  HistoricalEntry, 
+  Historical, 
   Key, 
   Option, 
   OptionKey,
@@ -19,8 +19,8 @@ import {
 export function getData(key: OptionKey): Option[];
 export function getData(key: "countries"): Country[];
 export function getData(key: "accounts"): Account[];
-export function getData(key: "companies"): CompanyData[];
-export function getData(key: "historicals"): HistoricalEntry[];
+export function getData(key: "companies"): Company[];
+export function getData(key: "historicals"): Historical[];
 export function getData(key: "settings"): Settings;
 
 /**
@@ -61,8 +61,8 @@ export function getData(key: Key) {
 export function setData(key: OptionKey, data: Option[]): void;
 export function setData(key: "countries", data: Country[]): void;
 export function setData(key: "accounts", data: Account[]): void;
-export function setData(key: "companies", data: CompanyData[]): void;
-export function setData(key: "historicals", data: HistoricalEntry[]): void;
+export function setData(key: "companies", data: Company[]): void;
+export function setData(key: "historicals", data: Historical[]): void;
 export function setData(key: "settings", data: Settings): void;
 
 /**
