@@ -1,12 +1,15 @@
-import yahooFinance from "yahoo-finance2";
-import { writeLog } from "./logs";
 import { getData, setData } from "./core";
+import { writeLog } from "./logs";
 import { 
   changeFormat, 
   currencyFormat, 
   dayjsDate, 
   precentFormat
 } from "./format";
+
+// Yahoo-finance2
+import yahooFinance from "yahoo-finance2";
+import { QuoteField } from "yahoo-finance2/dist/esm/src/modules/quote";
 
 // Dayjs
 import dayjs, { Dayjs } from "dayjs";
@@ -15,18 +18,16 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 // Types
 import { 
   AccountOption,
-  CompanyData, 
+  Company, 
   GraphDataPoint, 
+  HistoricalEntry, 
   Option, 
   PortfolioData, 
   PortfolioFilterValues,
   PortfolioTableRow,
 } from "../types";
 
-// Set concurrency limit to 16
 yahooFinance.setGlobalConfig({ queue: { concurrency: 16 } });
-
-// Custom parse format for dayjs
 dayjs.extend(customParseFormat);
 
 /**
@@ -35,7 +36,7 @@ dayjs.extend(customParseFormat);
  * @returns Data for each component
  */
 export const getPortfolioData = async (filterValues: PortfolioFilterValues): Promise<PortfolioData> => {
-  const companies = getFilteredData(filterValues);
+  const companies = getFilteredCompanies(filterValues);
 
   // If no companies match the filter values
   if (companies.length === 0) {
@@ -52,19 +53,16 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
     }
   }
 
-  // Array of asxcodes ["CBA", ...] and symbols ["CBA.AX", ...]
   const asxcodeArray = companies.map(entry => entry.asxcode); 
   const symbolArray = companies.map(entry => `${entry.asxcode}.AX`);
 
-  // Specify only required fields to save on bandwidth and latency
-  const fields = [
+  const fields: QuoteField[] = [
     "symbol",
     "regularMarketChangePercent",
     "regularMarketPrice",
     "regularMarketPreviousClose",
   ];
 
-  // Get the quotes and historical data for all the filtered companies
   const quoteArray = await yahooFinance.quote(symbolArray, { fields });
   const historicalData = await getHistoricalData(asxcodeArray);
 
@@ -101,12 +99,6 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
 
     // Calculate graph data using historical prices
     for (const historical of historicalEntry.historical) {
-      // Skip is historical entry is missing adjusted close price
-      if (historical.adjclose === undefined) {
-        writeLog(`[getPortfolioData]: Skipped a historical entry for ${company.asxcode}. Missing adjclose field.`);
-        continue;
-      }
-
       // If historical date is today, don't add an entry as one 
       // will be added later using more recent quote data instead
       if (dayjs().isSame(historical.date, "day")) continue;
@@ -114,19 +106,13 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
       // Calculate the value at the time of the historical entry
       const time = dayjs(historical.date);
       const units = countUnitsAtTime(company, filterValues.account, time);
-      const value = units * historical.adjclose;
+      const value = units * historical.adjClose;
 
-      // Add value to the existing data point (if possible), otherwise make new data point
-      const graphEntry = graphData.find(entry => time.isSame(entry.date, "day"));
-      if (graphEntry === undefined) {
-        graphData.push({ 
-          id: graphId++, 
-          date: time.toDate(), 
-          value,
-        });
-      } else {
-        graphEntry.value += value;
-      }
+      graphData.push({ 
+        id: graphId++, 
+        date: time.toDate(), 
+        value,
+      });
     }
 
     let totalQuantity = 0;
@@ -239,7 +225,7 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
 /**
  * Searches the given `arr` array and checks if all options in the
  * `target` array is found.
- *  * 
+ * 
  * @param target Array of targets
  * @param arr Array to check for targets
  * @returns Whether all targets were found
@@ -254,14 +240,11 @@ const filterOption = (target: Option[], arr: Option[]) => {
  * @param filterValues Provided values for filtering
  * @returns Array of companies matching all filter values
  */
-const getFilteredData = (filterValues: PortfolioFilterValues): CompanyData[] => {
+const getFilteredCompanies = (filterValues: PortfolioFilterValues): Company[] => {
   // Check account is provided
   if (filterValues.account === null) return [];
 
-  // Get existing data from storage
   const data = getData("companies");
-
-  // Return the filtered companies
   return data.filter(entry =>
     filterOption(filterValues.financialStatus, entry.financialStatus) &&
     filterOption(filterValues.miningStatus, entry.miningStatus) &&
@@ -283,12 +266,9 @@ const getFilteredData = (filterValues: PortfolioFilterValues): CompanyData[] => 
  * @param time dayjs object of the required time (assumed to be in the past)
  * @returns Number of units
  */
-const countUnitsAtTime = (company: CompanyData, account: AccountOption, time: Dayjs) => {
-  // Calculate the number of units brought before the given time
+const countUnitsAtTime = (company: Company, account: AccountOption, time: Dayjs) => {
   const unitsBrought = company.buyHistory.reduce((total, entry) => {
-    // If the account id is correct
     if (account.label === "All Accounts" || account.accountId === entry.accountId) {
-      // If the entry buy date was before the given time
       if (dayjsDate(entry.date).isBefore(time)) {
         total += Number(entry.quantity);
       }
@@ -296,11 +276,8 @@ const countUnitsAtTime = (company: CompanyData, account: AccountOption, time: Da
     return total;
   }, 0);
 
-  // Calculate the number of units sold before the given time
   const unitsSold = company.sellHistory.reduce((total, entry) => {
-    // If the account id is correct
     if (account.label === "All Accounts" || account.accountId === entry.accountId) {
-      // If the entry sell date was before the given time
       if (dayjsDate(entry.sellDate).isBefore(time)) {
         total += Number(entry.quantity);
       }
@@ -317,10 +294,9 @@ const countUnitsAtTime = (company: CompanyData, account: AccountOption, time: Da
  * saved to storage, and returned from this function.
  * 
  * @param asxcodes Array of ASX codes
- * @returns Array containing historical adjusted close prices for all ASX codes
+ * @returns Array containing historical adjusted close prices for all the given ASX codes
  */
 const getHistoricalData = async (asxcodes: string[]) => {
-  // Get historical data from storage
   const data = getData("historicals");
 
   // Missing asxcodes (not found in the storage file)
@@ -338,32 +314,45 @@ const getHistoricalData = async (asxcodes: string[]) => {
   // If no updates needed, can return early
   if (needUpdate.length === 0) return data;
 
-  // Query options for each chart request
   const queryOptions = { 
     period1: dayjs().subtract(5, "year").toDate(), 
     interval: "1d" as const,
   };
 
-  // Send chart requests in parallel (within concurrency limit)
+  // Send chart requests in parallel
   const responseArray = await Promise.allSettled(needUpdate.map(async (asxcode) => {
     const chart = await yahooFinance.chart(`${asxcode}.AX`, queryOptions);
     const historical = chart.quotes;
     return { asxcode, historical };
   }));
 
-  // Last updated is right now
   const lastUpdated = dayjs().format("DD/MM/YYYY hh:mm A");
-
-  // Update data using responses
   for (const response of responseArray) {
     if (response.status === "fulfilled") {
-      // Extract values from response
-      // NOTE: Only keep weekly data for entries >1 year ago
+      // Keep daily data for entries <1 year ago, and only weekly data for entries >1 year ago
       const asxcode = response.value.asxcode;
-      const historical = response.value.historical
-        .filter(entry => dayjs().diff(entry.date, "year") < 1 || entry.date.getDay() == 1);
-      
-      // Find the existing entry and update it (if possible), otherwise add a new entry
+      const filteredHistoricals = response.value.historical
+        .filter(entry => dayjs().diff(entry.date, "year") < 1 || entry.date.getDay() == 1)
+
+      const historical: HistoricalEntry[] = [];
+      for (const entry of filteredHistoricals) {
+        const date = dayjs(entry.date).format("DD/MM/YYYY");
+
+        // Check that adjClose field is present
+        if (!("adjclose" in entry)) {
+          writeLog(`[getHistoricalData]: Skipped a historical entry on ${date} for ${asxcode}. Missing 'adjclose' field.`);
+          continue;
+        }
+
+        // Check that there is not already an historical for the date (to prevent duplicate historicals for the same day)
+        if (historical.find(hist => dayjs(hist.date).isSame(entry.date, "day"))) {
+          writeLog(`[getHistoricalData]: Skipped a historical entry on ${date} for ${asxcode}. Entry already exists for this date.`);
+          continue;
+        }
+
+        historical.push({ adjClose: entry.adjclose, date: entry.date });
+      }
+
       const existingEntry = data.find(entry => entry.asxcode === response.value.asxcode);
       if (existingEntry === undefined) {
         data.push({ asxcode, lastUpdated, historical });
@@ -377,8 +366,6 @@ const getHistoricalData = async (asxcodes: string[]) => {
     }
   }
 
-  // Save the updated data
   setData("historicals", data);
-
   return data;
 }
