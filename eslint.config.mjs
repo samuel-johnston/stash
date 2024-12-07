@@ -30,6 +30,7 @@ export default [
   {
     rules: {
       "@stylistic/jsx-one-expression-per-line": "off",
+      "@stylistic/no-multi-spaces": ["error", { ignoreEOLComments: true }],
     },
   },
 ];

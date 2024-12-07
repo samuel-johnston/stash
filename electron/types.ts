@@ -69,39 +69,39 @@ export interface ValidateASXReturn {
 }
 
 export interface CurrentShareEntry {
-  accountId: string; // Account id that owns the share
-  date: string; // Date of when the shares were originally brought
-  quantity: string; // Number of current outstanding shares
-  unitPrice: string; // Price paid for 1 share at the time of purchase
-  brokerage: string; // Remaining brokerage for the trade
-  gst: string; // Remaining GST for the trade
+  accountId: string;            // Account id that owns the share
+  date: string;                 // Date of when the shares were originally brought
+  quantity: string;             // Number of current outstanding shares
+  unitPrice: string;            // Price paid for 1 share at the time of purchase
+  brokerage: string;            // Remaining brokerage for the trade
+  gst: string;                  // Remaining GST for the trade
 }
 
 export interface BuyHistoryEntry {
-  accountId: string; // Account id that brought the share
-  date: string; // Date of when the shares were brought
-  quantity: string; // Number of shares brought
-  unitPrice: string; // Price paid for 1 share at the time of purchase
-  brokerage: string; // Brokerage paid for the trade
-  gst: string; // GST paid for the trade
-  total: string; // Total amount paid for the trade
+  accountId: string;            // Account id that brought the share
+  date: string;                 // Date of when the shares were brought
+  quantity: string;             // Number of shares brought
+  unitPrice: string;            // Price paid for 1 share at the time of purchase
+  brokerage: string;            // Brokerage paid for the trade
+  gst: string;                  // GST paid for the trade
+  total: string;                // Total amount paid for the trade
 }
 
 export interface SellHistoryEntry {
-  accountId: string; // Account id that sold the share
-  buyDate: string; // Date of when the shares were brought
-  sellDate: string; // Date of when the shares were sold
-  quantity: string; // Number of shares sold
-  buyPrice: string; // Price paid for 1 share at the time of purchase
-  sellPrice: string; // Price sold for 1 share at the time of sale
-  appliedBuyBrokerage: string; // Proportion of brokerage paid when brought
+  accountId: string;            // Account id that sold the share
+  buyDate: string;              // Date of when the shares were brought
+  sellDate: string;             // Date of when the shares were sold
+  quantity: string;             // Number of shares sold
+  buyPrice: string;             // Price paid for 1 share at the time of purchase
+  sellPrice: string;            // Price sold for 1 share at the time of sale
+  appliedBuyBrokerage: string;  // Proportion of brokerage paid when brought
   appliedSellBrokerage: string; // Proportion of brokerage paid when sold
-  appliedBuyGst: string; // Proportion of GST paid when brought
-  appliedSellGst: string; // Proportion of GST paid when sold
-  total: string; // Total amount received for the trade (negative = loss)
-  profitOrLoss: string; // Profit/loss made from the trade (includes brokerage and GST fees)
-  capitalGainOrLoss: string; // Capital gain/loss made by trade (positive = gain, negative = loss)
-  cgtDiscount: boolean; // Whether the CGT discount (50%) was applied to the capital gain.
+  appliedBuyGst: string;        // Proportion of GST paid when brought
+  appliedSellGst: string;       // Proportion of GST paid when sold
+  total: string;                // Total amount received for the trade (negative = loss)
+  profitOrLoss: string;         // Profit/loss made from the trade (includes brokerage and GST fees)
+  capitalGainOrLoss: string;    // Capital gain/loss made by trade (positive = gain, negative = loss)
+  cgtDiscount: boolean;         // Whether the CGT discount (50%) was applied to the capital gain.
 }
 
 export interface Company {
@@ -156,20 +156,20 @@ export interface AddTradeValues extends Omit<AddTradeFormValues, "date"> {
 }
 
 export interface PortfolioTableRow {
-  id: number; // ID, eg. 1, 2, 3, ...
-  asxcode: string; // ASX code of the company
-  units: number; // Number of units owned
-  avgBuyPrice: number; // Average price of brought shares
-  currentPrice: number; // Last share price
-  marketValue: number; // Market value using last share price
-  purchaseCost: number; // Purchase cost of all units
-  dailyChangePerc: number; // Daily change in share price %
-  dailyProfit: number; // Daily change in profit
-  profitOrLoss: number; // Profit/loss amount
-  profitOrLossPerc: number; // Profit/loss %
+  id: number;                // ID, eg. 1, 2, 3, ...
+  asxcode: string;           // ASX code of the company
+  units: number;             // Number of units owned
+  avgBuyPrice: number;       // Average price of brought shares
+  currentPrice: number;      // Last share price
+  marketValue: number;       // Market value using last share price
+  purchaseCost: number;      // Purchase cost of all units
+  dailyChangePerc: number;   // Daily change in share price %
+  dailyProfit: number;       // Daily change in profit
+  profitOrLoss: number;      // Profit/loss amount
+  profitOrLossPerc: number;  // Profit/loss %
   firstPurchaseDate: string; // Earliest purchase date of current shares
-  lastPurchaseDate: string; // Latest purchast date of current shares
-  weightPerc: number; // Weight % using market value
+  lastPurchaseDate: string;  // Latest purchast date of current shares
+  weightPerc: number;        // Weight % using market value
 }
 
 export type GraphDataPoint = {
@@ -190,9 +190,9 @@ export interface PortfolioData {
 }
 
 export interface PortfolioText {
-  totalValue: string; // Total value of the portfolio (as of today)
-  dailyChange: string; // Today's change in portfolio value
+  totalValue: string;      // Total value of the portfolio (as of today)
+  dailyChange: string;     // Today's change in portfolio value
   dailyChangePerc: string; // Today's change in portfolio value %
-  totalChange: string; // Total change in portfolio value
+  totalChange: string;     // Total change in portfolio value
   totalChangePerc: string; // Total change in portfolio value %
 }
