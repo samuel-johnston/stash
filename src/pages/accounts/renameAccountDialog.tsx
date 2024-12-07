@@ -60,7 +60,7 @@ const RenameAccountDialog = (props: Props) => {
         onSubmit={async (values: RenameAccountFormValues) => {
           setAccountsList(await window.electronAPI.renameAccount(values.name, accountToRename.accountId));
           setOpen(false);
-          enqueueSnackbar(`${values.name} successfully renamed!`, { variant: "success" });
+          enqueueSnackbar(`Successfully renamed to ${values.name}!`, { variant: "success" });
         }}
       >
         {({ values, handleChange, touched, errors }) => (
