@@ -5,8 +5,8 @@ interface Props {
   label: string;
   valueName: string;
   value: string;
-  handleBlur: (e: FocusEvent<any, Element>) => void;
-  handleChange: (e: ChangeEvent<any>) => void;
+  handleBlur: (e: FocusEvent<unknown, Element>) => void;
+  handleChange: (e: ChangeEvent<unknown>) => void;
   span: number;
   rows: number;
 }

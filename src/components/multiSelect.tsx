@@ -37,7 +37,7 @@ const MultiSelectInput = (props: Props) => {
 
     // New value will always be the last value in the array
     const newValue = newValues[newValues.length - 1];
-  
+
     // If new value was created by pressing enter
     if (typeof newValue === "string") {
       const existingOption = options.find((option) => option.label === newValue);
@@ -46,7 +46,7 @@ const MultiSelectInput = (props: Props) => {
       // If the new value is an existing option that is not currently selected
       if (existingOption && !selected) {
         setFieldValue(valueName, [...value, existingOption]);
-      } 
+      }
       // If allowing new options
       else if (allowNewOptions && !existingOption) {
         setFieldValue(valueName, [...value, { label: newValue }]);
@@ -57,7 +57,7 @@ const MultiSelectInput = (props: Props) => {
       const newOption = { label: newValue.inputValue };
       const updatedValues = [...value, newOption];
       setFieldValue(valueName, updatedValues);
-    } 
+    }
     // If the new value was from clicking a normal option on dropdown
     else {
       setFieldValue(valueName, newValues);
@@ -75,19 +75,19 @@ const MultiSelectInput = (props: Props) => {
     const { inputValue } = state;
 
     // Check if option already exists
-    const existingOption = options.some(option => {
+    const existingOption = options.some((option) => {
       return (typeof option === "string")
         ? inputValue === option
-        : inputValue === option.label
+        : inputValue === option.label;
     });
 
     // Check if option is already selected
-    const selectedOption = value.some(option => {
+    const selectedOption = value.some((option) => {
       return (typeof option === "string")
         ? inputValue === option
-        : inputValue === option.label
+        : inputValue === option.label;
     });
-    
+
     // Suggest the creation of a new value
     if (allowNewOptions && inputValue !== "" && !existingOption && !selectedOption) {
       filtered.push({
@@ -97,7 +97,7 @@ const MultiSelectInput = (props: Props) => {
     }
 
     return filtered;
-  }
+  };
 
   return (
     <Autocomplete

@@ -31,7 +31,7 @@ const Graph = (props: Props) => {
 
   // Graph range state
   const [range, setRange] = useState<GraphRange>(6);
-  
+
   // Set width of rect manually
   // Fixes an issue where lines are not rendered when window is resized larger
   const [rectWidth, setRectWidth] = useState<number>(window.innerWidth);
@@ -39,11 +39,11 @@ const Graph = (props: Props) => {
     const handleResize = () => setRectWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     // Clean up
-    return () => window.removeEventListener("resize", handleResize);  
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
   // Set yAxis limits and bottom offset manually
-  // Fixes an issue where setting { area: true } property of graph defaults 
+  // Fixes an issue where setting { area: true } property of graph defaults
   // the yAxis bottom limit to 0.
   const { top, height } = useDrawingArea();
   const [dataset, setDataset] = useState<GraphDataPoint[]>([]);
@@ -59,7 +59,7 @@ const Graph = (props: Props) => {
     }
 
     // Find extremum values in data
-    const values = data[range].map(point => point.value);
+    const values = data[range].map((point) => point.value);
     const extremums = [Math.min(...values), Math.max(...values)];
 
     // Calculate number to ticks to display
@@ -69,7 +69,7 @@ const Graph = (props: Props) => {
     // Use d3 to calculate a nice domain
     const niceDomain = scaleLinear(extremums, drawAreaRange).nice(tickNumber).domain() as [number, number];
     const bottomOffset = 0.9 * (niceDomain[1] - niceDomain[0]) / niceDomain[1];
-    
+
     // Update states
     setBottomOffset(bottomOffset);
     setYAxis(niceDomain);
@@ -87,7 +87,7 @@ const Graph = (props: Props) => {
    */
   const xAxisValueFormatter = (id: number, context: AxisValueFormatterContext) => {
     // If data point could not be found (eg. if id was invalid)
-    const dataPoint = data[range].find(entry => entry.id === id);
+    const dataPoint = data[range].find((entry) => entry.id === id);
     if (dataPoint === undefined) return null;
 
     // Convert date to dayjs
@@ -101,10 +101,11 @@ const Graph = (props: Props) => {
     // Format for hover (window on mouse hover)
     if (dayjs().subtract(range, "month").year() != dayjs().year()) {
       return date.format("D MMM YYYY");
-    } else {
-      return date.format("ddd, D MMM")
     }
-  }
+    else {
+      return date.format("ddd, D MMM");
+    }
+  };
 
   /**
    * Determines whether the x-axis tick should be displayed.
@@ -113,9 +114,9 @@ const Graph = (props: Props) => {
     const frequency = Math.floor(data[range].length / 7);
     const offset = Math.ceil((frequency - (data[range].length % frequency)) / 2);
     return index % frequency === Math.max(frequency - offset, 0);
-  }
+  };
 
-   /**
+  /**
    * Formats the values for the y-axis (ie. prices).
    */
   const yAxisValueFormatter = (value: number) => {
@@ -124,7 +125,7 @@ const Graph = (props: Props) => {
     if (value < 1e6) return `${value / 1e3}K`;
     if (value < 1e9) return `${value / 1e6}M`;
     return `${value / 1e9}B`;
-  }
+  };
 
   /**
    * Custom style for overlay text.
@@ -154,7 +155,7 @@ const Graph = (props: Props) => {
         </OverlayText>
       </g>
     );
-  }
+  };
 
   /**
    * A helper function that maps a value to is respective label.
@@ -169,7 +170,7 @@ const Graph = (props: Props) => {
       case 12: return "1Y";
       case 60: return "5Y";
     }
-  }
+  };
 
   return (
     <Box
@@ -186,26 +187,28 @@ const Graph = (props: Props) => {
         height="33px"
         mb="-40px"
       >
-        {data[range].length !== 0 && <ButtonGroup>
-          {graphRanges.map(value => {
-            return (
-              <Button
-                disableRipple
-                variant="text"
-                onClick={() => setRange(value)}
-                sx={{ 
-                  color: range === value ? "white" : colors.blueAccent[600],
-                  zIndex: 1,
-                  "&:hover": {
-                    backgroundColor: "transparent",
-                  },
-                }}
-              >
-                {valueToLabel(value)}
-              </Button>
-            )
-          })}
-        </ButtonGroup>}
+        {data[range].length !== 0 && (
+          <ButtonGroup>
+            {graphRanges.map((value) => {
+              return (
+                <Button
+                  disableRipple
+                  variant="text"
+                  onClick={() => setRange(value)}
+                  sx={{
+                    color: range === value ? "white" : colors.blueAccent[600],
+                    zIndex: 1,
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                >
+                  {valueToLabel(value)}
+                </Button>
+              );
+            })}
+          </ButtonGroup>
+        )}
       </Box>
       <LineChart
         height={400}
@@ -221,14 +224,14 @@ const Graph = (props: Props) => {
             valueFormatter: xAxisValueFormatter,
             scaleType: "point",
             tickInterval: xAxisTickInterval,
-          }
+          },
         ]}
         yAxis={[
           {
             valueFormatter: yAxisValueFormatter,
             min: yAxis[0],
             max: yAxis[1],
-          }
+          },
         ]}
         series={[
           {
@@ -238,9 +241,9 @@ const Graph = (props: Props) => {
             color: colors.blueAccent[600],
             valueFormatter: currencyFormat,
             area: true,
-          }
+          },
         ]}
-        slots={{ 
+        slots={{
           noDataOverlay: Overlay("No data to display"),
           loadingOverlay: Overlay("Loading data..."),
         }}
@@ -279,7 +282,7 @@ const Graph = (props: Props) => {
         </defs>
       </LineChart>
     </Box>
-  )
-}
+  );
+};
 
 export default Graph;

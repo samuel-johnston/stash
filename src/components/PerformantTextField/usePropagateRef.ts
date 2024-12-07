@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 type UsePropagateRefProps = {
-  setFieldValue: React.Dispatch<React.SetStateAction<any>>;
+  setFieldValue: Dispatch<SetStateAction<unknown>>;
   name: string;
-  value: any;
+  value: unknown;
 };
 
 export function usePropagateRef(props: UsePropagateRefProps) {
@@ -28,6 +28,5 @@ export function usePropagateRef(props: UsePropagateRefProps) {
     }
 
     setFieldValue(value);
-    // eslint-disable-next-line
   }, [name]);
 }

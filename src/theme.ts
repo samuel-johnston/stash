@@ -25,12 +25,12 @@ export const tokens = (mode: PaletteMode): ColorType => ({
     ? {
         grey: {
           100: "#ffffff", // Primary text
-          200: "#bbbbbb", 
+          200: "#bbbbbb",
           300: "#aaaab2", // Secondary text
           400: "#7a7a7f",
           500: "#3a3a3f", // Scrollbar hover, Borders & Input Outline
           600: "#27272a", // Sidebar selected bg, Scrollbar handle, Dialog Outline
-          700: "#212124", // Sidebar hover bg & card UI 
+          700: "#212124", // Sidebar hover bg & card UI
           800: "#121212",
           900: "#0a0a0b", // Sidebar & content bg
         },
@@ -38,12 +38,12 @@ export const tokens = (mode: PaletteMode): ColorType => ({
           100: "#bbdefb",
           200: "#90caf9",
           300: "#64b5f6",
-          400: "#42a5f5", 
-          500: "#2196f3", 
+          400: "#42a5f5",
+          500: "#2196f3",
           600: "#1e88e5", // Graph components
           700: "#1976d2",
           800: "#1565c0",
-          900: "#0d47a1", 
+          900: "#0d47a1",
         },
       }
     : {
@@ -99,8 +99,8 @@ export const themeSettings = (mode: PaletteMode) => {
               light: "#e57373",
               main: "#d43a2f",
               dark: "#d32f2f",
-              contrastText: "#ffffff"
-            }
+              contrastText: "#ffffff",
+            },
           }
         : {
             primary: {
@@ -122,8 +122,8 @@ export const themeSettings = (mode: PaletteMode) => {
               light: "#e57373",
               main: "#d43a2f",
               dark: "#d32f2f",
-              contrastText: "#ffffff"
-            }
+              contrastText: "#ffffff",
+            },
           }),
     },
     typography: {
@@ -206,7 +206,7 @@ export const themeSettings = (mode: PaletteMode) => {
           },
           listbox: {
             padding: "0px",
-          }
+          },
         },
       },
       MuiButton: {
@@ -368,7 +368,7 @@ export const useMode = () => {
     () => ({
       toggleColorMode: () => setMode((prev) => (prev === "light" ? "dark" : "light")),
     }),
-    []
+    [],
   );
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   return [theme, colorMode];

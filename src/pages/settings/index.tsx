@@ -38,7 +38,9 @@ const Settings = () => {
       if (isMounted) setStoragePath(path);
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const initialValues: Settings = {

@@ -41,15 +41,15 @@ const RenameAccountDialog = (props: Props) => {
   // Formik initial values (use name from props)
   const initialValues: RenameAccountFormValues = {
     name: accountToRename.name,
-  }
+  };
 
   const validationSchema = yup.object().shape({
     name: yup
       .string()
-      .test("not-existing", "Name already exists", (value) => !accountsList.some(account => account.name === value))
+      .test("not-existing", "Name already exists", (value) => !accountsList.some((account) => account.name === value))
       .required("Name can't be empty"),
   });
-  
+
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
       <DialogTitle variant="h3" fontWeight={600}>
@@ -76,7 +76,7 @@ const RenameAccountDialog = (props: Props) => {
               <TextField
                 fullWidth
                 size="small"
-                name={"name"}
+                name="name"
                 value={values.name}
                 onChange={handleChange}
                 sx={{ mt: "8px", ml: "-2px" }}
@@ -93,6 +93,6 @@ const RenameAccountDialog = (props: Props) => {
       </Formik>
     </Dialog>
   );
-}
+};
 
 export default RenameAccountDialog;

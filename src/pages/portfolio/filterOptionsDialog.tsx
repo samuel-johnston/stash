@@ -35,17 +35,17 @@ const FilterOptionsDialog = (props: Props) => {
     miningStatusList,
     resourcesList,
     productsList,
-    recommendationList,  
+    recommendationList,
   } = props;
-  
+
   const handleReset = () => {
     // Skip if values are already all empty
     const alreadyEmpty = (
-      values.financialStatus.length === 0 &&
-      values.miningStatus.length === 0 &&
-      values.resources.length === 0 &&
-      values.products.length === 0 &&
-      values.recommendations.length === 0
+      values.financialStatus.length === 0
+      && values.miningStatus.length === 0
+      && values.resources.length === 0
+      && values.products.length === 0
+      && values.recommendations.length === 0
     );
     if (alreadyEmpty) return;
 
@@ -58,7 +58,7 @@ const FilterOptionsDialog = (props: Props) => {
       products: [],
       recommendations: [],
     });
-  }
+  };
 
   return (
     <Dialog
@@ -138,6 +138,6 @@ const FilterOptionsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 export default FilterOptionsDialog;

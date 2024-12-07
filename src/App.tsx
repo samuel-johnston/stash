@@ -3,7 +3,7 @@ import { CssBaseline, Theme, ThemeProvider } from "@mui/material";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // Fonts
-import "non.geist"
+import "non.geist";
 
 // Pages
 import Notifications from "./pages/notifications";

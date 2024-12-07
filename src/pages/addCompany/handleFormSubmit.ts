@@ -5,7 +5,7 @@ import Slide from "@mui/material/Slide";
 const handleFormSubmit = async (
   values: AddCompanyFormValues,
   setOpenSnackbar: Dispatch<SetStateAction<boolean>>,
-  setTransition: Dispatch<any>
+  setTransition: Dispatch<any>,
 ) => {
   // Convert Dayjs objects to strings (since can't send "Dayjs" types over IPC)
   const sendValues = {

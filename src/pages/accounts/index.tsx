@@ -37,7 +37,9 @@ const Accounts = () => {
       if (isMounted) setAccountsList(accounts);
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Add account dialog states
@@ -46,18 +48,18 @@ const Accounts = () => {
 
   // Rename account dialog states
   const [openRenameAccountDialog, setOpenRenameAccountDialog] = useState<boolean>(false);
-  const [accountToRename, setAccountToRename] = useState<Account>({ 
-    name: "", 
-    accountId: "", 
-    created: ""
+  const [accountToRename, setAccountToRename] = useState<Account>({
+    name: "",
+    accountId: "",
+    created: "",
   });
 
   // Delete account dialog states
   const [openDeleteAccountDialog, setOpenDeleteAccountDialog] = useState<boolean>(false);
-  const [accountToDelete, setAccountToDelete] = useState<Account>({ 
-    name: "", 
-    accountId: "", 
-    created: ""
+  const [accountToDelete, setAccountToDelete] = useState<Account>({
+    name: "",
+    accountId: "",
+    created: "",
   });
 
   // Snackbar states & functions
@@ -112,7 +114,7 @@ const Accounts = () => {
         gap="30px"
         gridTemplateColumns="repeat(4, minmax(0, 1fr))"
       >
-        {accountsList.map(account => {
+        {accountsList.map((account) => {
           return (
             <Box
               key={account.name}
@@ -140,7 +142,7 @@ const Accounts = () => {
                 </Box>
                 <ButtonGroup sx={{ m: "-3px" }}>
                   {/* Rename account button */}
-                  <Button 
+                  <Button
                     variant="text"
                     sx={{ height: "26px" }}
                     onClick={() => {
@@ -151,7 +153,7 @@ const Accounts = () => {
                     <EditRoundedIcon />
                   </Button>
                   {/* Delete account button */}
-                  <Button 
+                  <Button
                     variant="text"
                     sx={{ height: "26px" }}
                     onClick={() => {
@@ -164,7 +166,7 @@ const Accounts = () => {
                 </ButtonGroup>
               </Box>
             </Box>
-          )
+          );
         })}
         {/* Add new account button */}
         <Box
@@ -173,9 +175,9 @@ const Accounts = () => {
           borderRadius={2}
           gridColumn="span 4"
         >
-          <Button 
-            fullWidth 
-            variant="text" 
+          <Button
+            fullWidth
+            variant="text"
             sx={{ height: "74px", borderRadius: "6.5px" }}
             onClick={async () => {
               setNewAccountId(await window.electronAPI.generateAccountId());
@@ -200,6 +202,6 @@ const Accounts = () => {
       </Snackbar>
     </Box>
   );
-}
+};
 
 export default Accounts;

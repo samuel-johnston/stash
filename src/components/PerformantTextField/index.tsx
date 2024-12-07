@@ -29,7 +29,7 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
         }}
       />
     );
-  }
+  },
 );
 
 export type PerformantTextFieldProps = Omit<TextFieldProps, "name"> & {
@@ -81,7 +81,7 @@ export const PerformantTextField: React.FC<PerformantTextFieldProps> = memo((pro
   const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setFieldValue(evt.target.value);
   };
-  
+
   const onBlur = (evt: React.FocusEvent<HTMLInputElement>) => {
     const val = evt.target.value || "";
     window.setTimeout(() => {
@@ -118,11 +118,11 @@ export const PerformantTextField: React.FC<PerformantTextFieldProps> = memo((pro
           input: {
             ...((props.type === "number" && {
               inputProps: { min: props?.min, max: props?.max },
-            }) ||
-              undefined),
+            })
+            || undefined),
             startAdornment: currencyInput && <InputAdornment position="start">$</InputAdornment>,
             inputComponent: (currencyInput || numberInput) && (NumericFormatCustom as any),
-          }
+          },
         }}
         {...performanceProps}
       />

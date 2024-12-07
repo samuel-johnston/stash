@@ -13,8 +13,8 @@ interface Props {
   valueName: string;
   value: Dayjs;
   handleChange: (e: { target: { name: string; value: Dayjs } }) => void;
-  touched: FormikTouched<any>;
-  errors: FormikErrors<any>;
+  touched: FormikTouched<unknown>;
+  errors: FormikErrors<unknown>;
   disableFuture?: boolean;
   disablePast?: boolean;
   span: number;
@@ -23,16 +23,16 @@ interface Props {
 const DatePicker = (props: Props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { 
-    label, 
-    valueName, 
-    value, 
-    handleChange, 
-    touched, 
-    errors, 
+  const {
+    label,
+    valueName,
+    value,
+    handleChange,
+    touched,
+    errors,
     disableFuture,
-    disablePast, 
-    span 
+    disablePast,
+    span,
   } = props;
 
   return (

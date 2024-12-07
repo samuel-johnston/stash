@@ -5,7 +5,7 @@ import Slide from "@mui/material/Slide";
 const handleFormSubmit = (
   values: Settings,
   setOpenSnackbar: Dispatch<SetStateAction<boolean>>,
-  setTransition: Dispatch<any>
+  setTransition: Dispatch<any>,
 ) => {
   // Save new settings to storage
   window.electronAPI.setData("settings", values);

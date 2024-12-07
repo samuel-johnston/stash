@@ -30,7 +30,7 @@ const NumericTextField = (props: Props) => {
         input: {
           startAdornment: type === "currency" && <InputAdornment position="start">$</InputAdornment>,
           endAdornment: type === "percent" && <InputAdornment position="end">%</InputAdornment>,
-        }
+        },
       }}
       {...otherProps}
     />

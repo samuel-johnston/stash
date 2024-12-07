@@ -185,9 +185,9 @@ const AddCompany = () => {
     }
     // "Add Notification (Price)" Accordion
     if (
-      !!errors.notificationPriceTitle ||
-      !!errors.notificationPriceHigh ||
-      !!errors.notificationPriceLow
+      !!errors.notificationPriceTitle
+      || !!errors.notificationPriceHigh
+      || !!errors.notificationPriceLow
     ) {
       setPriceExpanded(true);
     }
@@ -225,7 +225,7 @@ const AddCompany = () => {
                 onChange={handleChange}
                 error={!!errors.asxcode}
                 helperText={errors.asxcode}
-                slotProps={{ htmlInput: { style: { textTransform: "uppercase" }}}}
+                slotProps={{ htmlInput: { style: { textTransform: "uppercase" } } }}
                 sx={{ gridColumn: isNonMobile ? "span 2" : "span 4" }}
               />
               {/* Loading Icon */}
@@ -259,7 +259,7 @@ const AddCompany = () => {
             </Box>
             {/* Company Details Dropdown */}
             <Accordion>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -375,7 +375,7 @@ const AddCompany = () => {
             </Accordion>
             {/* Add Note Dropdown */}
             <Accordion expanded={noteExpanded} onChange={() => setNoteExpanded(!noteExpanded)}>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -430,7 +430,7 @@ const AddCompany = () => {
             </Accordion>
             {/* Add notification (date) dropdown */}
             <Accordion expanded={dateExpanded} onChange={() => setDateExpanded(!dateExpanded)}>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -476,7 +476,7 @@ const AddCompany = () => {
             </Accordion>
             {/* Add Notification (Price) Input */}
             <Accordion expanded={priceExpanded} onChange={() => setPriceExpanded(!priceExpanded)}>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >

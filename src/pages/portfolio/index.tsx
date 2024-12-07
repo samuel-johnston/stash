@@ -45,7 +45,7 @@ const Portfolio = () => {
       dailyChangePerc: "",
       totalChange: "",
       totalChangePerc: "",
-    }
+    },
   });
 
   // "All Accounts" option
@@ -66,9 +66,9 @@ const Portfolio = () => {
       const recommendations = await window.electronAPI.getData("recommendations");
       if (isMounted) {
         // Format accounts as options
-        const newAccountsList: Option[] = accounts.map(element => ({ 
-          label: element.name, 
-          accountId: element.accountId
+        const newAccountsList: Option[] = accounts.map((element) => ({
+          label: element.name,
+          accountId: element.accountId,
         })).sort(byLabel);
 
         // Add "All Accounts" option to top of list
@@ -84,7 +84,9 @@ const Portfolio = () => {
       }
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Formik initial values
@@ -95,7 +97,7 @@ const Portfolio = () => {
     resources: [],
     products: [],
     recommendations: [],
-  }
+  };
 
   return (
     <Box m="25px 30px 15px 30px">
@@ -124,7 +126,7 @@ const Portfolio = () => {
               <SelectInput
                 small
                 label={null}
-                valueName={"account"}
+                valueName="account"
                 value={values.account}
                 options={accountsList}
                 width={220}
@@ -136,7 +138,7 @@ const Portfolio = () => {
               data={data.graph}
             />
             {/* Table showing current shares */}
-            <PortfolioTable 
+            <PortfolioTable
               loading={loading}
               data={data.table}
               financialStatusList={financialStatusList}
@@ -154,7 +156,7 @@ const Portfolio = () => {
         )}
       </Formik>
     </Box>
-  )
-}
+  );
+};
 
 export default Portfolio;

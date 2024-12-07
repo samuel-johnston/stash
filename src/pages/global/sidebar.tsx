@@ -28,7 +28,7 @@ import NoteAddIcon from "@mui/icons-material/NoteAddRounded";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 // Custom logo icon
-import LogoIcon from "../../assets/logo.svg"
+import LogoIcon from "../../assets/logo.svg";
 
 interface ItemProps {
   title: string;
@@ -99,7 +99,7 @@ const Sidebar = () => {
     },
     "& .pro-sidebar-header .pro-menu .pro-inner-item:hover": {
       background: "transparent !important",
-    }
+    },
   };
 
   return (
@@ -118,7 +118,7 @@ const Sidebar = () => {
             >
               {!isCollapsed && (
                 <Box display="flex" justifyContent="space-between" alignItems="center" ml="8px">
-                  <Box display="flex" alignItems="center"> 
+                  <Box display="flex" alignItems="center">
                     <LogoIcon style={{ width: "32px", height: "32px", marginRight: "10px", flexShrink: 0 }} />
                     <Typography variant="h2" fontWeight={500} color={colors.grey[100]}>
                       Stash

@@ -28,7 +28,7 @@ const PortfolioValueText = (props: Props) => {
   const getColor = (str: string): string => {
     if (str === "+0.00") return "white";
     return (str[0] === "+") ? "success.main" : "error.main";
-  }
+  };
 
   /**
    * A helper function that returns a skeleton component with the given width.
@@ -42,8 +42,8 @@ const PortfolioValueText = (props: Props) => {
         animation="wave"
         sx={{ animationDuration: "0.8s" }}
       />
-    )
-  }
+    );
+  };
 
   return (
     <Box display="flex" alignItems="flex-end" gap="30px" ml="3px">
@@ -76,6 +76,6 @@ const PortfolioValueText = (props: Props) => {
       </Box>
     </Box>
   );
-}
+};
 
 export default PortfolioValueText;

@@ -18,8 +18,8 @@ const skeleton = (width: number) => {
       animation="wave"
       sx={{ animationDuration: "0.8s" }}
     />
-  )
-}
+  );
+};
 
 const RowLabel = (props: Props) => {
   const { title, subtitle } = props;

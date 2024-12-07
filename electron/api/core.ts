@@ -5,13 +5,13 @@ import path from "path";
 import fs from "fs";
 
 // Types
-import { 
+import {
   Account,
-  Company, 
-  Country, 
-  Historical, 
-  Key, 
-  Option, 
+  Company,
+  Country,
+  Historical,
+  Key,
+  Option,
   OptionKey,
 } from "../types";
 
@@ -42,12 +42,13 @@ export function getData(key: Key) {
       // Read default values from file
       const datastr = fs.readFileSync(fileName);
       data = JSON.parse(String(datastr));
-    } else {
+    }
+    else {
       // Encase no file exists, set data to an empty array
       data = [];
       writeLog(`[getData]: Failed to read default values from [${fileName}]`);
     }
-    
+
     // Save data to storage
     storage.set(key, data, (error) => {
       if (error) writeLog(`[storage.set]: ${error}`);
@@ -67,7 +68,7 @@ export function setData(key: "settings", data: Settings): void;
 
 /**
  * Saves the data for a specific key to the storage file.
- * 
+ *
  * @param key Provided key
  * @param data The data to save
  */
@@ -79,7 +80,7 @@ export function setData(key: Key, data: object): void {
 
 /**
  * Gets the path to the storage folder.
- * 
+ *
  * @returns Full path to storage folder
  */
 export const getStoragePath = () => {

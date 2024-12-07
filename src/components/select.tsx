@@ -8,14 +8,13 @@ import TextField from "@mui/material/TextField";
 // Types
 import { Option } from "../../electron/types";
 
-
 interface Props {
   label: string;
   valueName: string;
   value: Option;
   options: Option[];
-  touched?: FormikTouched<any>;
-  errors?: FormikErrors<any>;
+  touched?: FormikTouched<unknown>;
+  errors?: FormikErrors<unknown>;
   capitaliseInput?: boolean | undefined;
   width?: number;
   span?: number;
@@ -24,7 +23,7 @@ interface Props {
 
 const SelectInput = (props: Props) => {
   const { setFieldValue } = useFormikContext();
-  const { 
+  const {
     label,
     valueName,
     value,
@@ -48,7 +47,7 @@ const SelectInput = (props: Props) => {
       return;
     }
 
-    // Convert string into label 
+    // Convert string into label
     if (typeof newValue === "string") {
       newValue = { label: newValue };
     }
@@ -60,7 +59,7 @@ const SelectInput = (props: Props) => {
 
     // Update form value
     setFieldValue(valueName, newValue);
-  }
+  };
 
   return (
     <Autocomplete
@@ -75,7 +74,7 @@ const SelectInput = (props: Props) => {
         // Disable formik submit on enter
         if (event.key === "Enter") event.preventDefault();
       }}
-      sx={{ 
+      sx={{
         gridColumn: span ? `span ${span}` : undefined,
         width: width ?? "auto",
       }}
@@ -99,7 +98,7 @@ const SelectInput = (props: Props) => {
           label={label}
           {...(small && { size: "small" })}
           // If touched and errors were given...
-          {...(touched && errors && { 
+          {...(touched && errors && {
             error: !!touched[valueName] && !!errors[valueName],
             helperText: touched[valueName] && (errors[valueName] as string),
           })}
@@ -107,7 +106,7 @@ const SelectInput = (props: Props) => {
             htmlInput: {
               ...params.inputProps,
               style: capitaliseInput ? { textTransform: "uppercase" } : undefined,
-            }
+            },
           }}
         />
       )}

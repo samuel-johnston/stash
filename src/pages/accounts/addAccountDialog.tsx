@@ -15,7 +15,7 @@ import { Account } from "../../../electron/types";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
-  accountsList: Account[],
+  accountsList: Account[];
   newAccountId: string;
   open: boolean;
   handleClose: () => void;
@@ -29,9 +29,9 @@ interface AddAccountFormValues {
 }
 
 const AddAccountDialog = (props: Props) => {
-  const { 
-    accountsList, 
-    newAccountId, 
+  const {
+    accountsList,
+    newAccountId,
     open,
     handleClose,
     handleSuccess,
@@ -42,15 +42,15 @@ const AddAccountDialog = (props: Props) => {
   const initialValues: AddAccountFormValues = {
     name: "",
     accountId: newAccountId,
-  }
+  };
 
   const validationSchema = yup.object().shape({
     name: yup
       .string()
-      .test("not-existing", "Name already exists", (value) => !accountsList.some(account => account.name === value))
+      .test("not-existing", "Name already exists", (value) => !accountsList.some((account) => account.name === value))
       .required("Name can't be empty"),
   });
-  
+
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
       <DialogTitle variant="h3" fontWeight={600} sx={{ paddingBottom: "0px" }}>
@@ -74,7 +74,7 @@ const AddAccountDialog = (props: Props) => {
               <TextField
                 fullWidth
                 size="small"
-                name={"name"}
+                name="name"
                 placeholder="Account Name"
                 value={values.name}
                 onChange={handleChange}
@@ -90,7 +90,7 @@ const AddAccountDialog = (props: Props) => {
                 disabled
                 fullWidth
                 size="small"
-                name={"accountId"}
+                name="accountId"
                 value={values.accountId}
                 sx={{ mt: "8px", ml: "-2px" }}
               />
@@ -107,6 +107,6 @@ const AddAccountDialog = (props: Props) => {
       </Formik>
     </Dialog>
   );
-}
+};
 
 export default AddAccountDialog;

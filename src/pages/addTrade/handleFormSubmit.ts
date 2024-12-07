@@ -8,7 +8,7 @@ const handleFormSubmit = async (
   setOpenSnackbar: Dispatch<SetStateAction<boolean>>,
   setTransition: Dispatch<any>,
   setSeverity: Dispatch<SetStateAction<"success" | "error">>,
-  setAlertMessage: Dispatch<SetStateAction<string>>
+  setAlertMessage: Dispatch<SetStateAction<string>>,
 ) => {
   // Convert dates Dayjs objects to strings (since can't send "Dayjs" types over IPC)
   const sendValues = {
@@ -20,7 +20,8 @@ const handleFormSubmit = async (
   try {
     if (values.type === "BUY") {
       await window.electronAPI.buyShare(sendValues, gstPercent);
-    } else {
+    }
+    else {
       await window.electronAPI.sellShare(sendValues, gstPercent);
     }
 
@@ -39,9 +40,9 @@ const handleFormSubmit = async (
 
     // Display error message in both console and accordion
     console.error(msg);
-    setAlertMessage(msg); 
+    setAlertMessage(msg);
   }
-  
+
   // Open accordion to show message
   setOpenSnackbar(true);
   setTransition(() => Slide);

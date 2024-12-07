@@ -10,7 +10,7 @@ import ToggleColumnsDialog from "./toggleColumnsDialog";
 import {
   DataGrid,
   GridColDef,
-  GridCellParams
+  GridCellParams,
 } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -35,38 +35,38 @@ interface Props {
 }
 
 // A helper function that assigns a class whether it is a positive/negative value
-const colorValue = (params: GridCellParams<any, number>) => {
+const colorValue = (params: GridCellParams<unknown, number>) => {
   // Don't assign class if no value
   if (params.value == null) return "";
   return clsx("color-cell", {
     negative: params.value < 0,
     positive: params.value > 0,
   });
-}
+};
 
 // A helper function for formatting prices
 const formatPriceValue = (decimals: number) => (value: number) => {
   // If no value
   if (value == null) return "-";
   return currencyFormat(value, decimals);
-}
+};
 
 // A helper function for formatting precents
 const formatPercentValue = (decimals: number) => (value: number) => {
   // If no value
   if (value == null) return "-";
   return precentFormat(value, decimals);
-}
+};
 
 // A helper function for formatting dates
 const formatDateValue = (value: string) => {
   return value.split(" ")[0];
-}
+};
 
 // A helper function for sorting with dates
 const sortDateValue = (value1: string, value2: string) => {
   return dayjsDate(value1).isAfter(value2) ? 1 : -1;
-}
+};
 
 // Data grid columns
 const columns: GridColDef[] = [
@@ -194,8 +194,8 @@ const columns: GridColDef[] = [
 ];
 
 const PortfolioTable = (props: Props) => {
-  const { 
-    loading, 
+  const {
+    loading,
     data,
     financialStatusList,
     miningStatusList,
@@ -248,7 +248,7 @@ const PortfolioTable = (props: Props) => {
       gridColumn="span 4"
     >
       {/* Dialogs */}
-      <FilterOptionsDialog 
+      <FilterOptionsDialog
         open={openFilterDialog}
         handleClose={handleFilterDialogClose}
         financialStatusList={financialStatusList}
@@ -257,7 +257,7 @@ const PortfolioTable = (props: Props) => {
         productsList={productsList}
         recommendationList={recommendationList}
       />
-      <ToggleColumnsDialog 
+      <ToggleColumnsDialog
         open={openColumnDialog}
         handleClose={handleColumnDialogClose}
         columns={columns}
@@ -273,7 +273,7 @@ const PortfolioTable = (props: Props) => {
         mb="-5px"
       >
         {/* Filter Options Button */}
-        <IconButton 
+        <IconButton
           disabled={openFilterDialog}
           onClick={handleFilterDialogOpen}
           sx={{ mr: "4px", zIndex: 10 }}
@@ -289,7 +289,7 @@ const PortfolioTable = (props: Props) => {
           <ViewWeekIcon />
         </IconButton>
         {/* Previous Page Button */}
-        <IconButton 
+        <IconButton
           onClick={handlePrevPage}
           disabled={paginationModel.page === 0}
           sx={{ zIndex: 10 }}
@@ -297,7 +297,7 @@ const PortfolioTable = (props: Props) => {
           <KeyboardArrowLeftIcon />
         </IconButton>
         {/* Next Page Button */}
-        <IconButton 
+        <IconButton
           onClick={handleNextPage}
           disabled={paginationModel.page === totalPages - 1}
           sx={{ zIndex: 10 }}
@@ -306,17 +306,17 @@ const PortfolioTable = (props: Props) => {
         </IconButton>
       </Box>
       {/* Table */}
-      <DataGrid 
+      <DataGrid
         disableRowSelectionOnClick
         disableColumnMenu
         pagination
         hideFooter
         paginationModel={paginationModel}
         loading={loading}
-        columns={columns.filter(column => !hiddenColumns.includes(column.field))}
+        columns={columns.filter((column) => !hiddenColumns.includes(column.field))}
         rows={data}
         sx={{
-          height: 385, 
+          height: 385,
           border: 0,
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: 500,
@@ -351,7 +351,7 @@ const PortfolioTable = (props: Props) => {
             },
           },
           "& .MuiDataGrid-overlay": {
-            fontSize: 14, 
+            fontSize: 14,
           },
           "& .color-cell.positive": {
             color: "#049104",
@@ -360,11 +360,11 @@ const PortfolioTable = (props: Props) => {
           "& .color-cell.negative": {
             color: "#e32020",
             fontWeight: 600,
-          }
+          },
         }}
       />
     </Box>
   );
-}
+};
 
 export default PortfolioTable;

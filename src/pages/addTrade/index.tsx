@@ -93,8 +93,8 @@ const AddTrade = () => {
       const data = await window.electronAPI.getData("companies");
       if (isMounted) {
         setSettings(settings);
-        setAccountsList(accounts.map(element => ({ label: element.name, accountId: element.accountId })).sort(byLabel));
-        setAsxCodeList(data.map(element => ({ label: element.asxcode })).sort(byLabel));
+        setAccountsList(accounts.map((element) => ({ label: element.name, accountId: element.accountId })).sort(byLabel));
+        setAsxCodeList(data.map((element) => ({ label: element.asxcode })).sort(byLabel));
       }
     })();
     // Clean up
@@ -147,7 +147,7 @@ const AddTrade = () => {
             setOpenSnackbar,
             setTransition,
             setSeverity,
-            setAlertMessage
+            setAlertMessage,
           );
         }}
         initialValues={initialValues}
@@ -165,7 +165,7 @@ const AddTrade = () => {
               <SelectInput
                 capitaliseInput
                 label="ASX Code"
-                valueName={"asxcode"}
+                valueName="asxcode"
                 value={values.asxcode}
                 options={asxCodeList}
                 errors={errors}
@@ -219,7 +219,7 @@ const AddTrade = () => {
               {/* Account Input */}
               <SelectInput
                 label="Account"
-                valueName={"account"}
+                valueName="account"
                 value={values.account}
                 options={accountsList}
                 errors={errors}
@@ -242,8 +242,8 @@ const AddTrade = () => {
                 variant={values.type === "BUY" ? "contained" : "outlined"}
                 color="success"
                 size="large"
-                onClick={() => handleChange({ target: { name: "type", value: "BUY" } })} 
-                sx={{ 
+                onClick={() => handleChange({ target: { name: "type", value: "BUY" } })}
+                sx={{
                   borderColor: theme.palette.success.main,
                   gridColumn: isNonMobile ? "span 2" : "span 4",
                   height: "50px",
@@ -252,11 +252,11 @@ const AddTrade = () => {
                 <Typography variant="h5" fontWeight={500}>BUY</Typography>
               </Button>
               <Button
-                variant={values.type === "SELL" ? "contained" : "outlined"} 
+                variant={values.type === "SELL" ? "contained" : "outlined"}
                 color="error"
                 size="large"
                 onClick={() => handleChange({ target: { name: "type", value: "SELL" } })}
-                sx={{ 
+                sx={{
                   borderColor: theme.palette.error.main,
                   gridColumn: isNonMobile ? "span 2" : "span 4",
                   height: "50px",
@@ -265,7 +265,7 @@ const AddTrade = () => {
                 <Typography variant="h5" fontWeight={500}>SELL</Typography>
               </Button>
               {/* Show available units if type is SELL */}
-              <ShowAvailableUnits/>
+              <ShowAvailableUnits />
               {/* Quantity Input */}
               <NumericTextField
                 name="quantity"
@@ -307,8 +307,15 @@ const AddTrade = () => {
                 {/* Share Value */}
                 <Box display="flex" justifyContent="space-between" p="16px 10px 12px 10px">
                   <Typography variant="h5">
-                    Shares <span style={{ color: colors.grey[300] }}>
-                      ({values.quantity ? values.quantity : 0} x ${values.unitPrice ? values.unitPrice : 0})
+                    Shares
+                    {" "}
+                    <span style={{ color: colors.grey[300] }}>
+                      (
+                      {values.quantity ? values.quantity : 0}
+                      {" "}
+                      x $
+                      {values.unitPrice ? values.unitPrice : 0}
+                      )
                     </span>
                   </Typography>
                   <Typography variant="h5">{"$" + shareValue.toFixed(2)}</Typography>
@@ -321,8 +328,12 @@ const AddTrade = () => {
                 {/* GST */}
                 <Box display="flex" justifyContent="space-between" p="0px 10px 16px 10px">
                   <Typography variant="h5">
-                    GST <span style={{ color: colors.grey[300] }}>
-                      ({settings.gstPercent}%)
+                    GST
+                    {" "}
+                    <span style={{ color: colors.grey[300] }}>
+                      (
+                      {settings.gstPercent}
+                      %)
                     </span>
                   </Typography>
                   <Typography variant="h5">{(gst < 0 ? "-$" : "$") + Math.abs(gst).toFixed(2)}</Typography>

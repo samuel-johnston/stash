@@ -7,7 +7,7 @@ import { getData } from "./core";
  * Validates the ASX code without sending any requests to yahoo-finance. Used for
  * the "Add Company" page when the submit button is pressed. Faster, but has more
  * basic checking than `validateASXCode()`.
- * 
+ *
  * @param asxcode ASX code to check
  * @returns A string that is either `"Valid"` or a description of the error
  */
@@ -24,18 +24,18 @@ export const quickValidateASXCode = (asxcode: string) => {
   const data = getData("companies");
 
   // ASX code must not already exist in data (ie. a new asxcode)
-  if (data.some(obj => obj.asxcode === asxcode)) {
+  if (data.some((obj) => obj.asxcode === asxcode)) {
     return "Company already added";
   }
 
   return "Valid";
-}
+};
 
 /**
  * Validates the given asxcode. If `existing` is true, then the provided asxcode
- * must be existing in the data. Otherwise, if `existing` is false, then the 
+ * must be existing in the data. Otherwise, if `existing` is false, then the
  * provided asxcode must not be existing (ie. a new asxcode).
- * 
+ *
  * @param asxcode ASX code to check
  * @param existing Should the ASX code already exist in the data?
  * @returns Status of the validation with the `unitPrice` (only if valid)
@@ -53,24 +53,24 @@ export const validateASXCode = async (asxcode: string, existing: boolean) => {
   const data = getData("companies");
 
   // ASX code must already exist in data
-  if (existing && !data.some(obj => obj.asxcode === asxcode)) {
+  if (existing && !data.some((obj) => obj.asxcode === asxcode)) {
     return { status: "Could not find company", companyName: "", unitPrice: undefined };
   }
 
   // ASX code must not already exist in data (ie. a new asxcode)
-  if (!existing && data.some(obj => obj.asxcode === asxcode)) {
+  if (!existing && data.some((obj) => obj.asxcode === asxcode)) {
     return { status: "Company already added", companyName: "", unitPrice: undefined };
   }
 
   try {
     // Send request to yahoo-finance using asxcode
     const fields: QuoteField[] = [
-      "longName", 
-      "shortName", 
+      "longName",
+      "shortName",
       "regularMarketPrice",
-    ]
+    ];
     const quote = await yahooFinance.quote(`${asxcode}.AX`, { fields });
-  
+
     // Ensure company name & share price does exist
     if (!quote?.regularMarketPrice || !(quote.longName ?? quote.shortName)) {
       return { status: "Company not found", companyName: "", unitPrice: undefined };
@@ -80,8 +80,9 @@ export const validateASXCode = async (asxcode: string, existing: boolean) => {
     const companyName = quote.longName || quote.shortName;
     const unitPrice = quote.regularMarketPrice.toString();
     return { status: "Valid", companyName, unitPrice };
-  } catch (error) {
+  }
+  catch (error) {
     writeLog(`[validateASXCode]: ${error}`);
     return { status: "ERROR: Could not fetch quote", companyName: "", unitPrice: undefined };
   }
-}
+};

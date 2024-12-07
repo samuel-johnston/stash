@@ -17,14 +17,14 @@ export const cleanUpValidation = () => {
 /**
  * Validates the ASX code field in the yup validation schema for the
  * "Add Company" page. Sets the company name (empty string if not valid).
- * 
+ *
  * @param setCompanyName Set company name function
  * @param setLoading Set loading function
  * @returns True/false if field is valid
  */
 export const validateASXCode = (
   setCompanyName: Dispatch<SetStateAction<string>>,
-  setLoading: Dispatch<SetStateAction<boolean>>
+  setLoading: Dispatch<SetStateAction<boolean>>,
 ) => {
   return async (value: string, context: TestContext) => {
     const { createError } = context;
@@ -38,7 +38,7 @@ export const validateASXCode = (
 
       // Wait for validation request to be processed
       const res = await window.electronAPI.validateASXCode(value, false);
-      
+
       // If current request id is outdated, don't update anything and
       // just show the previous error (if one)
       if (currentRequestId !== requestId) {
@@ -53,8 +53,8 @@ export const validateASXCode = (
       if (res.status !== "Valid") {
         prevErrorMsg = res.status;
         return createError({ message: res.status });
-      } 
-      
+      }
+
       // Otherwise, if it is valid...
       prevErrorMsg = undefined;
       return true;
@@ -67,7 +67,7 @@ export const validateASXCode = (
 
       // Wait for validation request to be processed
       const res = await window.electronAPI.quickValidateASXCode(value);
-      
+
       // If current request id is outdated, don't update anything and
       // just show the previous error (if one)
       if (currentRequestId !== requestId) {
@@ -79,8 +79,8 @@ export const validateASXCode = (
         setCompanyName("");
         prevErrorMsg = res;
         return createError({ message: res });
-      } 
-      
+      }
+
       // Otherwise, if it is valid...
       prevErrorMsg = undefined;
       return true;
@@ -94,7 +94,7 @@ export const validateASXCode = (
 /**
  * Validates the note title field in the yup validation schema for the
  * "Add Company" page. If description is not empty, then a title must be provided.
- * 
+ *
  * @param value Note title field
  * @param context Yup context
  * @returns True/false if field is valid
@@ -110,7 +110,7 @@ export const noteTitleRequired = (value: string, context: TestContext) => {
 /**
  * Validates the note date field in the yup validation schema for the
  * "Add Company" page. Date is required if any "note" related field is not empty.
- * 
+ *
  * @param value Note date field
  * @param context Yup context
  * @returns True/false if field is valid
@@ -126,7 +126,7 @@ export const noteDateRequired = (value: Date, context: TestContext) => {
 /**
  * Validates the notification date field in the yup validation schema for
  * the "Add Company" page. Notification date is required if title is not empty.
- * 
+ *
  * @param value Notification date field
  * @param context Yup context
  * @returns True/false if field is valid
@@ -143,7 +143,7 @@ export const notificationDateRequired = (value: Date, context: TestContext) => {
  * Validates the notification price fields in the yup validation schema for
  * the "Add Company" page. Notification price is required if title is not empty.
  * Returns true if title is empty.
- * 
+ *
  * @param value Notification price field
  * @param context Yup context
  * @returns True/false if field is valid
@@ -151,8 +151,8 @@ export const notificationDateRequired = (value: Date, context: TestContext) => {
 export const missingPrice = (value: number, context: TestContext) => {
   const { createError, parent } = context;
   if (
-    parent.notificationPriceTitle !== undefined && 
-    !(parent.notificationPriceHigh || parent.notificationPriceLow)
+    parent.notificationPriceTitle !== undefined
+    && !(parent.notificationPriceHigh || parent.notificationPriceLow)
   ) {
     return createError();
   }
@@ -162,7 +162,7 @@ export const missingPrice = (value: number, context: TestContext) => {
 /**
  * Validates the notification price fields in the yup validation schema for
  * the "Add Company" page. Checks if the upper price is above the lower price.
- * 
+ *
  * @param value Notification price field
  * @param context Yup context
  * @returns True/false if field is valid
@@ -179,7 +179,7 @@ export const lessThanLowPrice = (value: number, context: TestContext) => {
 /**
  * Validates the notification price fields in the yup validation schema for
  * the "Add Company" page. Checks if the lower price is below the upper price.
- * 
+ *
  * @param value Notification price field
  * @param context Yup context
  * @returns True/false if field is valid
