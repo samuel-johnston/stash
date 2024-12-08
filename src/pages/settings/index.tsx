@@ -126,7 +126,7 @@ const Settings = () => {
               />
               {/* Right Side */}
               <NumericTextField
-                type="percent"
+                adornment="percent"
                 name="gstPercent"
                 size="small"
                 value={values.gstPercent}
@@ -150,7 +150,7 @@ const Settings = () => {
               />
               {/* Right Side */}
               <NumericTextField
-                type="currency"
+                adornment="currency"
                 name="brokerageAutoFill"
                 size="small"
                 value={values.brokerageAutoFill}

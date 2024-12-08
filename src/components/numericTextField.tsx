@@ -1,12 +1,16 @@
-import { InputAdornment, TextField, TextFieldProps } from "@mui/material";
 import { NumericFormat } from "react-number-format";
+
+// Material UI
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import { TextFieldProps } from "@mui/material";
 
 type Props = Omit<TextFieldProps, "defaultValue" | "type"> & {
   value: string;
   /**
-   * The type of the `NumericTextField`.
-  */
-  type?: "currency" | "percent";
+   * Add an adornment to the `TextField`?
+   */
+  adornment?: "currency" | "percent";
   /**
    * Allow negative number inputs?
    */
@@ -14,25 +18,25 @@ type Props = Omit<TextFieldProps, "defaultValue" | "type"> & {
 };
 
 /**
- * Wrapper around Material UI's TextField component adding percent/currency adornments,
- * and restricting inputs to numerical.
+ * Wrapper around Material UI's `<TextField>` component adding an optional percent/currency adornment,
+ * and restricting inputs to numerical values only.
  */
 const NumericTextField = (props: Props) => {
-  const { type, value, allowNegative, ...otherProps } = props;
+  const { adornment, value, allowNegative, ...otherProps } = props;
   return (
     <NumericFormat
+      {...otherProps}
+      type="text"
       value={value}
       customInput={TextField}
       allowNegative={allowNegative ?? false}
       allowLeadingZeros={false}
-      type="text"
       slotProps={{
         input: {
-          startAdornment: type === "currency" && <InputAdornment position="start">$</InputAdornment>,
-          endAdornment: type === "percent" && <InputAdornment position="end">%</InputAdornment>,
+          startAdornment: adornment === "currency" && <InputAdornment position="start">$</InputAdornment>,
+          endAdornment: adornment === "percent" && <InputAdornment position="end">%</InputAdornment>,
         },
       }}
-      {...otherProps}
     />
   );
 };

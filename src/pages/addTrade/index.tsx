@@ -264,7 +264,7 @@ const AddTrade = () => {
               />
               {/* Unit Price Input */}
               <NumericTextField
-                type="currency"
+                adornment="currency"
                 name="unitPrice"
                 label="Unit Price"
                 value={values.unitPrice}
@@ -276,7 +276,7 @@ const AddTrade = () => {
               />
               {/* Brokerage Input */}
               <NumericTextField
-                type="currency"
+                adornment="currency"
                 name="brokerage"
                 label="Brokerage"
                 value={values.brokerage}
