@@ -32,10 +32,9 @@ import Box from "@mui/material/Box";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 // Components
-import { PerformantTextField } from "../../components/PerformantTextField";
 import MultiSelectInput from "../../components/multiSelect";
+import FastTextField from "../../components/fastTextField";
 import DatePicker from "../../components/datePicker";
-import TextArea from "../../components/textArea";
 import Header from "../../components/header";
 
 // Types
@@ -323,44 +322,44 @@ const AddCompany = () => {
                     options={monitorList}
                   />
                   {/* Reasons to Buy Input */}
-                  <TextArea
-                    label="Reasons To Buy"
-                    valueName="noteToBuy"
-                    value={values.noteToBuy}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="noteToBuy"
+                    label="Reasons To Buy"
+                    value={values.noteToBuy}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Reasons Not to Buy Input */}
-                  <TextArea
-                    label="Reasons Not To Buy"
-                    valueName="noteNotToBuy"
-                    value={values.noteNotToBuy}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="noteNotToBuy"
+                    label="Reasons Not To Buy"
+                    value={values.noteNotToBuy}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Positives Input */}
-                  <TextArea
-                    label="Positives"
-                    valueName="notePositives"
-                    value={values.notePositives}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="notePositives"
+                    label="Positives"
+                    value={values.notePositives}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Negatives Input */}
-                  <TextArea
-                    label="Negatives"
-                    valueName="noteNegatives"
-                    value={values.noteNegatives}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="noteNegatives"
+                    label="Negatives"
+                    value={values.noteNegatives}
+                    sx={{ gridColumn: "span 2" }}
                   />
                 </Box>
               </AccordionDetails>
@@ -386,13 +385,11 @@ const AddCompany = () => {
                   }}
                 >
                   {/* Note Title Input */}
-                  <PerformantTextField
+                  <FastTextField
                     type="text"
                     name="noteTitle"
                     label="Title"
                     value={values.noteTitle}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.noteTitle && !!errors.noteTitle}
                     helperText={touched.noteTitle && errors.noteTitle}
                     sx={{ gridColumn: "span 3" }}
@@ -408,14 +405,14 @@ const AddCompany = () => {
                     span={1}
                   />
                   {/* Note Description Input */}
-                  <TextArea
-                    label="Description"
-                    valueName="noteDescription"
-                    value={values.noteDescription}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={4}
+                  <FastTextField
+                    multiline
                     rows={8}
+                    type="text"
+                    name="noteDescription"
+                    label="Description"
+                    value={values.noteDescription}
+                    sx={{ gridColumn: "span 4" }}
                   />
                 </Box>
               </AccordionDetails>
@@ -441,13 +438,11 @@ const AddCompany = () => {
                   }}
                 >
                   {/* Notification (Date) Title Input */}
-                  <PerformantTextField
+                  <FastTextField
                     type="text"
                     name="notificationDateTitle"
                     label="Title"
                     value={values.notificationDateTitle}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationDateTitle && !!errors.notificationDateTitle}
                     helperText={touched.notificationDateTitle && errors.notificationDateTitle}
                     sx={{ gridColumn: "span 3" }}
@@ -487,39 +482,33 @@ const AddCompany = () => {
                   }}
                 >
                   {/* Notification (Price) Title */}
-                  <PerformantTextField
+                  <FastTextField
                     type="text"
                     name="notificationPriceTitle"
                     label="Title (Optional)"
                     value={values.notificationPriceTitle}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationPriceTitle && !!errors.notificationPriceTitle}
                     helperText={touched.notificationPriceTitle && errors.notificationPriceTitle}
                     sx={{ gridColumn: "span 4" }}
                   />
                   {/* Notification (Price) Low Price */}
-                  <PerformantTextField
-                    currencyInput
-                    type="text"
+                  <FastTextField
+                    adornment="currency"
+                    type="number"
                     name="notificationPriceLow"
                     label="Lower Limit"
                     value={values.notificationPriceLow}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationPriceLow && !!errors.notificationPriceLow}
                     helperText={touched.notificationPriceLow && errors.notificationPriceLow}
                     sx={{ gridColumn: "span 2" }}
                   />
                   {/* Notification (Price) High Price */}
-                  <PerformantTextField
-                    currencyInput
-                    type="text"
+                  <FastTextField
+                    adornment="currency"
+                    type="number"
                     name="notificationPriceHigh"
                     label="Upper Limit"
                     value={values.notificationPriceHigh}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationPriceHigh && !!errors.notificationPriceHigh}
                     helperText={touched.notificationPriceHigh && errors.notificationPriceHigh}
                     sx={{ gridColumn: "span 2" }}
