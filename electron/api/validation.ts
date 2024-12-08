@@ -64,11 +64,7 @@ export const validateASXCode = async (asxcode: string, existing: boolean) => {
 
   try {
     // Send request to yahoo-finance using asxcode
-    const fields: QuoteField[] = [
-      "longName",
-      "shortName",
-      "regularMarketPrice",
-    ];
+    const fields: QuoteField[] = ["longName", "shortName", "regularMarketPrice"];
     const quote = await yahooFinance.quote(`${asxcode}.AX`, { fields });
 
     // Ensure company name & share price does exist
