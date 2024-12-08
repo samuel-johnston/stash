@@ -397,12 +397,11 @@ const AddCompany = () => {
                   {/* Note Date Input */}
                   <DatePicker
                     label="Date"
-                    valueName="noteDate"
+                    name="noteDate"
                     value={values.noteDate}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
-                    span={1}
+                    error={!!touched.noteDate && !!errors.noteDate}
+                    helperText={touched.noteDate && errors.noteDate as string}
+                    sx={{ gridColumn: "span 1" }}
                   />
                   {/* Note Description Input */}
                   <FastTextField
@@ -449,14 +448,13 @@ const AddCompany = () => {
                   />
                   {/* Notification (Date) Date Input */}
                   <DatePicker
-                    label="Future Date"
-                    valueName="notificationDate"
-                    value={values.notificationDate}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
                     disablePast
-                    span={1}
+                    label="Future Date"
+                    name="notificationDate"
+                    value={values.notificationDate}
+                    error={!!touched.notificationDate && !!errors.notificationDate}
+                    helperText={touched.notificationDate && errors.notificationDate as string}
+                    sx={{ gridColumn: "span 1" }}
                   />
                 </Box>
               </AccordionDetails>

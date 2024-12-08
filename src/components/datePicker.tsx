@@ -1,68 +1,42 @@
-import { FormikErrors, FormikTouched } from "formik";
+import { useFormikContext } from "formik";
 import { tokens } from "../theme";
 import { Dayjs } from "dayjs";
 
-// Material IU
-import { DesktopDateTimePicker } from "@mui/x-date-pickers/DesktopDateTimePicker";
+// Material UI
+import { DesktopDateTimePicker, DesktopDateTimePickerProps } from "@mui/x-date-pickers/DesktopDateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useTheme from "@mui/material/styles/useTheme";
 
-interface Props {
-  label: string;
-  valueName: string;
-  value: Dayjs;
-  handleChange: (e: { target: { name: string; value: Dayjs } }) => void;
-  touched: FormikTouched<unknown>;
-  errors: FormikErrors<unknown>;
-  disableFuture?: boolean;
-  disablePast?: boolean;
-  span: number;
-}
+type Props = DesktopDateTimePickerProps<Dayjs> & {
+  error?: boolean;
+  helperText?: React.ReactNode;
+};
 
 const DatePicker = (props: Props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const {
-    label,
-    valueName,
-    value,
-    handleChange,
-    touched,
-    errors,
-    disableFuture,
-    disablePast,
-    span,
-  } = props;
+  const { name, label, error, helperText, ...otherProps } = props;
+  const { setFieldValue } = useFormikContext();
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DesktopDateTimePicker
-        {...(disablePast && { disablePast: true })}
-        {...(disableFuture && { disableFuture: true })}
+        {...otherProps}
+        onChange={(newValue) => setFieldValue(name, newValue)}
         format="DD/MM/YYYY hh:mm A"
-        value={value}
-        onChange={(newValue) => {
-          handleChange({
-            target: {
-              name: valueName,
-              value: newValue,
-            },
-          });
-        }}
         viewRenderers={{
           hours: null,
           minutes: null,
           seconds: null,
         }}
-        sx={{ gridColumn: `span ${span}` }}
         slotProps={{
           textField: {
             fullWidth: true,
-            name: valueName,
-            label: label,
-            error: !!touched[valueName] && !!errors[valueName],
-            helperText: touched[valueName] && (errors[valueName] as string),
+            name,
+            label,
+            error,
+            helperText,
           },
           actionBar: {
             actions: [],

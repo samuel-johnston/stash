@@ -215,12 +215,11 @@ const AddTrade = () => {
               <DatePicker
                 disableFuture
                 label="Date"
-                valueName="date"
+                name="date"
                 value={values.date}
-                handleChange={handleChange}
-                touched={touched}
-                errors={errors}
-                span={2}
+                error={!!touched.date && !!errors.date}
+                helperText={touched.date && errors.date as string}
+                sx={{ gridColumn: "span 2" }}
               />
               {/* Type Buttons */}
               <Button
