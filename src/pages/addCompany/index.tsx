@@ -277,49 +277,55 @@ const AddCompany = () => {
                   <MultiSelectInput
                     allowNewOptions
                     label="Financial Status"
-                    valueName="financialStatus"
+                    name="financialStatus"
                     value={values.financialStatus}
                     options={financialStatusList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Mining Status Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Mining Status"
-                    valueName="miningStatus"
+                    name="miningStatus"
                     value={values.miningStatus}
                     options={miningStatusList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Resources Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Resources"
-                    valueName="resources"
+                    name="resources"
                     value={values.resources}
                     options={resourcesList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Products Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Products"
-                    valueName="products"
+                    name="products"
                     value={values.products}
                     options={productsList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Recommendations Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Recommendations"
-                    valueName="recommendations"
+                    name="recommendations"
                     value={values.recommendations}
                     options={recommendationList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Monitor Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Monitor"
-                    valueName="monitor"
+                    name="monitor"
                     value={values.monitor}
                     options={monitorList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Reasons to Buy Input */}
                   <FastTextField
