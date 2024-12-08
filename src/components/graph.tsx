@@ -21,13 +21,61 @@ interface Props {
   data: Record<GraphRange, GraphDataPoint[]>;
 }
 
+/**
+ * Currency formatter helper function.
+ * Note: Use USD format "$" instead of AUD format "A$"
+ */
+const currencyFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format;
+
+/**
+ * A helper function that maps a value to is respective label.
+ * @param value Graph range value
+ * @returns Label of the value
+ */
+const valueToLabel = (value: GraphRange) => {
+  switch (value) {
+    case 1: return "1M";
+    case 3: return "3M";
+    case 6: return "6M";
+    case 12: return "1Y";
+    case 60: return "5Y";
+  }
+};
+
+/**
+ * Custom style for overlay text.
+ */
+const OverlayText = styled("text")(({ theme }) => ({
+  transform: "translateX(-28px)",
+  fill: theme.palette.text.primary,
+  fontFamily: theme.typography.fontFamily,
+  fontSize: 15,
+  textAnchor: "middle",
+  dominantBaseline: "middle",
+}));
+
+/**
+ * Creates a centered overlay component with the provided text.
+ * @param text Text to display
+ * @returns Overlay component
+ */
+const Overlay = (text: string) => () => {
+  const yScale = useYScale();
+  const { left, width, height } = useDrawingArea();
+  const top = yScale.range()[1];
+  return (
+    <g>
+      <OverlayText x={left + width / 2} y={top + height / 2}>
+        {text}
+      </OverlayText>
+    </g>
+  );
+};
+
 const Graph = (props: Props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const {
-    loading,
-    data,
-  } = props;
+  const { loading, data } = props;
 
   // Graph range state
   const [range, setRange] = useState<GraphRange>(6);
@@ -38,7 +86,6 @@ const Graph = (props: Props) => {
   useEffect(() => {
     const handleResize = () => setRectWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
-    // Clean up
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -50,7 +97,6 @@ const Graph = (props: Props) => {
   const [yAxis, setYAxis] = useState<[number, number]>([null, null]);
   const [bottomOffset, setBottomOffset] = useState<number>(1);
   useEffect(() => {
-    // If no data for the range
     if (data[range].length === 0) {
       setYAxis([null, null]);
       setBottomOffset(1);
@@ -70,27 +116,20 @@ const Graph = (props: Props) => {
     const niceDomain = scaleLinear(extremums, drawAreaRange).nice(tickNumber).domain() as [number, number];
     const bottomOffset = 0.9 * (niceDomain[1] - niceDomain[0]) / niceDomain[1];
 
-    // Update states
     setBottomOffset(bottomOffset);
     setYAxis(niceDomain);
     setDataset(data[range]);
   }, [data, range]);
 
   /**
-   * Currency formatter helper function.
-   * Note use USD format "$" instead of AUD format "A$"
-   */
-  const currencyFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format;
-
-  /**
    * Formats the values for the x-axis (ie. dates).
    */
   const xAxisValueFormatter = (id: number, context: AxisValueFormatterContext) => {
-    // If data point could not be found (eg. if id was invalid)
     const dataPoint = data[range].find((entry) => entry.id === id);
-    if (dataPoint === undefined) return null;
+    if (dataPoint === undefined) {
+      return null;
+    }
 
-    // Convert date to dayjs
     const date = dayjs(dataPoint.date);
 
     // Format for tick (on x-axis)
@@ -118,58 +157,13 @@ const Graph = (props: Props) => {
 
   /**
    * Formats the values for the y-axis (ie. prices).
+   * Compacts to "245K" or "1.2M" etc.
    */
   const yAxisValueFormatter = (value: number) => {
-    // Compact to "245K" or "1.2M" etc.
     if (value < 1e3) return `${value}`;
     if (value < 1e6) return `${value / 1e3}K`;
     if (value < 1e9) return `${value / 1e6}M`;
     return `${value / 1e9}B`;
-  };
-
-  /**
-   * Custom style for overlay text.
-   */
-  const OverlayText = styled("text")(({ theme }) => ({
-    transform: "translateX(-28px)",
-    fill: theme.palette.text.primary,
-    fontFamily: theme.typography.fontFamily,
-    fontSize: 15,
-    textAnchor: "middle",
-    dominantBaseline: "middle",
-  }));
-
-  /**
-   * Creates a centered overlay component with the provided text.
-   * @param text Text to display
-   * @returns Overlay component
-   */
-  const Overlay = (text: string) => () => {
-    const yScale = useYScale();
-    const { left, width, height } = useDrawingArea();
-    const top = yScale.range()[1];
-    return (
-      <g>
-        <OverlayText x={left + width / 2} y={top + height / 2}>
-          {text}
-        </OverlayText>
-      </g>
-    );
-  };
-
-  /**
-   * A helper function that maps a value to is respective label.
-   * @param value Graph range value
-   * @returns Label of the value
-   */
-  const valueToLabel = (value: GraphRange) => {
-    switch (value) {
-      case 1: return "1M";
-      case 3: return "3M";
-      case 6: return "6M";
-      case 12: return "1Y";
-      case 60: return "5Y";
-    }
   };
 
   return (
