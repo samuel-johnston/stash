@@ -187,6 +187,7 @@ const Graph = (props: Props) => {
               return (
                 <Button
                   disableRipple
+                  key={value}
                   variant="text"
                   onClick={() => setRange(value)}
                   sx={{

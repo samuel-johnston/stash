@@ -74,9 +74,9 @@ const ToggleColumnsDialog = (props: Props) => {
           justifyContent="space-between"
           mt="12px"
         >
-          {columnsList.map((columns) => {
+          {columnsList.map((columns, index) => {
             return (
-              <FormGroup sx={{ width: "100%", zIndex: 10 }}>
+              <FormGroup sx={{ width: "100%", zIndex: 10 }} key={index}>
                 {columns.map((column) => (
                   <Box
                     key={column.field}
