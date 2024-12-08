@@ -38,7 +38,7 @@ export const quickValidateASXCode = (asxcode: string) => {
  *
  * @param asxcode ASX code to check
  * @param existing Should the ASX code already exist in the data?
- * @returns Status of the validation with the `unitPrice` (only if valid)
+ * @returns Object containing validation results
  */
 export const validateASXCode = async (asxcode: string, existing: boolean) => {
   // ASX Code must be 3-5 characters long
