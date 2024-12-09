@@ -1,4 +1,7 @@
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import "react-pro-sidebar/dist/css/styles.css";
+import { Link } from "react-router-dom";
+import { tokens } from "../../theme";
 import {
   ProSidebar,
   Menu,
@@ -7,9 +10,6 @@ import {
   SidebarContent,
   SidebarFooter,
 } from "react-pro-sidebar";
-import "react-pro-sidebar/dist/css/styles.css";
-import { Link } from "react-router-dom";
-import { tokens } from "../../theme";
 
 // Material UI
 import useTheme from "@mui/material/styles/useTheme";
