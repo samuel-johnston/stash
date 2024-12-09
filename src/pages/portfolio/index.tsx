@@ -124,12 +124,12 @@ const Portfolio = () => {
               />
               {/* Account select */}
               <SelectInput
-                small
-                label={null}
-                valueName="account"
+                label=""
+                name="account"
+                size="small"
                 value={values.account}
                 options={accountsList}
-                width={220}
+                sx={{ width: 220 }}
               />
             </Box>
             {/* Graph of portfolio value over time */}

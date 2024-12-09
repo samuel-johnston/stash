@@ -150,12 +150,12 @@ const AddTrade = () => {
               <SelectInput
                 capitaliseInput
                 label="ASX Code"
-                valueName="asxcode"
+                name="asxcode"
                 value={values.asxcode}
                 options={asxCodeList}
-                errors={errors}
-                touched={touched}
-                span={isNonMobile ? 2 : 4}
+                error={!!touched.asxcode && !!errors.asxcode}
+                helperText={touched.asxcode && errors.asxcode as string}
+                sx={{ gridColumn: `span ${isNonMobile ? 2 : 4}` }}
               />
               {/* Loading Icon */}
               {loading && (
@@ -204,12 +204,12 @@ const AddTrade = () => {
               {/* Account Input */}
               <SelectInput
                 label="Account"
-                valueName="account"
+                name="account"
                 value={values.account}
                 options={accountsList}
-                errors={errors}
-                touched={touched}
-                span={2}
+                error={!!touched.account && !!errors.account}
+                helperText={touched.account && errors.account as string}
+                sx={{ gridColumn: "span 2" }}
               />
               {/* Date Input */}
               <DatePicker
