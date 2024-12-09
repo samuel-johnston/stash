@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { Formik } from "formik";
 
-// Components
-import SelectInput from "../../components/select";
+// Helper files
+import PortfolioValueText from "./portfolioValueText";
 import PortfolioTable from "./portfolioTable";
-import Graph from "../../components/graph";
 import UpdateData from "./updateData";
 
 // Material UI
 import Box from "@mui/material/Box";
 
+// Components
+import SelectInput from "../../components/select";
+import Graph from "../../components/graph";
+
 // Types
-import { Option, PortfolioData } from "../../../electron/types";
-import PortfolioValueText from "./portfolioValueText";
+import { AccountOption, Option, PortfolioData } from "../../../electron/types";
 
 export interface PortfolioFormValues {
-  account: Option;
+  account: AccountOption;
   financialStatus: Option[];
   miningStatus: Option[];
   resources: Option[];
@@ -43,7 +45,7 @@ const Portfolio = () => {
       dailyChangePerc: "",
       totalChange: "",
       totalChangePerc: "",
-    }
+    },
   });
 
   // "All Accounts" option
@@ -64,9 +66,9 @@ const Portfolio = () => {
       const recommendations = await window.electronAPI.getData("recommendations");
       if (isMounted) {
         // Format accounts as options
-        const newAccountsList: Option[] = accounts.map(element => ({ 
-          label: element.name, 
-          accountId: element.accountId
+        const newAccountsList: Option[] = accounts.map((element) => ({
+          label: element.name,
+          accountId: element.accountId,
         })).sort(byLabel);
 
         // Add "All Accounts" option to top of list
@@ -82,7 +84,9 @@ const Portfolio = () => {
       }
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Formik initial values
@@ -93,7 +97,7 @@ const Portfolio = () => {
     resources: [],
     products: [],
     recommendations: [],
-  }
+  };
 
   return (
     <Box m="25px 30px 15px 30px">
@@ -120,12 +124,12 @@ const Portfolio = () => {
               />
               {/* Account select */}
               <SelectInput
-                small
-                label={null}
-                valueName={"account"}
+                label=""
+                name="account"
+                size="small"
                 value={values.account}
                 options={accountsList}
-                width={220}
+                sx={{ width: 220 }}
               />
             </Box>
             {/* Graph of portfolio value over time */}
@@ -134,7 +138,7 @@ const Portfolio = () => {
               data={data.graph}
             />
             {/* Table showing current shares */}
-            <PortfolioTable 
+            <PortfolioTable
               loading={loading}
               data={data.table}
               financialStatusList={financialStatusList}
@@ -152,7 +156,7 @@ const Portfolio = () => {
         )}
       </Formik>
     </Box>
-  )
-}
+  );
+};
 
 export default Portfolio;

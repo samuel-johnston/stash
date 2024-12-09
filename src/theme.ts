@@ -1,6 +1,5 @@
 import { createContext, useState, useMemo } from "react";
-import { createTheme } from "@mui/material/styles";
-import { PaletteMode } from "@mui/material";
+import { PaletteMode, createTheme } from "@mui/material";
 
 interface Color {
   100: string;
@@ -25,12 +24,12 @@ export const tokens = (mode: PaletteMode): ColorType => ({
     ? {
         grey: {
           100: "#ffffff", // Primary text
-          200: "#bbbbbb", 
+          200: "#bbbbbb",
           300: "#aaaab2", // Secondary text
           400: "#7a7a7f",
           500: "#3a3a3f", // Scrollbar hover, Borders & Input Outline
           600: "#27272a", // Sidebar selected bg, Scrollbar handle, Dialog Outline
-          700: "#212124", // Sidebar hover bg & card UI 
+          700: "#212124", // Sidebar hover bg & card UI
           800: "#121212",
           900: "#0a0a0b", // Sidebar & content bg
         },
@@ -38,12 +37,12 @@ export const tokens = (mode: PaletteMode): ColorType => ({
           100: "#bbdefb",
           200: "#90caf9",
           300: "#64b5f6",
-          400: "#42a5f5", 
-          500: "#2196f3", 
+          400: "#42a5f5",
+          500: "#2196f3",
           600: "#1e88e5", // Graph components
           700: "#1976d2",
           800: "#1565c0",
-          900: "#0d47a1", 
+          900: "#0d47a1",
         },
       }
     : {
@@ -99,8 +98,8 @@ export const themeSettings = (mode: PaletteMode) => {
               light: "#e57373",
               main: "#d43a2f",
               dark: "#d32f2f",
-              contrastText: "#ffffff"
-            }
+              contrastText: "#ffffff",
+            },
           }
         : {
             primary: {
@@ -122,8 +121,8 @@ export const themeSettings = (mode: PaletteMode) => {
               light: "#e57373",
               main: "#d43a2f",
               dark: "#d32f2f",
-              contrastText: "#ffffff"
-            }
+              contrastText: "#ffffff",
+            },
           }),
     },
     typography: {
@@ -206,7 +205,7 @@ export const themeSettings = (mode: PaletteMode) => {
           },
           listbox: {
             padding: "0px",
-          }
+          },
         },
       },
       MuiButton: {
@@ -319,32 +318,32 @@ export const themeSettings = (mode: PaletteMode) => {
             width: 42,
             height: 24,
             padding: 0,
-            '& .MuiSwitch-switchBase': {
+            "& .MuiSwitch-switchBase": {
               padding: 0,
               margin: 2,
-              transitionDuration: '160ms',
-              '&.Mui-checked': {
-                transform: 'translateX(18px)',
-                '& + .MuiSwitch-track': {
+              transitionDuration: "160ms",
+              "&.Mui-checked": {
+                transform: "translateX(18px)",
+                "& + .MuiSwitch-track": {
                   backgroundColor: colors.grey[100],
                   opacity: 1,
                   border: 0,
                 },
-                '&.Mui-disabled + .MuiSwitch-track': {
+                "&.Mui-disabled + .MuiSwitch-track": {
                   opacity: 0.5,
                 },
               },
-              '&.Mui-disabled + .MuiSwitch-track': {
+              "&.Mui-disabled + .MuiSwitch-track": {
                 opacity: 0.7,
               },
             },
-            '& .MuiSwitch-thumb': {
+            "& .MuiSwitch-thumb": {
               color: colors.grey[900],
-              boxSizing: 'border-box',
+              boxSizing: "border-box",
               width: 20,
               height: 20,
             },
-            '& .MuiSwitch-track': {
+            "& .MuiSwitch-track": {
               borderRadius: 24 / 2,
               backgroundColor: colors.grey[500],
               opacity: 1,
@@ -357,18 +356,16 @@ export const themeSettings = (mode: PaletteMode) => {
 };
 
 export const ColorModeContext = createContext({
-  toggleColorMode: () => {
-    // This is deliberately empty
-  },
+  toggleColorMode: () => {},
 });
 
 export const useMode = () => {
-  const [mode, setMode] = useState("dark" as PaletteMode);
+  const [mode, setMode] = useState<PaletteMode>("dark");
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => setMode((prev) => (prev === "light" ? "dark" : "light")),
     }),
-    []
+    [],
   );
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   return [theme, colorMode];

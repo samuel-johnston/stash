@@ -13,13 +13,13 @@ import Button from "@mui/material/Button";
 // Types
 import { Account } from "../../../electron/types";
 import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
-  accountsList: Account[],
+  accountsList: Account[];
   newAccountId: string;
   open: boolean;
-  handleClose: () => void;
-  handleSuccess: () => void;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   setAccountsList: Dispatch<SetStateAction<Account[]>>;
 }
 
@@ -29,12 +29,11 @@ interface AddAccountFormValues {
 }
 
 const AddAccountDialog = (props: Props) => {
-  const { 
-    accountsList, 
-    newAccountId, 
+  const {
+    accountsList,
+    newAccountId,
     open,
-    handleClose,
-    handleSuccess,
+    setOpen,
     setAccountsList,
   } = props;
 
@@ -42,17 +41,17 @@ const AddAccountDialog = (props: Props) => {
   const initialValues: AddAccountFormValues = {
     name: "",
     accountId: newAccountId,
-  }
+  };
 
   const validationSchema = yup.object().shape({
     name: yup
       .string()
-      .test("not-existing", "Name already exists", (value) => !accountsList.some(account => account.name === value))
+      .test("not-existing", "Name already exists", (value) => !accountsList.some((account) => account.name === value))
       .required("Name can't be empty"),
   });
-  
+
   return (
-    <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+    <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
       <DialogTitle variant="h3" fontWeight={600} sx={{ paddingBottom: "0px" }}>
         Add New Account
       </DialogTitle>
@@ -61,7 +60,8 @@ const AddAccountDialog = (props: Props) => {
         validationSchema={validationSchema}
         onSubmit={async (values: AddAccountFormValues) => {
           setAccountsList(await window.electronAPI.createAccount(values.name, values.accountId));
-          handleSuccess();
+          setOpen(false);
+          enqueueSnackbar(`${values.name} successfully created!`, { variant: "success" });
         }}
       >
         {({ values, handleChange, touched, errors }) => (
@@ -74,7 +74,7 @@ const AddAccountDialog = (props: Props) => {
               <TextField
                 fullWidth
                 size="small"
-                name={"name"}
+                name="name"
                 placeholder="Account Name"
                 value={values.name}
                 onChange={handleChange}
@@ -90,7 +90,7 @@ const AddAccountDialog = (props: Props) => {
                 disabled
                 fullWidth
                 size="small"
-                name={"accountId"}
+                name="accountId"
                 value={values.accountId}
                 sx={{ mt: "8px", ml: "-2px" }}
               />
@@ -99,7 +99,7 @@ const AddAccountDialog = (props: Props) => {
               </Typography>
             </DialogContent>
             <DialogActions sx={{ pt: "4px" }}>
-              <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+              <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit" variant="contained">Save</Button>
             </DialogActions>
           </Form>
@@ -107,6 +107,6 @@ const AddAccountDialog = (props: Props) => {
       </Formik>
     </Dialog>
   );
-}
+};
 
 export default AddAccountDialog;

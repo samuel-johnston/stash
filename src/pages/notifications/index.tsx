@@ -13,6 +13,6 @@ const Notifications = () => {
       />
     </Box>
   );
-}
+};
 
 export default Notifications;

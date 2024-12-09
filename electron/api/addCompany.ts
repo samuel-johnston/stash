@@ -1,16 +1,16 @@
 import { getData, setData } from "./core";
 
 // Types
-import { 
-  AddCompanyValues, 
-  CompanyData, 
-  Option, 
+import {
+  AddCompanyValues,
+  Company,
+  Option,
   OptionKey,
 } from "../types";
 
 /**
  * Saves add company form values into the datastore.
- * 
+ *
  * @param values "Add Company" page form values
  */
 export const addCompany = (values: AddCompanyValues) => {
@@ -23,7 +23,7 @@ export const addCompany = (values: AddCompanyValues) => {
   saveNewOptions("monitor", values.monitor);
 
   // Construct new company data object
-  const newCompany: CompanyData = {
+  const newCompany: Company = {
     asxcode: values.asxcode.toUpperCase(),
     operatingCountries: values.operatingCountries,
     financialStatus: values.financialStatus,
@@ -75,12 +75,12 @@ export const addCompany = (values: AddCompanyValues) => {
 
   // Save the new company data into the datastore
   setData("companies", data.concat(newCompany));
-}
+};
 
 /**
- * Provided a key and the current options for that key, 
+ * Provided a key and the current options for that key,
  * saves any new options into storage.
- * 
+ *
  * @param key Provided key
  * @param options Current options for the provided key
  */
@@ -90,7 +90,7 @@ const saveNewOptions = (key: OptionKey, options: Option[]) => {
 
   // Filter the options to find any new ones
   const newOptions = options.filter((option) => {
-    return !existingOptions.some(value => value.label === option.label);
+    return !existingOptions.some((value) => value.label === option.label);
   });
 
   // If new options were found...
@@ -101,4 +101,4 @@ const saveNewOptions = (key: OptionKey, options: Option[]) => {
       .sort((a, b) => a.label.localeCompare(b.label));
     setData(key, allOptions);
   }
-}
+};

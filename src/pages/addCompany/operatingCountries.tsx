@@ -38,7 +38,7 @@ const OperatingCountriesInput = (props: Props) => {
           {option.label}
         </Box>
       )}
-      renderInput={(params) => <TextField {...params} label="Operating Countries"/>}
+      renderInput={(params) => <TextField {...params} label="Operating Countries" />}
     />
   );
 };

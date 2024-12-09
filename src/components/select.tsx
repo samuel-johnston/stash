@@ -1,83 +1,69 @@
-import { FormikErrors, FormikTouched, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 import { SyntheticEvent } from "react";
 
 // Material UI
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
+import { SxProps, Theme } from "@mui/material";
 
 // Types
 import { Option } from "../../electron/types";
 
-
-interface Props {
+type Props = Partial<Pick<TextFieldProps, "error" | "helperText" | "size">> & {
   label: string;
-  valueName: string;
+  name: string;
   value: Option;
   options: Option[];
-  touched?: FormikTouched<any>;
-  errors?: FormikErrors<any>;
-  capitaliseInput?: boolean | undefined;
-  width?: number;
-  span?: number;
-  small?: boolean;
-}
+  capitaliseInput?: boolean;
+  sx?: SxProps<Theme>;
+};
 
 const SelectInput = (props: Props) => {
   const { setFieldValue } = useFormikContext();
-  const { 
+  const {
     label,
-    valueName,
+    name,
     value,
     options,
-    errors,
-    touched,
     capitaliseInput,
-    small,
-    span,
-    width,
+    sx,
+    error,
+    helperText,
+    size,
   } = props;
 
   /**
    * Handle value change when input is updated.
-   * @param event Native event
-   * @param newValue Value from input
    */
   const handleChangeInput = (event: SyntheticEvent, newValue: string | Option) => {
     if (newValue === null) {
-      setFieldValue(valueName, null);
+      setFieldValue(name, null);
       return;
     }
 
-    // Convert string into label 
     if (typeof newValue === "string") {
       newValue = { label: newValue };
     }
 
-    // Capitalise value if necessary
     if (capitaliseInput) {
       newValue.label.toUpperCase();
     }
 
-    // Update form value
-    setFieldValue(valueName, newValue);
-  }
+    setFieldValue(name, newValue);
+  };
 
   return (
     <Autocomplete
       clearOnBlur
       handleHomeEndKeys
       disableCloseOnSelect
-      id={valueName}
+      id={name}
       value={value}
       options={options}
       onChange={handleChangeInput}
       onKeyDown={(event) => {
         // Disable formik submit on enter
         if (event.key === "Enter") event.preventDefault();
-      }}
-      sx={{ 
-        gridColumn: span ? `span ${span}` : undefined,
-        width: width ?? "auto",
       }}
       getOptionLabel={(option) => {
         if (typeof option === "string") return option;
@@ -97,20 +83,18 @@ const SelectInput = (props: Props) => {
         <TextField
           {...params}
           label={label}
-          {...(small && { size: "small" })}
-          // If touched and errors were given...
-          {...(touched && errors && { 
-            error: !!touched[valueName] && !!errors[valueName],
-            helperText: touched[valueName] && (errors[valueName] as string),
-          })}
+          size={size}
+          error={error}
+          helperText={helperText}
           slotProps={{
             htmlInput: {
               ...params.inputProps,
               style: capitaliseInput ? { textTransform: "uppercase" } : undefined,
-            }
+            },
           }}
         />
       )}
+      sx={sx}
     />
   );
 };

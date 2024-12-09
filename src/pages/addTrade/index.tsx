@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
+// Helper files
 import { cleanUpValidation, validateASXCode } from "./validation";
 import AutoUpdateUnitPrice from "./autoUpdateUnitPrice";
 import ShowAvailableUnits from "./showAvailableUnits";
@@ -16,20 +17,18 @@ import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useTheme from "@mui/material/styles/useTheme";
 import Typography from "@mui/material/Typography";
-import Snackbar from "@mui/material/Snackbar";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Components
-import CustomTextField from "../../components/customTextField";
+import NumericTextField from "../../components/numericTextField";
 import DatePicker from "../../components/datePicker";
 import SelectInput from "../../components/select";
 import Header from "../../components/header";
 
 // Types
-import { Option } from "../../../electron/types";
+import { AccountOption, Option } from "../../../electron/types";
 
 interface Settings {
   unitPriceAutoFill: boolean;
@@ -40,7 +39,7 @@ interface Settings {
 export interface AddTradeFormValues {
   asxcode: Option;
   type: "BUY" | "SELL";
-  account: Option;
+  account: AccountOption;
   date: dayjs.Dayjs;
   quantity: string;
   unitPrice: string;
@@ -74,12 +73,6 @@ const AddTrade = () => {
   const [gst, setGst] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
 
-  // Alert states
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [transition, setTransition] = useState(undefined);
-  const [severity, setSeverity] = useState<"success" | "error">("success");
-  const [alertMessage, setAlertMessage] = useState<string>("");
-
   // A helper function. Used to sort an array by label, alphabetically.
   const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label);
 
@@ -92,8 +85,8 @@ const AddTrade = () => {
       const data = await window.electronAPI.getData("companies");
       if (isMounted) {
         setSettings(settings);
-        setAccountsList(accounts.map(element => ({ label: element.name, accountId: element.accountId })).sort(byLabel));
-        setAsxCodeList(data.map(element => ({ label: element.asxcode })).sort(byLabel));
+        setAccountsList(accounts.map((element) => ({ label: element.name, accountId: element.accountId })).sort(byLabel));
+        setAsxCodeList(data.map((element) => ({ label: element.asxcode })).sort(byLabel));
       }
     })();
     // Clean up
@@ -140,14 +133,7 @@ const AddTrade = () => {
       <Header title="Add Trade" subtitle="Record a new trade for an existing company" />
       <Formik
         onSubmit={(values: AddTradeFormValues) => {
-          handleFormSubmit(
-            values,
-            settings.gstPercent,
-            setOpenSnackbar,
-            setTransition,
-            setSeverity,
-            setAlertMessage
-          );
+          handleFormSubmit(values, settings.gstPercent);
         }}
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -164,12 +150,12 @@ const AddTrade = () => {
               <SelectInput
                 capitaliseInput
                 label="ASX Code"
-                valueName={"asxcode"}
+                name="asxcode"
                 value={values.asxcode}
                 options={asxCodeList}
-                errors={errors}
-                touched={touched}
-                span={isNonMobile ? 2 : 4}
+                error={!!touched.asxcode && !!errors.asxcode}
+                helperText={touched.asxcode && errors.asxcode as string}
+                sx={{ gridColumn: `span ${isNonMobile ? 2 : 4}` }}
               />
               {/* Loading Icon */}
               {loading && (
@@ -218,31 +204,30 @@ const AddTrade = () => {
               {/* Account Input */}
               <SelectInput
                 label="Account"
-                valueName={"account"}
+                name="account"
                 value={values.account}
                 options={accountsList}
-                errors={errors}
-                touched={touched}
-                span={2}
+                error={!!touched.account && !!errors.account}
+                helperText={touched.account && errors.account as string}
+                sx={{ gridColumn: "span 2" }}
               />
               {/* Date Input */}
               <DatePicker
                 disableFuture
                 label="Date"
-                valueName="date"
+                name="date"
                 value={values.date}
-                handleChange={handleChange}
-                touched={touched}
-                errors={errors}
-                span={2}
+                error={!!touched.date && !!errors.date}
+                helperText={touched.date && errors.date as string}
+                sx={{ gridColumn: "span 2" }}
               />
               {/* Type Buttons */}
               <Button
                 variant={values.type === "BUY" ? "contained" : "outlined"}
                 color="success"
                 size="large"
-                onClick={() => handleChange({ target: { name: "type", value: "BUY" } })} 
-                sx={{ 
+                onClick={() => handleChange({ target: { name: "type", value: "BUY" } })}
+                sx={{
                   borderColor: theme.palette.success.main,
                   gridColumn: isNonMobile ? "span 2" : "span 4",
                   height: "50px",
@@ -251,11 +236,11 @@ const AddTrade = () => {
                 <Typography variant="h5" fontWeight={500}>BUY</Typography>
               </Button>
               <Button
-                variant={values.type === "SELL" ? "contained" : "outlined"} 
+                variant={values.type === "SELL" ? "contained" : "outlined"}
                 color="error"
                 size="large"
                 onClick={() => handleChange({ target: { name: "type", value: "SELL" } })}
-                sx={{ 
+                sx={{
                   borderColor: theme.palette.error.main,
                   gridColumn: isNonMobile ? "span 2" : "span 4",
                   height: "50px",
@@ -264,11 +249,9 @@ const AddTrade = () => {
                 <Typography variant="h5" fontWeight={500}>SELL</Typography>
               </Button>
               {/* Show available units if type is SELL */}
-              <ShowAvailableUnits/>
+              <ShowAvailableUnits />
               {/* Quantity Input */}
-              <CustomTextField
-                numberInput
-                type="text"
+              <NumericTextField
                 name="quantity"
                 label="Quantity"
                 value={values.quantity}
@@ -279,9 +262,8 @@ const AddTrade = () => {
                 sx={{ gridColumn: "span 4" }}
               />
               {/* Unit Price Input */}
-              <CustomTextField
-                currencyInput
-                type="text"
+              <NumericTextField
+                adornment="currency"
                 name="unitPrice"
                 label="Unit Price"
                 value={values.unitPrice}
@@ -292,9 +274,8 @@ const AddTrade = () => {
                 sx={{ gridColumn: "span 4" }}
               />
               {/* Brokerage Input */}
-              <CustomTextField
-                currencyInput
-                type="text"
+              <NumericTextField
+                adornment="currency"
                 name="brokerage"
                 label="Brokerage"
                 value={values.brokerage}
@@ -310,8 +291,15 @@ const AddTrade = () => {
                 {/* Share Value */}
                 <Box display="flex" justifyContent="space-between" p="16px 10px 12px 10px">
                   <Typography variant="h5">
-                    Shares <span style={{ color: colors.grey[300] }}>
-                      ({values.quantity ? values.quantity : 0} x ${values.unitPrice ? values.unitPrice : 0})
+                    Shares
+                    {" "}
+                    <span style={{ color: colors.grey[300] }}>
+                      (
+                      {values.quantity ? values.quantity : 0}
+                      {" "}
+                      x $
+                      {values.unitPrice ? values.unitPrice : 0}
+                      )
                     </span>
                   </Typography>
                   <Typography variant="h5">{"$" + shareValue.toFixed(2)}</Typography>
@@ -324,8 +312,12 @@ const AddTrade = () => {
                 {/* GST */}
                 <Box display="flex" justifyContent="space-between" p="0px 10px 16px 10px">
                   <Typography variant="h5">
-                    GST <span style={{ color: colors.grey[300] }}>
-                      ({settings.gstPercent}%)
+                    GST
+                    {" "}
+                    <span style={{ color: colors.grey[300] }}>
+                      (
+                      {settings.gstPercent}
+                      %)
                     </span>
                   </Typography>
                   <Typography variant="h5">{(gst < 0 ? "-$" : "$") + Math.abs(gst).toFixed(2)}</Typography>
@@ -356,18 +348,6 @@ const AddTrade = () => {
             <LoadBrokerage />
             {/* Automatically set unit price using current market price */}
             {settings.unitPriceAutoFill && <AutoUpdateUnitPrice unitPrice={unitPrice} />}
-            {/* Snackbar shown on success/error */}
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={() => setOpenSnackbar(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              TransitionComponent={transition}
-            >
-              <Alert severity={severity} onClose={() => setOpenSnackbar(false)}>
-                {alertMessage}
-              </Alert>
-            </Snackbar>
           </form>
         )}
       </Formik>

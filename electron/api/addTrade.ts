@@ -2,15 +2,15 @@ import { getData, setData } from "./core";
 import { dayjsDate } from "./format";
 
 // Types
-import { 
+import {
   AddTradeValues,
-  CurrentShareEntry, 
+  CurrentShareEntry,
 } from "../types";
 
 /**
  * Returns the number of available shares the account id owns for the given asxcode.
  * Returns 0 if the account id doesn't exist.
- * 
+ *
  * @param asxcode ASX code to check
  * @param accountId Account id to check
  * @returns Number of available shares
@@ -21,21 +21,21 @@ export const availableShares = (asxcode: string, accountId: string) => {
   const data = getData("companies");
 
   // If the company's data could not be found...
-  const companyData = data.find(entry => entry.asxcode === asxcode);
+  const companyData = data.find((entry) => entry.asxcode === asxcode);
   if (companyData === undefined) {
     throw new Error(`ERROR: Could not find data for ${asxcode}`);
   }
 
   return companyData.currentShares
-    .filter(entry => entry.accountId === accountId)
+    .filter((entry) => entry.accountId === accountId)
     .reduce((acc, cur) => acc + Number(cur.quantity), 0);
-}
+};
 
 /**
  * Saves form values for a BUY trade into the datastore.
  * Assumes form values can be parsed as numbers (checked prior by validation).
  * Creates 1 BUY history record of the trade, and 1 CURRENT record of the trade.
- * 
+ *
  * @param values "Add Trade" page form values
  * @param gstPercent The GST % to use
  * @throws Throws an error if asxcode does not exist in the storage
@@ -45,7 +45,7 @@ export const buyShare = (values: AddTradeValues, gstPercent: string) => {
   const data = getData("companies");
 
   // If the company's data could not be found...
-  const companyData = data.find(entry => entry.asxcode === values.asxcode.label);
+  const companyData = data.find((entry) => entry.asxcode === values.asxcode.label);
   if (companyData === undefined) {
     throw new Error(`ERROR: Could not find data for ${values.asxcode.label}.`);
   }
@@ -70,7 +70,7 @@ export const buyShare = (values: AddTradeValues, gstPercent: string) => {
     unitPrice: values.unitPrice,
     brokerage: values.brokerage,
     gst: gst.toString(),
-  }
+  };
 
   // Add new share entry into company data
   companyData.currentShares.push(shareEntry);
@@ -81,14 +81,14 @@ export const buyShare = (values: AddTradeValues, gstPercent: string) => {
 
   // Save datastore
   setData("companies", data);
-}
+};
 
 /**
  * Saves form values for a SELL trade into the datastore.
  * Assumes form values can be parsed as numbers (checked prior by validation).
- * Creates 1, or more, "SELL" history records of the trade. 
+ * Creates 1, or more, "SELL" history records of the trade.
  * May remove/modify multiple "CURRENT" records.
- * 
+ *
  * @param values "Add Trade" page form values
  * @param gstPercent The GST % to use
  * @throws Throws an error if asxcode does not exist in the storage
@@ -98,7 +98,7 @@ export const sellShare = (values: AddTradeValues, gstPercent: string) => {
   const data = getData("companies");
 
   // If the company's data could not be found...
-  const companyData = data.find(entry => entry.asxcode === values.asxcode.label);
+  const companyData = data.find((entry) => entry.asxcode === values.asxcode.label);
   if (companyData === undefined) {
     throw new Error(`ERROR: Could not find data for ${values.asxcode}.`);
   }
@@ -111,7 +111,7 @@ export const sellShare = (values: AddTradeValues, gstPercent: string) => {
   // Retrieve all of the current shares for the account id, removing any entries with
   // buy dates after the sell date, sorted in date ascending order
   const currentShares = companyData.currentShares
-    .filter(entry => entry.accountId === values.account.accountId && !dayjsDate(entry.date).isAfter(dayjsDate(values.date)))
+    .filter((entry) => entry.accountId === values.account.accountId && !dayjsDate(entry.date).isAfter(dayjsDate(values.date)))
     .sort((a, b) => dayjsDate(a.date).isBefore(dayjsDate(b.date)) ? -1 : 1);
 
   // If the account id owns no shares
@@ -189,7 +189,8 @@ export const sellShare = (values: AddTradeValues, gstPercent: string) => {
       if (index != -1) {
         companyData.currentShares.splice(index, 1);
       }
-    } else {
+    }
+    else {
       // ...Otherwise, remove only the amount of shares sold from the current entry
       entry.quantity = (Number(entry.quantity) - sellQuantity).toString();
       entry.brokerage = ((1 - buyRatio) * Number(entry.brokerage)).toString();
@@ -199,4 +200,4 @@ export const sellShare = (values: AddTradeValues, gstPercent: string) => {
 
   // Save datastore
   setData("companies", data);
-}
+};

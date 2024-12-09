@@ -1,26 +1,26 @@
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef } from "@mui/x-data-grid";
 
 // Material UI
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Typography from '@mui/material/Typography';
-import FormGroup from '@mui/material/FormGroup';
-import Switch from '@mui/material/Switch';
-import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
+import FormGroup from "@mui/material/FormGroup";
+import Switch from "@mui/material/Switch";
+import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 // Types
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   open: boolean;
   handleClose: () => void;
   columns: GridColDef[];
   hiddenColumns: string[];
-  setHiddenColumns: Dispatch<SetStateAction<string[]>>
+  setHiddenColumns: Dispatch<SetStateAction<string[]>>;
 }
 
 const ToggleColumnsDialog = (props: Props) => {
@@ -43,15 +43,16 @@ const ToggleColumnsDialog = (props: Props) => {
 
   const handleToggleColumn = (field: string) => {
     if (hiddenColumns.includes(field)) {
-      setHiddenColumns(hiddenColumns.filter(column => column !== field));
-    } else {
+      setHiddenColumns(hiddenColumns.filter((column) => column !== field));
+    }
+    else {
       setHiddenColumns([...hiddenColumns, field]);
     }
   };
 
   const handleDefault = () => {
     setHiddenColumns(["purchaseCost", "firstPurchaseDate", "lastPurchaseDate", "weightPerc"]);
-  }
+  };
 
   return (
     <Dialog
@@ -73,14 +74,14 @@ const ToggleColumnsDialog = (props: Props) => {
           justifyContent="space-between"
           mt="12px"
         >
-          {columnsList.map(columns => {
+          {columnsList.map((columns, index) => {
             return (
-              <FormGroup sx={{ width: "100%", zIndex: 10 }}>
-                {columns.map(column => (
-                  <Box 
-                    key={column.field} 
-                    display="flex" 
-                    alignItems="center" 
+              <FormGroup sx={{ width: "100%", zIndex: 10 }} key={index}>
+                {columns.map((column) => (
+                  <Box
+                    key={column.field}
+                    display="flex"
+                    alignItems="center"
                     justifyContent="flex-start"
                     my="5px"
                     gap="8px"
@@ -93,18 +94,18 @@ const ToggleColumnsDialog = (props: Props) => {
                   </Box>
                 ))}
               </FormGroup>
-            )
+            );
           })}
         </Box>
       </DialogContent>
       <DialogActions sx={{ mt: "-30px" }}>
-        <Button 
+        <Button
           variant="outlined"
           onClick={handleDefault}
         >
           Default
         </Button>
-        <Button 
+        <Button
           variant="contained"
           onClick={handleClose}
         >
@@ -113,6 +114,6 @@ const ToggleColumnsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 export default ToggleColumnsDialog;

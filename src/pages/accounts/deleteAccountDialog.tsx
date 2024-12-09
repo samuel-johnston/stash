@@ -15,12 +15,12 @@ import Button from "@mui/material/Button";
 // Types
 import { Account } from "../../../electron/types";
 import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   accountToDelete: Account;
   open: boolean;
-  handleClose: () => void;
-  handleSuccess: () => void;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   setAccountsList: Dispatch<SetStateAction<Account[]>>;
 }
 
@@ -34,24 +34,23 @@ const DeleteAccountDialog = (props: Props) => {
   const {
     accountToDelete,
     open,
-    handleClose,
-    handleSuccess,
+    setOpen,
     setAccountsList,
   } = props;
 
   // Formik initial values
   const initialValues: DeleteAccountFormValues = {
     name: "",
-  }
+  };
 
   const validationSchema = yup.object().shape({
     name: yup
       .string()
       .test("correct-name", `Input does not match "${accountToDelete.name}"`, (value) => value === accountToDelete.name),
   });
-  
+
   return (
-    <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+    <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
       <DialogTitle variant="h3" fontWeight={600}>
         Are You Sure?
       </DialogTitle>
@@ -60,15 +59,16 @@ const DeleteAccountDialog = (props: Props) => {
         validationSchema={validationSchema}
         onSubmit={async () => {
           setAccountsList(await window.electronAPI.deleteAccount(accountToDelete.accountId));
-          handleSuccess();
+          setOpen(false);
+          enqueueSnackbar(`${accountToDelete.name} successfully deleted!`, { variant: "success" });
         }}
       >
         {({ values, handleChange, touched, errors }) => (
           <Form>
             <DialogContent sx={{ pt: "0px", pb: "10px" }}>
               <DialogContentText>
-                This action is permanent and irreversible. 
-                Deleting this account will remove all data associated with the account. 
+                This action is permanent and irreversible.
+                Deleting this account will remove all data associated with the account.
                 This includes any trades entered for this account.
               </DialogContentText>
               <DialogContentText mt="10px">
@@ -80,7 +80,7 @@ const DeleteAccountDialog = (props: Props) => {
               <TextField
                 fullWidth
                 size="small"
-                name={"name"}
+                name="name"
                 value={values.name}
                 onChange={handleChange}
                 sx={{ mt: "8px", ml: "-2px" }}
@@ -89,7 +89,7 @@ const DeleteAccountDialog = (props: Props) => {
               />
             </DialogContent>
             <DialogActions sx={{ pt: "10px" }}>
-              <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+              <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit" variant="contained" color="error">Delete</Button>
             </DialogActions>
           </Form>
@@ -97,6 +97,6 @@ const DeleteAccountDialog = (props: Props) => {
       </Formik>
     </Dialog>
   );
-}
+};
 
 export default DeleteAccountDialog;

@@ -19,7 +19,7 @@ export const cleanUpValidation = () => {
  * Validates the ASX code field in the yup validation schema for the
  * "Add Trade" page. Sets the company name (empty string if not valid)
  * and sets the unit price (not changed if not valid).
- * 
+ *
  * @param setCompanyName Set company name function
  * @param setLoading Set loading function
  * @param setUnitPrice Set unit price function
@@ -28,7 +28,7 @@ export const cleanUpValidation = () => {
 export const validateASXCode = (
   setCompanyName: Dispatch<SetStateAction<string>>,
   setLoading: Dispatch<SetStateAction<boolean>>,
-  setUnitPrice: Dispatch<SetStateAction<string>>
+  setUnitPrice: Dispatch<SetStateAction<string>>,
 ) => {
   return async (currentOption: Option, context: TestContext) => {
     const value = currentOption.label;
@@ -43,7 +43,7 @@ export const validateASXCode = (
 
       // Wait for validation request to be processed
       const res = await window.electronAPI.validateASXCode(value, true);
-      
+
       // If current request id is outdated, don't update anything and
       // just show the previous error (if one)
       if (currentRequestId !== requestId) {
@@ -59,8 +59,8 @@ export const validateASXCode = (
       if (res.status !== "Valid") {
         prevErrorMsg = res.status;
         return createError({ message: res.status });
-      } 
-      
+      }
+
       // Otherwise, if it is valid...
       prevErrorMsg = undefined;
       return true;

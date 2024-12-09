@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect} from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useFormikContext } from "formik";
 
 // Types
@@ -25,18 +25,21 @@ const UpdateData = (props: Props): null => {
           setData(data);
           setLoading(false);
         }
-      } catch (error) {
+      }
+      catch (error) {
         // Split message since Electron wraps the original error message with additional text.
-        const splitMsg = error.message.split('Error: ');
+        const splitMsg = error.message.split("Error: ");
         const msg = (splitMsg.length === 2) ? splitMsg[1] : error.message;
         console.error(msg);
       }
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, [values]);
 
   return null;
-}
+};
 
 export default UpdateData;

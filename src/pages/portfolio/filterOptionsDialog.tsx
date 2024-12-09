@@ -35,17 +35,17 @@ const FilterOptionsDialog = (props: Props) => {
     miningStatusList,
     resourcesList,
     productsList,
-    recommendationList,  
+    recommendationList,
   } = props;
-  
+
   const handleReset = () => {
     // Skip if values are already all empty
     const alreadyEmpty = (
-      values.financialStatus.length === 0 &&
-      values.miningStatus.length === 0 &&
-      values.resources.length === 0 &&
-      values.products.length === 0 &&
-      values.recommendations.length === 0
+      values.financialStatus.length === 0
+      && values.miningStatus.length === 0
+      && values.resources.length === 0
+      && values.products.length === 0
+      && values.recommendations.length === 0
     );
     if (alreadyEmpty) return;
 
@@ -58,7 +58,7 @@ const FilterOptionsDialog = (props: Props) => {
       products: [],
       recommendations: [],
     });
-  }
+  };
 
   return (
     <Dialog
@@ -88,37 +88,42 @@ const FilterOptionsDialog = (props: Props) => {
           {/* Financial Status Input */}
           <MultiSelectInput
             label="Financial Status"
-            valueName="financialStatus"
+            name="financialStatus"
             value={values.financialStatus}
             options={financialStatusList}
+            sx={{ gridColumn: "span 2" }}
           />
           {/* Mining Status Input */}
           <MultiSelectInput
             label="Mining Status"
-            valueName="miningStatus"
+            name="miningStatus"
             value={values.miningStatus}
             options={miningStatusList}
+            sx={{ gridColumn: "span 2" }}
           />
           {/* Resources Input */}
           <MultiSelectInput
             label="Resources"
-            valueName="resources"
+            name="resources"
             value={values.resources}
             options={resourcesList}
+            sx={{ gridColumn: "span 2" }}
           />
           {/* Products Input */}
           <MultiSelectInput
             label="Products"
-            valueName="products"
+            name="products"
             value={values.products}
             options={productsList}
+            sx={{ gridColumn: "span 2" }}
           />
           {/* Recommendations Input */}
           <MultiSelectInput
             label="Recommendations"
-            valueName="recommendations"
+            name="recommendations"
             value={values.recommendations}
             options={recommendationList}
+            sx={{ gridColumn: "span 2" }}
           />
         </Box>
       </DialogContent>
@@ -138,6 +143,6 @@ const FilterOptionsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 export default FilterOptionsDialog;

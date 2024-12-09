@@ -3,10 +3,9 @@ import { useEffect, useState } from "react";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
+// Helper files
 import OperatingCountriesInput from "./operatingCountries";
 import handleFormSubmit from "./handleFormSubmit";
-
-// Yup validation functions
 import {
   cleanUpValidation,
   greaterThanHighPrice,
@@ -26,19 +25,16 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import TextField from "@mui/material/TextField";
-import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
-// Icons
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// Material UI Icons
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 // Components
-import { PerformantTextField } from "../../components/PerformantTextField";
 import MultiSelectInput from "../../components/multiSelect";
+import FastTextField from "../../components/fastTextField";
 import DatePicker from "../../components/datePicker";
-import TextArea from "../../components/textArea";
 import Header from "../../components/header";
 
 // Types
@@ -71,10 +67,6 @@ const AddCompany = () => {
   const isNonMobile = useMediaQuery("(min-width:800px)");
   const [companyName, setCompanyName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Success alert states
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [transition, setTransition] = useState(undefined);
 
   // Accordion Expanded States
   const [noteExpanded, setNoteExpanded] = useState<boolean>(false);
@@ -186,9 +178,9 @@ const AddCompany = () => {
     }
     // "Add Notification (Price)" Accordion
     if (
-      !!errors.notificationPriceTitle ||
-      !!errors.notificationPriceHigh ||
-      !!errors.notificationPriceLow
+      !!errors.notificationPriceTitle
+      || !!errors.notificationPriceHigh
+      || !!errors.notificationPriceLow
     ) {
       setPriceExpanded(true);
     }
@@ -201,9 +193,7 @@ const AddCompany = () => {
         subtitle="Add details, notes and notifications for a new company"
       />
       <Formik
-        onSubmit={(values: AddCompanyFormValues) => {
-          handleFormSubmit(values, setOpenSnackbar, setTransition);
-        }}
+        onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={validationSchema}
       >
@@ -226,7 +216,7 @@ const AddCompany = () => {
                 onChange={handleChange}
                 error={!!errors.asxcode}
                 helperText={errors.asxcode}
-                slotProps={{ htmlInput: { style: { textTransform: "uppercase" }}}}
+                slotProps={{ htmlInput: { style: { textTransform: "uppercase" } } }}
                 sx={{ gridColumn: isNonMobile ? "span 2" : "span 4" }}
               />
               {/* Loading Icon */}
@@ -260,7 +250,7 @@ const AddCompany = () => {
             </Box>
             {/* Company Details Dropdown */}
             <Accordion>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -287,96 +277,102 @@ const AddCompany = () => {
                   <MultiSelectInput
                     allowNewOptions
                     label="Financial Status"
-                    valueName="financialStatus"
+                    name="financialStatus"
                     value={values.financialStatus}
                     options={financialStatusList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Mining Status Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Mining Status"
-                    valueName="miningStatus"
+                    name="miningStatus"
                     value={values.miningStatus}
                     options={miningStatusList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Resources Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Resources"
-                    valueName="resources"
+                    name="resources"
                     value={values.resources}
                     options={resourcesList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Products Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Products"
-                    valueName="products"
+                    name="products"
                     value={values.products}
                     options={productsList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Recommendations Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Recommendations"
-                    valueName="recommendations"
+                    name="recommendations"
                     value={values.recommendations}
                     options={recommendationList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Monitor Input */}
                   <MultiSelectInput
                     allowNewOptions
                     label="Monitor"
-                    valueName="monitor"
+                    name="monitor"
                     value={values.monitor}
                     options={monitorList}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Reasons to Buy Input */}
-                  <TextArea
-                    label="Reasons To Buy"
-                    valueName="noteToBuy"
-                    value={values.noteToBuy}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="noteToBuy"
+                    label="Reasons To Buy"
+                    value={values.noteToBuy}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Reasons Not to Buy Input */}
-                  <TextArea
-                    label="Reasons Not To Buy"
-                    valueName="noteNotToBuy"
-                    value={values.noteNotToBuy}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="noteNotToBuy"
+                    label="Reasons Not To Buy"
+                    value={values.noteNotToBuy}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Positives Input */}
-                  <TextArea
-                    label="Positives"
-                    valueName="notePositives"
-                    value={values.notePositives}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="notePositives"
+                    label="Positives"
+                    value={values.notePositives}
+                    sx={{ gridColumn: "span 2" }}
                   />
                   {/* Negatives Input */}
-                  <TextArea
-                    label="Negatives"
-                    valueName="noteNegatives"
-                    value={values.noteNegatives}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={2}
+                  <FastTextField
+                    multiline
                     rows={3}
+                    type="text"
+                    name="noteNegatives"
+                    label="Negatives"
+                    value={values.noteNegatives}
+                    sx={{ gridColumn: "span 2" }}
                   />
                 </Box>
               </AccordionDetails>
             </Accordion>
             {/* Add Note Dropdown */}
             <Accordion expanded={noteExpanded} onChange={() => setNoteExpanded(!noteExpanded)}>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -395,13 +391,11 @@ const AddCompany = () => {
                   }}
                 >
                   {/* Note Title Input */}
-                  <PerformantTextField
+                  <FastTextField
                     type="text"
                     name="noteTitle"
                     label="Title"
                     value={values.noteTitle}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.noteTitle && !!errors.noteTitle}
                     helperText={touched.noteTitle && errors.noteTitle}
                     sx={{ gridColumn: "span 3" }}
@@ -409,29 +403,28 @@ const AddCompany = () => {
                   {/* Note Date Input */}
                   <DatePicker
                     label="Date"
-                    valueName="noteDate"
+                    name="noteDate"
                     value={values.noteDate}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
-                    span={1}
+                    error={!!touched.noteDate && !!errors.noteDate}
+                    helperText={touched.noteDate && errors.noteDate as string}
+                    sx={{ gridColumn: "span 1" }}
                   />
                   {/* Note Description Input */}
-                  <TextArea
-                    label="Description"
-                    valueName="noteDescription"
-                    value={values.noteDescription}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    span={4}
+                  <FastTextField
+                    multiline
                     rows={8}
+                    type="text"
+                    name="noteDescription"
+                    label="Description"
+                    value={values.noteDescription}
+                    sx={{ gridColumn: "span 4" }}
                   />
                 </Box>
               </AccordionDetails>
             </Accordion>
             {/* Add notification (date) dropdown */}
             <Accordion expanded={dateExpanded} onChange={() => setDateExpanded(!dateExpanded)}>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -450,34 +443,31 @@ const AddCompany = () => {
                   }}
                 >
                   {/* Notification (Date) Title Input */}
-                  <PerformantTextField
+                  <FastTextField
                     type="text"
                     name="notificationDateTitle"
                     label="Title"
                     value={values.notificationDateTitle}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationDateTitle && !!errors.notificationDateTitle}
                     helperText={touched.notificationDateTitle && errors.notificationDateTitle}
                     sx={{ gridColumn: "span 3" }}
                   />
                   {/* Notification (Date) Date Input */}
                   <DatePicker
-                    label="Future Date"
-                    valueName="notificationDate"
-                    value={values.notificationDate}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
                     disablePast
-                    span={1}
+                    label="Future Date"
+                    name="notificationDate"
+                    value={values.notificationDate}
+                    error={!!touched.notificationDate && !!errors.notificationDate}
+                    helperText={touched.notificationDate && errors.notificationDate as string}
+                    sx={{ gridColumn: "span 1" }}
                   />
                 </Box>
               </AccordionDetails>
             </Accordion>
             {/* Add Notification (Price) Input */}
             <Accordion expanded={priceExpanded} onChange={() => setPriceExpanded(!priceExpanded)}>
-              <AccordionSummary 
+              <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
                 sx={{ flexDirection: "row-reverse" }}
               >
@@ -496,39 +486,33 @@ const AddCompany = () => {
                   }}
                 >
                   {/* Notification (Price) Title */}
-                  <PerformantTextField
+                  <FastTextField
                     type="text"
                     name="notificationPriceTitle"
                     label="Title (Optional)"
                     value={values.notificationPriceTitle}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationPriceTitle && !!errors.notificationPriceTitle}
                     helperText={touched.notificationPriceTitle && errors.notificationPriceTitle}
                     sx={{ gridColumn: "span 4" }}
                   />
                   {/* Notification (Price) Low Price */}
-                  <PerformantTextField
-                    currencyInput
-                    type="text"
+                  <FastTextField
+                    adornment="currency"
+                    type="number"
                     name="notificationPriceLow"
                     label="Lower Limit"
                     value={values.notificationPriceLow}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationPriceLow && !!errors.notificationPriceLow}
                     helperText={touched.notificationPriceLow && errors.notificationPriceLow}
                     sx={{ gridColumn: "span 2" }}
                   />
                   {/* Notification (Price) High Price */}
-                  <PerformantTextField
-                    currencyInput
-                    type="text"
+                  <FastTextField
+                    adornment="currency"
+                    type="number"
                     name="notificationPriceHigh"
                     label="Upper Limit"
                     value={values.notificationPriceHigh}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
                     error={!!touched.notificationPriceHigh && !!errors.notificationPriceHigh}
                     helperText={touched.notificationPriceHigh && errors.notificationPriceHigh}
                     sx={{ gridColumn: "span 2" }}
@@ -547,18 +531,6 @@ const AddCompany = () => {
                 Confirm
               </Button>
             </Box>
-            {/* Snackbar shown on success */}
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={() => setOpenSnackbar(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              TransitionComponent={transition}
-            >
-              <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
-                Successfully saved!
-              </Alert>
-            </Snackbar>
           </form>
         )}
       </Formik>

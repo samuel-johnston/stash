@@ -2,30 +2,27 @@ import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import { Settings } from "../../../electron/types";
-import handleFormSubmit from "./handleFormSubmit";
+// Helper files
 import LoadSettings from "./loadSettings";
 import RowLabel from "./rowLabel";
 
 // Material UI
 import Typography from "@mui/material/Typography";
-import Snackbar from "@mui/material/Snackbar";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
 // Components
-import CustomTextField from "../../components/customTextField";
+import NumericTextField from "../../components/numericTextField";
 import Header from "../../components/header";
+
+// Types
+import { Settings } from "../../../electron/types";
+import { enqueueSnackbar } from "notistack";
 
 const Settings = () => {
   const [storagePath, setStoragePath] = useState<string>("");
-
-  // Success alert states
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [transition, setTransition] = useState(undefined);
 
   // On page render, get data from API
   useEffect(() => {
@@ -35,7 +32,9 @@ const Settings = () => {
       if (isMounted) setStoragePath(path);
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const initialValues: Settings = {
@@ -52,8 +51,9 @@ const Settings = () => {
   return (
     <Box m="25px 30px 15px 30px">
       <Formik
-        onSubmit={(values: Settings) => {
-          handleFormSubmit(values, setOpenSnackbar, setTransition);
+        onSubmit={async (values: Settings) => {
+          await window.electronAPI.setData("settings", values);
+          enqueueSnackbar("Successfully saved!", { variant: "success" });
         }}
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -125,9 +125,8 @@ const Settings = () => {
                 subtitle="% of brokerage used to calculate GST"
               />
               {/* Right Side */}
-              <CustomTextField
-                percentInput
-                type="text"
+              <NumericTextField
+                adornment="percent"
                 name="gstPercent"
                 size="small"
                 value={values.gstPercent}
@@ -150,9 +149,8 @@ const Settings = () => {
                 subtitle="Automatically prefill forms with this brokerage"
               />
               {/* Right Side */}
-              <CustomTextField
-                currencyInput
-                type="text"
+              <NumericTextField
+                adornment="currency"
                 name="brokerageAutoFill"
                 size="small"
                 value={values.brokerageAutoFill}
@@ -167,18 +165,6 @@ const Settings = () => {
                 Save Changes
               </Button>
             </Box>
-            {/* Snackbar shown on success */}
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={() => setOpenSnackbar(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              TransitionComponent={transition}
-            >
-              <Alert severity="success" onClose={() => setOpenSnackbar(false)}>
-                Successfully saved!
-              </Alert>
-            </Snackbar>
           </form>
         )}
       </Formik>

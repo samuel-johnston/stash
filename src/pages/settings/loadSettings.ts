@@ -16,7 +16,9 @@ const LoadSettings = (): null => {
       }
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return null;

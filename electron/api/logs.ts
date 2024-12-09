@@ -9,7 +9,7 @@ if (!fs.existsSync(dirPath)) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
-const today = dayjs().format('DD-MM-YYYY');
+const today = dayjs().format("DD-MM-YYYY");
 const pattern = new RegExp(`^${today}_(\\d{2}).log$`);
 
 // Find the highest number already used in the logs
@@ -25,21 +25,21 @@ fs.readdirSync(dirPath).forEach((filename) => {
 });
 
 // Setup the log file
-const logFilename = `${today}_${String(maxNumber + 1).padStart(2, '0')}.log`;
+const logFilename = `${today}_${String(maxNumber + 1).padStart(2, "0")}.log`;
 const logPath = path.join(dirPath, logFilename);
 fs.writeFileSync(logPath, "");
 const stream = fs.createWriteStream(logPath, { flags: "a" });
 
 /**
- * Appends the given message to the current log file. 
+ * Appends the given message to the current log file.
  * Each message is appended on a single line.
- * 
+ *
  * @param message The message to be appended
  */
 export const writeLog = (message: string) => {
   const time = dayjs().format("HH:mm:ss");
   stream.write(`[${time}] ${message} \n`);
-}
+};
 
 // Write when the log was made
 writeLog(`Log started on ${dayjs().format("dddd, MMMM D, YYYY h:mm A")}`);

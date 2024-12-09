@@ -1,26 +1,25 @@
 import { tokens } from "../../theme";
 import { useEffect, useState } from "react";
 
+// Helper files
+import RenameAccountDialog from "./renameAccountDialog";
+import DeleteAccountDialog from "./deleteAccountDialog";
+import AddAccountDialog from "./addAccountDialog";
+
 // Material UI
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import useTheme from "@mui/material/styles/useTheme";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
-import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
 // Components
-import DeleteAccountDialog from "./deleteAccountDialog";
-import AddAccountDialog from "./addAccountDialog";
 import Header from "../../components/header";
 
 // Types
 import { Account } from "../../../electron/types";
-import RenameAccountDialog from "./renameAccountDialog";
 
 const Accounts = () => {
   const theme = useTheme();
@@ -35,7 +34,9 @@ const Accounts = () => {
       if (isMounted) setAccountsList(accounts);
     })();
     // Clean up
-    return () => { isMounted = false };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Add account dialog states
@@ -44,23 +45,19 @@ const Accounts = () => {
 
   // Rename account dialog states
   const [openRenameAccountDialog, setOpenRenameAccountDialog] = useState<boolean>(false);
-  const [accountToRename, setAccountToRename] = useState<Account>({ 
-    name: "", 
-    accountId: "", 
-    created: ""
+  const [accountToRename, setAccountToRename] = useState<Account>({
+    name: "",
+    accountId: "",
+    created: "",
   });
 
   // Delete account dialog states
   const [openDeleteAccountDialog, setOpenDeleteAccountDialog] = useState<boolean>(false);
-  const [accountToDelete, setAccountToDelete] = useState<Account>({ 
-    name: "", 
-    accountId: "", 
-    created: ""
+  const [accountToDelete, setAccountToDelete] = useState<Account>({
+    name: "",
+    accountId: "",
+    created: "",
   });
-
-  // Snackbar states & functions
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>("");
 
   return (
     <Box m="25px 30px 15px 30px">
@@ -70,35 +67,20 @@ const Accounts = () => {
         setAccountsList={setAccountsList}
         newAccountId={newAccountId}
         open={openAddAccountDialog}
-        handleClose={() => setOpenAddAccountDialog(false)}
-        handleSuccess={() => {
-          setOpenAddAccountDialog(false);
-          setAlertMessage("Account successfully added");
-          setOpenSnackbar(true);
-        }}
+        setOpen={setOpenAddAccountDialog}
       />
       <RenameAccountDialog
         accountsList={accountsList}
         accountToRename={accountToRename}
         setAccountsList={setAccountsList}
         open={openRenameAccountDialog}
-        handleClose={() => setOpenRenameAccountDialog(false)}
-        handleSuccess={() => {
-          setOpenRenameAccountDialog(false);
-          setAlertMessage("Account successfull edited");
-          setOpenSnackbar(true);
-        }}
+        setOpen={setOpenRenameAccountDialog}
       />
       <DeleteAccountDialog
         accountToDelete={accountToDelete}
         setAccountsList={setAccountsList}
         open={openDeleteAccountDialog}
-        handleClose={() => setOpenDeleteAccountDialog(false)}
-        handleSuccess={() => {
-          setOpenDeleteAccountDialog(false);
-          setAlertMessage("Account successfully deleted");
-          setOpenSnackbar(true);
-        }}
+        setOpen={setOpenDeleteAccountDialog}
       />
       <Header
         title="Accounts"
@@ -110,7 +92,7 @@ const Accounts = () => {
         gap="30px"
         gridTemplateColumns="repeat(4, minmax(0, 1fr))"
       >
-        {accountsList.map(account => {
+        {accountsList.map((account) => {
           return (
             <Box
               key={account.name}
@@ -138,7 +120,7 @@ const Accounts = () => {
                 </Box>
                 <ButtonGroup sx={{ m: "-3px" }}>
                   {/* Rename account button */}
-                  <Button 
+                  <Button
                     variant="text"
                     sx={{ height: "26px" }}
                     onClick={() => {
@@ -149,7 +131,7 @@ const Accounts = () => {
                     <EditRoundedIcon />
                   </Button>
                   {/* Delete account button */}
-                  <Button 
+                  <Button
                     variant="text"
                     sx={{ height: "26px" }}
                     onClick={() => {
@@ -162,7 +144,7 @@ const Accounts = () => {
                 </ButtonGroup>
               </Box>
             </Box>
-          )
+          );
         })}
         {/* Add new account button */}
         <Box
@@ -171,9 +153,9 @@ const Accounts = () => {
           borderRadius={2}
           gridColumn="span 4"
         >
-          <Button 
-            fullWidth 
-            variant="text" 
+          <Button
+            fullWidth
+            variant="text"
             sx={{ height: "74px", borderRadius: "6.5px" }}
             onClick={async () => {
               setNewAccountId(await window.electronAPI.generateAccountId());
@@ -184,20 +166,8 @@ const Accounts = () => {
           </Button>
         </Box>
       </Box>
-      {/* Show snackbar on action success */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={5000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        TransitionComponent={Slide}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)}>
-          {alertMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
-}
+};
 
 export default Accounts;

@@ -13,8 +13,8 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     extraResource: [
-      "./src/assets/data"
-    ]
+      "./src/assets/data",
+    ],
   },
   rebuildConfig: {},
   makers: [
