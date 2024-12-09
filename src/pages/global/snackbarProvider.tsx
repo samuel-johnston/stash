@@ -26,6 +26,7 @@ const SnackbarProvider = ({ children }: Props) => {
       maxSnack={1}
       autoHideDuration={3500}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      TransitionProps={{ direction: "down" }}
       Components={{
         success: StyledMaterialDesignContent,
         error: StyledMaterialDesignContent,
