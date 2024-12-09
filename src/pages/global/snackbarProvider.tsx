@@ -1,9 +1,15 @@
-import { closeSnackbar, MaterialDesignContent, SnackbarProvider as NotistackSnackBarProvider } from "notistack";
+import styled from "@emotion/styled";
+import { ReactNode } from "react";
+import {
+  closeSnackbar,
+  MaterialDesignContent,
+  SnackbarProvider as NotistackSnackBarProvider,
+} from "notistack";
+
+// Material UI
 import useTheme from "@mui/material/styles/useTheme";
 import CloseIcon from "@mui/icons-material/Close";
 import Button from "@mui/material/Button";
-import styled from "@emotion/styled";
-import { ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
