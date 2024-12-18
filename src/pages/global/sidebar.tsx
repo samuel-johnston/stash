@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import "react-pro-sidebar/dist/css/styles.css";
 import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
@@ -41,8 +41,15 @@ interface ItemProps {
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState("Portfolio");
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [selected, setSelected] = useState<string>("Portfolio");
+  const [version, setVersion] = useState<string>("");
+
+  useEffect(() => {
+      (async () => {
+        setVersion(await window.electronAPI.getVersion());
+      })();
+    }, []);
 
   /**
    * A helper function for displaying menu items.
@@ -181,6 +188,9 @@ const Sidebar = () => {
         <SidebarFooter>
           <Menu>
             <Box>
+              <Typography ml="24px">
+                {"v" + version}
+              </Typography>
               {/* Settings Button */}
               <Item
                 title="Settings"
