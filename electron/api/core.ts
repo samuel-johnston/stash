@@ -1,6 +1,6 @@
-import { Settings, app, shell } from "electron";
 import storage from "electron-json-storage";
-import { writeLog } from "./logs";
+import { app, shell } from "electron";
+import { writeLog } from "../utils";
 import path from "path";
 import fs from "fs";
 
@@ -13,22 +13,22 @@ import {
   Key,
   Option,
   OptionKey,
+  Settings,
 } from "../types";
-
-// Overload signatures
-export function getData(key: OptionKey): Option[];
-export function getData(key: "countries"): Country[];
-export function getData(key: "accounts"): Account[];
-export function getData(key: "companies"): Company[];
-export function getData(key: "historicals"): Historical[];
-export function getData(key: "settings"): Settings;
 
 /**
  * Gets the data for a specific key from the storage file.
+ *
  * @param key Provided key
  * @returns The data saved for the specific key
  */
-export function getData(key: Key) {
+export function getData(key: OptionKey): Promise<Option[]>;
+export function getData(key: "countries"): Promise<Country[]>;
+export function getData(key: "accounts"): Promise<Account[]>;
+export function getData(key: "companies"): Promise<Company[]>;
+export function getData(key: "historicals"): Promise<Historical[]>;
+export function getData(key: "settings"): Promise<Settings>;
+export async function getData(key: Key) {
   // Attempt to get data from storage
   let data = storage.getSync(key);
 
@@ -51,20 +51,12 @@ export function getData(key: Key) {
 
     // Save data to storage
     storage.set(key, data, (error) => {
-      if (error) writeLog(`[storage.set]: ${error}`);
+      if (error) writeLog(`[setData]: ${error}`);
     });
   }
 
   return data;
 }
-
-// Overload signatures
-export function setData(key: OptionKey, data: Option[]): void;
-export function setData(key: "countries", data: Country[]): void;
-export function setData(key: "accounts", data: Account[]): void;
-export function setData(key: "companies", data: Company[]): void;
-export function setData(key: "historicals", data: Historical[]): void;
-export function setData(key: "settings", data: Settings): void;
 
 /**
  * Saves the data for a specific key to the storage file.
@@ -72,9 +64,15 @@ export function setData(key: "settings", data: Settings): void;
  * @param key Provided key
  * @param data The data to save
  */
-export function setData(key: Key, data: object): void {
+export function setData(key: OptionKey, data: Option[]): Promise<void>;
+export function setData(key: "countries", data: Country[]): Promise<void>;
+export function setData(key: "accounts", data: Account[]): Promise<void>;
+export function setData(key: "companies", data: Company[]): Promise<void>;
+export function setData(key: "historicals", data: Historical[]): Promise<void>;
+export function setData(key: "settings", data: Settings): Promise<void>;
+export async function setData(key: Key, data: object) {
   storage.set(key, data, (error) => {
-    if (error) writeLog(`[storage.set]: ${error}`);
+    if (error) writeLog(`[setData]: ${error}`);
   });
 }
 
@@ -83,13 +81,22 @@ export function setData(key: Key, data: object): void {
  *
  * @returns Full path to storage folder
  */
-export const getStoragePath = () => {
+export const getStoragePath = async () => {
   return storage.getDataPath();
 };
 
 /**
  * Opens the storage folder in a new window.
  */
-export const openStoragePath = () => {
+export const openStoragePath = async () => {
   shell.openPath(storage.getDataPath());
+};
+
+/**
+ * Gets the version of the application from `package.json`.
+ */
+export const getVersion = async () => {
+  return (app.isPackaged)
+    ? app.getVersion()
+    : process.env.npm_package_version;
 };

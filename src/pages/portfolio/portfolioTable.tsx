@@ -1,5 +1,5 @@
-import { currencyFormat, dayjsDate, precentFormat } from "../../../electron/api/format";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import clsx from "clsx";
 
 // Helper files
@@ -7,13 +7,13 @@ import FilterOptionsDialog from "./filterOptionsDialog";
 import ToggleColumnsDialog from "./toggleColumnsDialog";
 
 // Material UI
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
 import {
   DataGrid,
   GridColDef,
   GridCellParams,
 } from "@mui/x-data-grid";
-import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
 
 // Material UI Icons
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -36,7 +36,6 @@ interface Props {
 
 // A helper function that assigns a class whether it is a positive/negative value
 const colorValue = (params: GridCellParams<unknown, number>) => {
-  // Don't assign class if no value
   if (params.value == null) return "";
   return clsx("color-cell", {
     negative: params.value < 0,
@@ -46,16 +45,18 @@ const colorValue = (params: GridCellParams<unknown, number>) => {
 
 // A helper function for formatting prices
 const formatPriceValue = (decimals: number) => (value: number) => {
-  // If no value
   if (value == null) return "-";
-  return currencyFormat(value, decimals);
+  return Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: decimals,
+  }).format(value);
 };
 
 // A helper function for formatting precents
 const formatPercentValue = (decimals: number) => (value: number) => {
-  // If no value
   if (value == null) return "-";
-  return precentFormat(value, decimals);
+  return value.toFixed(decimals) + "%";
 };
 
 // A helper function for formatting dates
@@ -65,7 +66,7 @@ const formatDateValue = (value: string) => {
 
 // A helper function for sorting with dates
 const sortDateValue = (value1: string, value2: string) => {
-  return dayjsDate(value1).isAfter(value2) ? 1 : -1;
+  return dayjs(value1, "DD/MM/YYYY hh:mm A").isAfter(value2) ? 1 : -1;
 };
 
 // Data grid columns

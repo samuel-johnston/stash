@@ -1,6 +1,6 @@
 import { QuoteField } from "yahoo-finance2/dist/esm/src/modules/quote";
 import yahooFinance from "yahoo-finance2";
-import { writeLog } from "./logs";
+import { writeLog } from "../utils";
 import { getData } from "./core";
 
 /**
@@ -11,7 +11,7 @@ import { getData } from "./core";
  * @param asxcode ASX code to check
  * @returns A string that is either `"Valid"` or a description of the error
  */
-export const quickValidateASXCode = (asxcode: string) => {
+export const quickValidateASXCode = async (asxcode: string) => {
   // ASX Code must be 3-5 characters long
   if (!/^[a-zA-Z0-9]{3,5}$/.test(asxcode)) {
     return "Must be 3-5 characters";
@@ -20,10 +20,8 @@ export const quickValidateASXCode = (asxcode: string) => {
   // Ensure ASX code is all uppercase
   asxcode = asxcode.toUpperCase();
 
-  // Get existing data from storage
-  const data = getData("companies");
-
   // ASX code must not already exist in data (ie. a new asxcode)
+  const data = await getData("companies");
   if (data.some((obj) => obj.asxcode === asxcode)) {
     return "Company already added";
   }
@@ -49,10 +47,8 @@ export const validateASXCode = async (asxcode: string, existing: boolean) => {
   // Ensure ASX code is all uppercase
   asxcode = asxcode.toUpperCase();
 
-  // Get existing data from storage
-  const data = getData("companies");
-
   // ASX code must already exist in data
+  const data = await getData("companies");
   if (existing && !data.some((obj) => obj.asxcode === asxcode)) {
     return { status: "Could not find company", companyName: "", unitPrice: undefined };
   }

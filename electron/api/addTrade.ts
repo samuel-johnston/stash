@@ -1,5 +1,5 @@
 import { getData, setData } from "./core";
-import { dayjsDate } from "./format";
+import { dayjsDate } from "../utils";
 
 // Types
 import {
@@ -16,9 +16,8 @@ import {
  * @returns Number of available shares
  * @throws Throws an error if asxcode does not exist in the storage
  */
-export const availableShares = (asxcode: string, accountId: string) => {
-  // Get existing data from storage
-  const data = getData("companies");
+export const availableShares = async (asxcode: string, accountId: string) => {
+  const data = await getData("companies");
 
   // If the company's data could not be found...
   const companyData = data.find((entry) => entry.asxcode === asxcode);
@@ -40,9 +39,8 @@ export const availableShares = (asxcode: string, accountId: string) => {
  * @param gstPercent The GST % to use
  * @throws Throws an error if asxcode does not exist in the storage
  */
-export const buyShare = (values: AddTradeValues, gstPercent: string) => {
-  // Get existing data from storage
-  const data = getData("companies");
+export const buyShare = async (values: AddTradeValues, gstPercent: string) => {
+  const data = await getData("companies");
 
   // If the company's data could not be found...
   const companyData = data.find((entry) => entry.asxcode === values.asxcode.label);
@@ -79,7 +77,6 @@ export const buyShare = (values: AddTradeValues, gstPercent: string) => {
     total: total.toString(),
   });
 
-  // Save datastore
   setData("companies", data);
 };
 
@@ -93,9 +90,8 @@ export const buyShare = (values: AddTradeValues, gstPercent: string) => {
  * @param gstPercent The GST % to use
  * @throws Throws an error if asxcode does not exist in the storage
  */
-export const sellShare = (values: AddTradeValues, gstPercent: string) => {
-  // Get existing data from storage
-  const data = getData("companies");
+export const sellShare = async (values: AddTradeValues, gstPercent: string) => {
+  const data = await getData("companies");
 
   // If the company's data could not be found...
   const companyData = data.find((entry) => entry.asxcode === values.asxcode.label);
@@ -198,6 +194,5 @@ export const sellShare = (values: AddTradeValues, gstPercent: string) => {
     }
   }
 
-  // Save datastore
   setData("companies", data);
 };
