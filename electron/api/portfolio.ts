@@ -1,11 +1,11 @@
 import { getData, setData } from "./core";
-import { writeLog } from "./logs";
 import {
   changeFormat,
   currencyFormat,
   dayjsDate,
   precentFormat,
-} from "./format";
+  writeLog,
+} from "../utils";
 
 // Yahoo-finance2
 import yahooFinance from "yahoo-finance2";
@@ -36,8 +36,7 @@ dayjs.extend(customParseFormat);
  * @returns Data for each component
  */
 export const getPortfolioData = async (filterValues: PortfolioFilterValues): Promise<PortfolioData> => {
-  const companies = getFilteredCompanies(filterValues);
-
+  const companies = await getFilteredCompanies(filterValues);
   const emptyReturn = {
     graph: { 1: [], 3: [], 6: [], 12: [], 60: [] },
     table: [],
@@ -252,11 +251,11 @@ const filterOption = (target: Option[], arr: Option[]) => {
  * @param filterValues Provided values for filtering
  * @returns Array of companies matching all filter values
  */
-const getFilteredCompanies = (filterValues: PortfolioFilterValues): Company[] => {
+const getFilteredCompanies = async (filterValues: PortfolioFilterValues) => {
   // Check account is provided
   if (filterValues.account === null) return [];
 
-  const data = getData("companies");
+  const data = await getData("companies");
   return data.filter((entry) =>
     filterOption(filterValues.financialStatus, entry.financialStatus)
     && filterOption(filterValues.miningStatus, entry.miningStatus)
@@ -309,7 +308,7 @@ const countUnitsAtTime = (company: Company, account: AccountOption, time: Dayjs)
  * @returns Array containing historical adjusted close prices for all the given ASX codes
  */
 const getHistoricalData = async (asxcodes: string[]) => {
-  const data = getData("historicals");
+  const data = await getData("historicals");
 
   // Missing asxcodes (not found in the storage file)
   const existing = new Set(data.map((entry) => entry.asxcode));

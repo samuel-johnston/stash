@@ -7,8 +7,8 @@ import dayjs from "dayjs";
  * Generates a new account id.
  * @returns The new account id
  */
-export const generateAccountId = () => {
-  const accounts = getData("accounts");
+export const generateAccountId = async () => {
+  const accounts = await getData("accounts");
 
   // Generate a new ID
   let id = crypto.randomUUID();
@@ -28,8 +28,8 @@ export const generateAccountId = () => {
  * @param accountId Account id
  * @return Updated accounts array
  */
-export const createAccount = (name: string, accountId: string) => {
-  const accounts = getData("accounts");
+export const createAccount = async (name: string, accountId: string) => {
+  const accounts = await getData("accounts");
 
   // Add the new account
   accounts.push({
@@ -50,8 +50,8 @@ export const createAccount = (name: string, accountId: string) => {
  * @param acocuntId Account id
  * @returns Updated accounts array
  */
-export const renameAccount = (newName: string, accountId: string) => {
-  const accounts = getData("accounts");
+export const renameAccount = async (newName: string, accountId: string) => {
+  const accounts = await getData("accounts");
 
   // Find the account with the given account id
   const accountToEdit = accounts.find((account) => account.accountId === accountId);
@@ -74,12 +74,12 @@ export const renameAccount = (newName: string, accountId: string) => {
  * @param accountId Account id
  * @return Updated accounts array
  */
-export const deleteAccount = (accountId: string) => {
+export const deleteAccount = async (accountId: string) => {
   // Delete the account
-  const accounts = getData("accounts").filter((account) => account.accountId !== accountId);
+  const accounts = (await getData("accounts")).filter((account) => account.accountId !== accountId);
 
   // Delete all data relating to the account
-  const companies = getData("companies").map((company) => {
+  const companies = (await getData("companies")).map((company) => {
     return {
       ...company,
       buyHistory: company.buyHistory.filter((entry) => entry.accountId !== accountId),

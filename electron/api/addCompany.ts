@@ -13,7 +13,7 @@ import {
  *
  * @param values "Add Company" page form values
  */
-export const addCompany = (values: AddCompanyValues) => {
+export const addCompany = async (values: AddCompanyValues) => {
   // Save any new options that were created
   saveNewOptions("miningStatus", values.miningStatus);
   saveNewOptions("financialStatus", values.financialStatus);
@@ -70,10 +70,8 @@ export const addCompany = (values: AddCompanyValues) => {
     });
   }
 
-  // Get the existing data from storage
-  const data = getData("companies");
-
-  // Save the new company data into the datastore
+  // Save the new company data
+  const data = await getData("companies");
   setData("companies", data.concat(newCompany));
 };
 
@@ -84,9 +82,9 @@ export const addCompany = (values: AddCompanyValues) => {
  * @param key Provided key
  * @param options Current options for the provided key
  */
-const saveNewOptions = (key: OptionKey, options: Option[]) => {
+const saveNewOptions = async (key: OptionKey, options: Option[]) => {
   // Get the existing options from the datastore
-  const existingOptions = getData(key);
+  const existingOptions = await getData(key);
 
   // Filter the options to find any new ones
   const newOptions = options.filter((option) => {
