@@ -6,7 +6,6 @@
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    // "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "dist",
