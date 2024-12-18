@@ -81,21 +81,21 @@ export async function setData(key: Key, data: object) {
  *
  * @returns Full path to storage folder
  */
-export const getStoragePath = () => {
+export const getStoragePath = async () => {
   return storage.getDataPath();
 };
 
 /**
  * Opens the storage folder in a new window.
  */
-export const openStoragePath = () => {
+export const openStoragePath = async () => {
   shell.openPath(storage.getDataPath());
 };
 
 /**
  * Gets the version of the application from `package.json`.
  */
-export const getVersion = () => {
+export const getVersion = async () => {
   return (app.isPackaged)
     ? app.getVersion()
     : process.env.npm_package_version;
