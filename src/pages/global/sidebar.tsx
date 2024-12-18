@@ -46,10 +46,10 @@ const Sidebar = () => {
   const [version, setVersion] = useState<string>("");
 
   useEffect(() => {
-      (async () => {
-        setVersion(await window.electronAPI.getVersion());
-      })();
-    }, []);
+    (async () => {
+      setVersion(await window.electronAPI.getVersion());
+    })();
+  }, []);
 
   /**
    * A helper function for displaying menu items.
