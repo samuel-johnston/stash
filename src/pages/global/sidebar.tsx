@@ -188,6 +188,7 @@ const Sidebar = () => {
         <SidebarFooter>
           <Menu>
             <Box>
+              {/* Version Number */}
               <Typography ml="24px">
                 {"v" + version}
               </Typography>
