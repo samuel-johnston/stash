@@ -1,13 +1,9 @@
-import type { ForgeConfig } from "@electron-forge/shared-types";
-import { MakerSquirrel } from "@electron-forge/maker-squirrel";
-import { MakerZIP } from "@electron-forge/maker-zip";
-import { MakerDeb } from "@electron-forge/maker-deb";
-import { MakerRpm } from "@electron-forge/maker-rpm";
 import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
+import type { ForgeConfig } from "@electron-forge/shared-types";
 import { WebpackPlugin } from "@electron-forge/plugin-webpack";
 
-import { mainConfig } from "./webpack/webpack.main";
 import { rendererConfig } from "./webpack/webpack.renderer";
+import { mainConfig } from "./webpack/webpack.main";
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -18,10 +14,14 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
-    new MakerZIP({}, ["darwin"]),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    {
+      name: "@electron-forge/maker-squirrel",
+      config: {},
+    },
+    {
+      name: "@electron-forge/maker-dmg",
+      config: {},
+    },
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
