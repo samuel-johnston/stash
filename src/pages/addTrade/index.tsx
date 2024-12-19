@@ -76,7 +76,7 @@ const AddTrade = () => {
   // A helper function. Used to sort an array by label, alphabetically.
   const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label);
 
-  // On page render, get data from API
+  // On page render, get dropdown data from API
   useEffect(() => {
     let isMounted = true;
     (async () => {

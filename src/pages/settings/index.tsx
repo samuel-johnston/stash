@@ -24,7 +24,7 @@ import { enqueueSnackbar } from "notistack";
 const Settings = () => {
   const [storagePath, setStoragePath] = useState<string>("");
 
-  // On page render, get data from API
+  // On page render, get storage path from API
   useEffect(() => {
     let isMounted = true;
     (async () => {
