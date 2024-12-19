@@ -1,20 +1,19 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
-import "react-pro-sidebar/dist/css/styles.css";
+import { ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { tokens } from "../../theme";
 import {
-  ProSidebar,
   Menu,
-  MenuItem,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
+  menuClasses,
+  MenuItemStyles,
+  MenuItem as ProMenuItem,
+  Sidebar as ProSidebar,
 } from "react-pro-sidebar";
 
 // Material UI
 import useTheme from "@mui/material/styles/useTheme";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 
 // Material UI Icons
@@ -27,24 +26,23 @@ import AddchartIcon from "@mui/icons-material/AddchartRounded";
 import NoteAddIcon from "@mui/icons-material/NoteAddRounded";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
-// Custom logo icon
+// Custom Logo Icon
 import LogoIcon from "../../assets/logo.svg";
 
-interface ItemProps {
+interface MenuItemProps {
   title: string;
   to: string;
   icon: ReactNode;
-  selected: string;
-  setSelected: Dispatch<SetStateAction<string>>;
 }
 
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>("Portfolio");
   const [version, setVersion] = useState<string>("");
 
+  // On page render, get application version from API
   useEffect(() => {
     (async () => {
       setVersion(await window.electronAPI.getVersion());
@@ -52,159 +50,120 @@ const Sidebar = () => {
   }, []);
 
   /**
-   * A helper function for displaying menu items.
-   * @param props Item props
+   * A helper function for creating menu items.
    */
-  const Item = (props: ItemProps) => {
-    const { title, to, icon, selected, setSelected } = props;
+  const MenuItem = (props: MenuItemProps) => {
+    const { title, to, icon } = props;
     return (
-      <MenuItem
-        active={selected === title}
-        style={{ color: colors.grey[100] }}
-        onClick={() => setSelected(title)}
+      <ProMenuItem
         icon={icon}
+        active={selected === title}
+        onClick={() => setSelected(title)}
+        component={<Link to={to} />}
       >
         <Typography fontSize={16}>{title}</Typography>
-        <Link to={to} />
-      </MenuItem>
+      </ProMenuItem>
     );
   };
 
-  const overrideTheme = {
-    "& .pro-sidebar-inner": {
-      borderRight: `1px solid ${colors.grey[500]}`,
-      background: `${colors.grey[900]} !important`,
-    },
-    "& .pro-sidebar-header": {
-      borderBottom: `1px solid ${colors.grey[500]} !important`,
-      marginTop: "8px",
-    },
-    "& .pro-sidebar-content": {
-      marginTop: "-6px",
-    },
-    "& .pro-sidebar-footer": {
-      borderTop: "none !important",
-    },
-    "& .pro-icon-wrapper": {
-      marginLeft: "5px",
-    },
-    "& .pro-menu-item": {
-      margin: "5px 12px 5px 12px !important",
+  const menuItemStyles: MenuItemStyles = {
+    button: {
+      height: "42px",
+      padding: "0px 10px 0px 12px",
+      margin: "4px 10px 4px 10px",
       borderRadius: "8px",
-    },
-    "& .pro-inner-item": {
-      padding: "2px 5px 2px 5px !important",
-      borderRadius: "8px",
-    },
-    "& .pro-inner-item:hover": {
-      color: `${colors.grey[100]} !important`,
-      background: `${colors.grey[700]} !important`,
-    },
-    "& .pro-menu-item.active, & .pro-menu-item.active .pro-inner-item:hover": {
-      color: `${colors.grey[100]} !important`,
-      background: `${colors.grey[600]} !important`,
-    },
-    "& .pro-sidebar-header .pro-menu .pro-inner-item:hover": {
-      background: "transparent !important",
+      "&:hover": {
+        backgroundColor: colors.grey[700],
+      },
+      [`&.${menuClasses.active}`]: {
+        backgroundColor: colors.grey[600],
+      },
     },
   };
 
   return (
-    <Box sx={overrideTheme}>
-      <ProSidebar collapsed={isCollapsed} width={240}>
-        <SidebarHeader>
-          <Menu>
-            {/* Logo & Collapse Menu Button */}
-            <MenuItem
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              icon={isCollapsed ? <KeyboardDoubleArrowRightIcon /> : undefined}
-              style={{
-                color: colors.grey[100],
-                height: "50px",
-              }}
-            >
-              {!isCollapsed && (
-                <Box display="flex" justifyContent="space-between" alignItems="center" ml="8px">
-                  <Box display="flex" alignItems="center">
+    <ProSidebar
+      collapsed={collapsed}
+      backgroundColor={colors.grey[900]}
+      width="240px"
+      rootStyles={{
+        borderColor: colors.grey[500],
+      }}
+    >
+      <Box
+        display="flex"
+        flexDirection="column"
+        height="100%"
+        justifyContent="space-between"
+      >
+        {/* Header and content container */}
+        <Box>
+          {/* Header */}
+          <Box display="flex" alignItems="center" justifyContent="space-between" height="90px">
+            {/* Hide logo when collapsed */}
+            {!collapsed
+              ? (
+                  <Box display="flex" alignItems="center" ml="28px">
                     <LogoIcon style={{ width: "32px", height: "32px", marginRight: "10px", flexShrink: 0 }} />
                     <Typography variant="h2" fontWeight={500} color={colors.grey[100]}>
                       Stash
                     </Typography>
                   </Box>
-                  <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                    <KeyboardDoubleArrowLeftIcon />
-                  </IconButton>
-                </Box>
-              )}
-            </MenuItem>
-          </Menu>
-        </SidebarHeader>
-        <SidebarContent>
-          <Menu>
-            <Box pt="8px">
-              {/* Portfolio Button */}
-              <Item
+                )
+              : <Box></Box>}
+            {/* Open/close sidebar */}
+            <IconButton disableTouchRipple onClick={() => setCollapsed(!collapsed)} sx={{ mr: "20px" }}>
+              {collapsed ? <KeyboardDoubleArrowRightIcon /> : <KeyboardDoubleArrowLeftIcon />}
+            </IconButton>
+          </Box>
+          {/* Divider between header and content */}
+          <Divider sx={{ mb: "10px" }} />
+          {/* Content */}
+          <Box display="flex" flexDirection="column" justifyContent="space-between">
+            <Menu menuItemStyles={menuItemStyles}>
+              <MenuItem
                 title="Portfolio"
                 to="/portfolio"
                 icon={<AccountBalanceIcon />}
-                selected={selected}
-                setSelected={setSelected}
               />
-              {/* Accounts Button */}
-              <Item
+              <MenuItem
                 title="Accounts"
                 to="/accounts"
                 icon={<PeopleAltIcon />}
-                selected={selected}
-                setSelected={setSelected}
               />
-              {/* Notifications Button */}
-              <Item
+              <MenuItem
                 title="Notifications"
                 to="/notifications"
                 icon={<NotificationsIcon />}
-                selected={selected}
-                setSelected={setSelected}
               />
-              {/* Add Company Button */}
-              <Item
+              <MenuItem
                 title="Add Company"
                 to="/addCompany"
                 icon={<NoteAddIcon />}
-                selected={selected}
-                setSelected={setSelected}
               />
-              {/* Add Trade Button */}
-              <Item
+              <MenuItem
                 title="Add Trade"
                 to="/addTrade"
                 icon={<AddchartIcon />}
-                selected={selected}
-                setSelected={setSelected}
               />
-            </Box>
+            </Menu>
+          </Box>
+        </Box>
+        {/* Footer */}
+        <Box mb="5px">
+          <Typography color="secondary" align="center" width="79px">
+            {"v" + version}
+          </Typography>
+          <Menu menuItemStyles={menuItemStyles}>
+            <MenuItem
+              title="Settings"
+              to="/settings"
+              icon={<SettingsOutlinedIcon />}
+            />
           </Menu>
-        </SidebarContent>
-        <SidebarFooter>
-          <Menu>
-            <Box>
-              {/* Version Number */}
-              <Typography ml="24px">
-                {"v" + version}
-              </Typography>
-              {/* Settings Button */}
-              <Item
-                title="Settings"
-                to="/settings"
-                icon={<SettingsOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            </Box>
-          </Menu>
-        </SidebarFooter>
-      </ProSidebar>
-    </Box>
+        </Box>
+      </Box>
+    </ProSidebar>
   );
 };
 
