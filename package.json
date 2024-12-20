@@ -1,7 +1,7 @@
 {
   "name": "stash",
   "author": "Samuel Johnston",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A share management application.",
   "private": true,
   "keywords": [],
