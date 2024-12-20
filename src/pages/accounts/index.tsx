@@ -25,7 +25,7 @@ const Accounts = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // Load accounts list, on page render
+  // On page render, get accounts from API
   const [accountsList, setAccountsList] = useState<Account[]>([]);
   useEffect(() => {
     let isMounted = true;

@@ -82,7 +82,7 @@ const AddCompany = () => {
   const [recommendationList, setRecommendationList] = useState<Option[]>([]);
   const [monitorList, setMonitorList] = useState<Option[]>([]);
 
-  // On page render, get data from API
+  // On page render, get dropdown data from API
   useEffect(() => {
     let isMounted = true;
     (async () => {
