@@ -65,7 +65,7 @@ const Sidebar = (props: Props) => {
 
   const menuItemStyles: MenuItemStyles = {
     button: {
-      height: "42px",
+      height: "38px",
       padding: "0px 10px 0px 12px",
       margin: "4px 10px 4px 10px",
       borderRadius: "8px",
