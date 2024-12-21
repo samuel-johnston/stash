@@ -33,13 +33,13 @@ const Topbar = (props: Props) => {
       }}
     >
       <Toolbar disableGutters>
-        <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ ml: "21px" }}>
-          {!collapsed ? <CollapseSidebarIcon /> : <ExpandSidebarIcon />}
-        </IconButton>
-        <LogoIcon style={{ width: "30px", height: "30px", marginLeft: "30px" }} />
+        <LogoIcon style={{ width: "30px", height: "30px", marginLeft: "24px" }} />
         <Typography variant="h3" fontWeight={500} color="primary" ml="12px">
           Stash
         </Typography>
+        <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ ml: "30px" }}>
+          {!collapsed ? <CollapseSidebarIcon /> : <ExpandSidebarIcon />}
+        </IconButton>
         <Box sx={{ flexGrow: 1 }} />
       </Toolbar>
     </AppBar>
