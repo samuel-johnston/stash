@@ -27,7 +27,7 @@ const config: ForgeConfig = {
       name: "@electron-forge/maker-dmg",
       config: {
         icon: path.join(__dirname, "/src/assets/icons/installer_icon.icns"),
-      }
+      },
     },
   ],
   plugins: [
