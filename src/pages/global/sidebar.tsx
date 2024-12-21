@@ -15,12 +15,12 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 // Material UI Icons
-import AccountBalanceIcon from "@mui/icons-material/AccountBalanceRounded";
 import NotificationsIcon from "@mui/icons-material/NotificationsRounded";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import AddchartIcon from "@mui/icons-material/AddchartRounded";
-import NoteAddIcon from "@mui/icons-material/NoteAddRounded";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import SettingsIcon from "@mui/icons-material/SettingsOutlined";
+import AddCompanyIcon from "@mui/icons-material/NoteAddRounded";
+import AddTradeIcon from "@mui/icons-material/AddchartRounded";
+import AccountsIcon from "@mui/icons-material/PeopleAlt";
+import PortfolioIcon from "@mui/icons-material/Timeline";
 
 interface MenuItemProps {
   title: string;
@@ -101,12 +101,12 @@ const Sidebar = (props: Props) => {
             <MenuItem
               title="Portfolio"
               to="/portfolio"
-              icon={<AccountBalanceIcon />}
+              icon={<PortfolioIcon />}
             />
             <MenuItem
               title="Accounts"
               to="/accounts"
-              icon={<PeopleAltIcon />}
+              icon={<AccountsIcon />}
             />
             <MenuItem
               title="Notifications"
@@ -116,12 +116,12 @@ const Sidebar = (props: Props) => {
             <MenuItem
               title="Add Company"
               to="/addCompany"
-              icon={<NoteAddIcon />}
+              icon={<AddCompanyIcon />}
             />
             <MenuItem
               title="Add Trade"
               to="/addTrade"
-              icon={<AddchartIcon />}
+              icon={<AddTradeIcon />}
             />
           </Menu>
         </Box>
@@ -134,7 +134,7 @@ const Sidebar = (props: Props) => {
             <MenuItem
               title="Settings"
               to="/settings"
-              icon={<SettingsOutlinedIcon />}
+              icon={<SettingsIcon />}
             />
           </Menu>
         </Box>
