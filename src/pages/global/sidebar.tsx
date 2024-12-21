@@ -11,14 +11,10 @@ import {
 
 // Material UI
 import useTheme from "@mui/material/styles/useTheme";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 
 // Material UI Icons
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeftRounded";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalanceRounded";
 import NotificationsIcon from "@mui/icons-material/NotificationsRounded";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
@@ -26,19 +22,20 @@ import AddchartIcon from "@mui/icons-material/AddchartRounded";
 import NoteAddIcon from "@mui/icons-material/NoteAddRounded";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
-// Custom Logo Icon
-import LogoIcon from "../../assets/logo.svg";
-
 interface MenuItemProps {
   title: string;
   to: string;
   icon: ReactNode;
 }
 
-const Sidebar = () => {
+interface Props {
+  collapsed: boolean;
+}
+
+const Sidebar = (props: Props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const { collapsed } = props;
   const [selected, setSelected] = useState<string>("Portfolio");
   const [version, setVersion] = useState<string>("");
 
@@ -88,6 +85,7 @@ const Sidebar = () => {
       width="240px"
       rootStyles={{
         borderColor: colors.grey[500],
+        marginTop: "64px",
       }}
     >
       <Box
@@ -95,59 +93,37 @@ const Sidebar = () => {
         flexDirection="column"
         height="100%"
         justifyContent="space-between"
+        pt="8px"
       >
-        {/* Header and content container */}
-        <Box>
-          {/* Header */}
-          <Box display="flex" alignItems="center" justifyContent="space-between" height="90px">
-            {/* Hide logo when collapsed */}
-            {!collapsed
-              ? (
-                  <Box display="flex" alignItems="center" ml="28px">
-                    <LogoIcon style={{ width: "32px", height: "32px", marginRight: "10px", flexShrink: 0 }} />
-                    <Typography variant="h2" fontWeight={500} color={colors.grey[100]}>
-                      Stash
-                    </Typography>
-                  </Box>
-                )
-              : <Box></Box>}
-            {/* Open/close sidebar */}
-            <IconButton disableTouchRipple onClick={() => setCollapsed(!collapsed)} sx={{ mr: "20px" }}>
-              {collapsed ? <KeyboardDoubleArrowRightIcon /> : <KeyboardDoubleArrowLeftIcon />}
-            </IconButton>
-          </Box>
-          {/* Divider between header and content */}
-          <Divider sx={{ mb: "10px" }} />
-          {/* Content */}
-          <Box display="flex" flexDirection="column" justifyContent="space-between">
-            <Menu menuItemStyles={menuItemStyles}>
-              <MenuItem
-                title="Portfolio"
-                to="/portfolio"
-                icon={<AccountBalanceIcon />}
-              />
-              <MenuItem
-                title="Accounts"
-                to="/accounts"
-                icon={<PeopleAltIcon />}
-              />
-              <MenuItem
-                title="Notifications"
-                to="/notifications"
-                icon={<NotificationsIcon />}
-              />
-              <MenuItem
-                title="Add Company"
-                to="/addCompany"
-                icon={<NoteAddIcon />}
-              />
-              <MenuItem
-                title="Add Trade"
-                to="/addTrade"
-                icon={<AddchartIcon />}
-              />
-            </Menu>
-          </Box>
+        {/* Content */}
+        <Box display="flex" flexDirection="column" justifyContent="space-between">
+          <Menu menuItemStyles={menuItemStyles}>
+            <MenuItem
+              title="Portfolio"
+              to="/portfolio"
+              icon={<AccountBalanceIcon />}
+            />
+            <MenuItem
+              title="Accounts"
+              to="/accounts"
+              icon={<PeopleAltIcon />}
+            />
+            <MenuItem
+              title="Notifications"
+              to="/notifications"
+              icon={<NotificationsIcon />}
+            />
+            <MenuItem
+              title="Add Company"
+              to="/addCompany"
+              icon={<NoteAddIcon />}
+            />
+            <MenuItem
+              title="Add Trade"
+              to="/addTrade"
+              icon={<AddchartIcon />}
+            />
+          </Menu>
         </Box>
         {/* Footer */}
         <Box mb="5px">
