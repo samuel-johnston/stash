@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
 
@@ -13,8 +15,6 @@ import Button from "@mui/material/Button";
 
 // Types
 import { Account } from "../../../electron/types";
-import { Dispatch, SetStateAction } from "react";
-import { enqueueSnackbar } from "notistack";
 
 interface Props {
   accountsList: Account[];
@@ -37,7 +37,6 @@ const RenameAccountDialog = (props: Props) => {
     setAccountsList,
   } = props;
 
-  // Formik initial values (use name from props)
   const initialValues: RenameAccountFormValues = {
     name: accountToRename.name,
   };
@@ -49,6 +48,15 @@ const RenameAccountDialog = (props: Props) => {
       .required("Name can't be empty"),
   });
 
+  const handleSubmit = async (values: RenameAccountFormValues) => {
+    const updateAccountsList = await window.electronAPI.renameAccount(values.name, accountToRename.accountId);
+    setAccountsList(updateAccountsList);
+    // Close dialog
+    setOpen(false);
+    // Show snackbar
+    enqueueSnackbar(`Successfully renamed to ${values.name}!`, { variant: "success" });
+  };
+
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
       <DialogTitle variant="h4" fontWeight={600}>
@@ -57,11 +65,7 @@ const RenameAccountDialog = (props: Props) => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async (values: RenameAccountFormValues) => {
-          setAccountsList(await window.electronAPI.renameAccount(values.name, accountToRename.accountId));
-          setOpen(false);
-          enqueueSnackbar(`Successfully renamed to ${values.name}!`, { variant: "success" });
-        }}
+        onSubmit={handleSubmit}
       >
         {({ values, handleChange, touched, errors }) => (
           <Form>

@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
 
@@ -12,8 +14,6 @@ import Button from "@mui/material/Button";
 
 // Types
 import { Account } from "../../../electron/types";
-import { Dispatch, SetStateAction } from "react";
-import { enqueueSnackbar } from "notistack";
 
 interface Props {
   accountsList: Account[];
@@ -37,7 +37,6 @@ const AddAccountDialog = (props: Props) => {
     setAccountsList,
   } = props;
 
-  // Formik initial values (use accountId from props)
   const initialValues: AddAccountFormValues = {
     name: "",
     accountId: newAccountId,
@@ -50,6 +49,15 @@ const AddAccountDialog = (props: Props) => {
       .required("Name can't be empty"),
   });
 
+  const handleSubmit = async (values: AddAccountFormValues) => {
+    const updatedAccountsList = await window.electronAPI.createAccount(values.name, values.accountId);
+    setAccountsList(updatedAccountsList);
+    // Close dialog
+    setOpen(false);
+    // Show snackbar
+    enqueueSnackbar(`${values.name} successfully created!`, { variant: "success" });
+  };
+
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
       <DialogTitle variant="h4" fontWeight={600} sx={{ paddingBottom: "0px" }}>
@@ -58,11 +66,7 @@ const AddAccountDialog = (props: Props) => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async (values: AddAccountFormValues) => {
-          setAccountsList(await window.electronAPI.createAccount(values.name, values.accountId));
-          setOpen(false);
-          enqueueSnackbar(`${values.name} successfully created!`, { variant: "success" });
-        }}
+        onSubmit={handleSubmit}
       >
         {({ values, handleChange, touched, errors }) => (
           <Form>
