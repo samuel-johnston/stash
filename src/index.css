@@ -16,5 +16,5 @@ body,
   flex: 1;
   overflow-y: auto;
   scrollbar-gutter: stable;
-  padding-top: 64px;
+  padding: 89px 22px 15px 30px;
 }

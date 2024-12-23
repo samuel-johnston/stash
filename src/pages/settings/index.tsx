@@ -49,7 +49,7 @@ const Settings = () => {
     });
 
   return (
-    <Box m="25px 30px 15px 30px">
+    <Box>
       <Formik
         onSubmit={async (values: Settings) => {
           await window.electronAPI.setData("settings", values);

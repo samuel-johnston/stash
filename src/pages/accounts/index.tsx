@@ -60,7 +60,7 @@ const Accounts = () => {
   });
 
   return (
-    <Box m="25px 30px 15px 30px">
+    <Box>
       {/* Dialogs */}
       <AddAccountDialog
         accountsList={accountsList}

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { AddTradeFormValues } from "./index";
+import { AddTradeFormValues } from "./formValues";
 import { useFormikContext } from "formik";
 
 interface Props {

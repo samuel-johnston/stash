@@ -4,6 +4,7 @@ import { Formik } from "formik";
 // Helper files
 import PortfolioValueText from "./portfolioValueText";
 import PortfolioTable from "./portfolioTable";
+import { initialValues } from "./formValues";
 import UpdateData from "./updateData";
 
 // Material UI
@@ -14,16 +15,7 @@ import SelectInput from "../../components/select";
 import Graph from "../../components/graph";
 
 // Types
-import { AccountOption, Option, PortfolioData } from "../../../electron/types";
-
-export interface PortfolioFormValues {
-  account: AccountOption;
-  financialStatus: Option[];
-  miningStatus: Option[];
-  resources: Option[];
-  products: Option[];
-  recommendations: Option[];
-}
+import { Option, PortfolioData } from "../../../electron/types";
 
 const Portfolio = () => {
   // Dropdown data states
@@ -48,12 +40,6 @@ const Portfolio = () => {
     },
   });
 
-  // "All Accounts" option
-  const allAccountsOption = { label: "All Accounts" };
-
-  // A helper function. Used to sort an array by label, alphabetically.
-  const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label);
-
   // On page render, get dropdown data from API
   useEffect(() => {
     let isMounted = true;
@@ -69,10 +55,10 @@ const Portfolio = () => {
         const newAccountsList: Option[] = accounts.map((element) => ({
           label: element.name,
           accountId: element.accountId,
-        })).sort(byLabel);
+        })).sort((a, b) => a.label.localeCompare(b.label));
 
         // Add "All Accounts" option to top of list
-        newAccountsList.unshift(allAccountsOption);
+        newAccountsList.unshift({ label: "All Accounts" });
 
         // Update states
         setAccountsList(newAccountsList);
@@ -89,18 +75,8 @@ const Portfolio = () => {
     };
   }, []);
 
-  // Formik initial values
-  const initialValues: PortfolioFormValues = {
-    account: allAccountsOption,
-    financialStatus: [],
-    miningStatus: [],
-    resources: [],
-    products: [],
-    recommendations: [],
-  };
-
   return (
-    <Box m="25px 30px 15px 30px">
+    <Box>
       <Formik
         onSubmit={() => { /* Do nothing on submit */ }}
         initialValues={initialValues}
@@ -129,7 +105,7 @@ const Portfolio = () => {
                 size="small"
                 value={values.account}
                 options={accountsList}
-                sx={{ width: 220 }}
+                sx={{ width: "220px" }}
               />
             </Box>
             {/* Graph of portfolio value over time */}

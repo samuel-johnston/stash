@@ -1,4 +1,4 @@
-import { AddTradeFormValues } from "./index";
+import { AddTradeFormValues } from "./formValues";
 import { enqueueSnackbar } from "notistack";
 
 const handleFormSubmit = async (values: AddTradeFormValues, gstPercent: string) => {

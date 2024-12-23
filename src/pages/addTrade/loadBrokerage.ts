@@ -1,4 +1,4 @@
-import { AddTradeFormValues } from "./index";
+import { AddTradeFormValues } from "./formValues";
 import { useFormikContext } from "formik";
 import { useEffect } from "react";
 

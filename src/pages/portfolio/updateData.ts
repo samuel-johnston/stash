@@ -3,7 +3,7 @@ import { useFormikContext } from "formik";
 
 // Types
 import { PortfolioData } from "../../../electron/types";
-import { PortfolioFormValues } from "./index";
+import { PortfolioFormValues } from "./formValues";
 
 interface Props {
   setData: Dispatch<SetStateAction<PortfolioData>>;
