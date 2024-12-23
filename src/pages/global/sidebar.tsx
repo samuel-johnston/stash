@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { tokens } from "../../theme";
 import {
   Menu,
@@ -35,8 +35,8 @@ interface Props {
 const Sidebar = (props: Props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const location = useLocation();
   const { collapsed } = props;
-  const [selected, setSelected] = useState<string>("Portfolio");
   const [version, setVersion] = useState<string>("");
 
   // On page render, get application version from API
@@ -54,8 +54,7 @@ const Sidebar = (props: Props) => {
     return (
       <ProMenuItem
         icon={icon}
-        active={selected === title}
-        onClick={() => setSelected(title)}
+        active={location.pathname.includes(to)}
         component={<Link to={to} />}
       >
         <Typography fontSize={16}>{title}</Typography>
