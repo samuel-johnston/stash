@@ -32,13 +32,13 @@ const Positioner = (props: PositionerProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { loadActions } = props;
-  
+
   // Backdrop styles
   const positionerStyle = {
     background: "rgba(0, 0, 0, 0.5)",
     zIndex: 1300,
   };
-  
+
   // Paper styles
   const animatorStyle = {
     maxWidth: "600px",
@@ -48,7 +48,7 @@ const Positioner = (props: PositionerProps) => {
     border: `1px solid ${colors.grey[600]}`,
     overflow: "hidden",
   };
-  
+
   // Search bar styles
   const searchStyle = {
     padding: "12px 16px",
@@ -65,7 +65,7 @@ const Positioner = (props: PositionerProps) => {
   useEffect(() => {
     loadActions();
   }, []);
-  
+
   return (
     <KBarPositioner style={positionerStyle}>
       <KBarAnimator style={animatorStyle}>
@@ -79,13 +79,13 @@ const Positioner = (props: PositionerProps) => {
 const Portal = () => {
   const navigate = useNavigate();
   const [actions, setActions] = useState<Action[]>([]);
-  
+
   const loadActions = async () => {
     const [companies, accounts] = await Promise.all([
       window.electronAPI.getData("companies"),
       window.electronAPI.getData("accounts"),
     ]);
-    
+
     const companyActions = companies.map((company) => createAction({
       section: "Companies",
       name: company.asxcode,
@@ -112,7 +112,7 @@ const Portal = () => {
     <KBarPortal>
       <Positioner loadActions={loadActions} />
     </KBarPortal>
-  )
+  );
 };
 
 const Provider = (props: ProviderProps) => {

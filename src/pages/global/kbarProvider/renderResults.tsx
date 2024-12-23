@@ -27,28 +27,28 @@ const RenderResults = () => {
               </Typography>
             )
           : (
-            <Box
-              display="flex"
-              alignItems="center"
-              bgcolor={active ? colors.grey[700] : "transparent"}
-              p="12px 16px"
-              gap="8px"
-              borderLeft={`2px solid ${active ? colors.grey[100] : "transparent"}`}
-              borderRadius="2px"
-            >
-              {item.icon && item.icon}
               <Box
                 display="flex"
-                flexDirection="column"
+                alignItems="center"
+                bgcolor={active ? colors.grey[700] : "transparent"}
+                p="12px 16px"
+                gap="8px"
+                borderLeft={`2px solid ${active ? colors.grey[100] : "transparent"}`}
+                borderRadius="2px"
               >
-                <Typography>
-                  {item.name}
-                </Typography>
-                <Typography sx={{ opacity: 0.5 }}>
-                  {item.subtitle}
-                </Typography>
+                {item.icon && item.icon}
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                >
+                  <Typography>
+                    {item.name}
+                  </Typography>
+                  <Typography sx={{ opacity: 0.5 }}>
+                    {item.subtitle}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
             )}
     />
   );
