@@ -13,8 +13,8 @@ import Box from "@mui/material/Box";
 import MultiSelectInput from "../../components/multiSelect";
 
 // Types
+import { PortfolioFormValues } from "./formValues";
 import { Option } from "../../../electron/types";
-import { PortfolioFormValues } from "./index";
 
 interface Props {
   open: boolean;
@@ -67,7 +67,7 @@ const FilterOptionsDialog = (props: Props) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle variant="h3" fontWeight={500}>
+      <DialogTitle variant="h4" fontWeight={500}>
         Filter Options
       </DialogTitle>
       <DialogContent>

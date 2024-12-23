@@ -51,7 +51,7 @@ const RenameAccountDialog = (props: Props) => {
 
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
-      <DialogTitle variant="h3" fontWeight={600}>
+      <DialogTitle variant="h4" fontWeight={600}>
         Rename Account
       </DialogTitle>
       <Formik

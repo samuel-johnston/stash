@@ -52,7 +52,7 @@ const AddAccountDialog = (props: Props) => {
 
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
-      <DialogTitle variant="h3" fontWeight={600} sx={{ paddingBottom: "0px" }}>
+      <DialogTitle variant="h4" fontWeight={600} sx={{ paddingBottom: "0px" }}>
         Add New Account
       </DialogTitle>
       <Formik
