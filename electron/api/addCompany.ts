@@ -2,11 +2,35 @@ import { getData, setData } from "./core";
 
 // Types
 import {
-  AddCompanyValues,
   Company,
+  Country,
   Option,
   OptionKey,
 } from "../types";
+
+export interface AddCompanyValues {
+  asxcode: string;
+  name: string;
+  operatingCountries: Country[];
+  financialStatus: Option[];
+  miningStatus: Option[];
+  resources: Option[];
+  products: Option[];
+  recommendations: Option[];
+  monitor: Option[];
+  noteTitle: string;
+  noteDate: string;
+  noteDescription: string;
+  noteToBuy: string;
+  noteNotToBuy: string;
+  notePositives: string;
+  noteNegatives: string;
+  notificationDateTitle: string;
+  notificationDate: string;
+  notificationPriceTitle: string;
+  notificationPriceHigh: string;
+  notificationPriceLow: string;
+}
 
 /**
  * Saves add company form values into the datastore.
@@ -25,6 +49,7 @@ export const addCompany = async (values: AddCompanyValues) => {
   // Construct new company data object
   const newCompany: Company = {
     asxcode: values.asxcode.toUpperCase(),
+    name: values.name.toUpperCase(),
     operatingCountries: values.operatingCountries,
     financialStatus: values.financialStatus,
     miningStatus: values.miningStatus,
@@ -72,7 +97,7 @@ export const addCompany = async (values: AddCompanyValues) => {
 
   // Save the new company data
   const data = await getData("companies");
-  setData("companies", data.concat(newCompany));
+  await setData("companies", data.concat(newCompany));
 };
 
 /**
@@ -93,7 +118,7 @@ const saveNewOptions = async (key: OptionKey, options: Option[]) => {
 
   // If new options were found...
   if (newOptions.length > 0) {
-    // ...save them into the datastore, sorted alphabetically
+    // ...save them into the datastore
     const allOptions = existingOptions
       .concat(newOptions)
       .sort((a, b) => a.label.localeCompare(b.label));

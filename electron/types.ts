@@ -1,8 +1,3 @@
-import { AddCompanyFormValues } from "../src/pages/addCompany";
-import { AddTradeFormValues } from "../src/pages/addTrade";
-
-export { PortfolioFormValues as PortfolioFilterValues } from "../src/pages/portfolio";
-
 // Valid option keys, used for company details
 export type OptionKey =
   | "financialStatus"
@@ -61,15 +56,8 @@ export interface PriceNotification {
   lowPrice: string;
 }
 
-// Return type from validateASXCode()
-export interface ValidateASXReturn {
-  status: string;
-  companyName: string;
-  unitPrice: string;
-}
-
 export interface CurrentShareEntry {
-  accountId: string;            // Account id that owns the share
+  accountId: string;            // Account id that owns the shares
   date: string;                 // Date of when the shares were originally brought
   quantity: string;             // Number of current outstanding shares
   unitPrice: string;            // Price paid for 1 share at the time of purchase
@@ -78,7 +66,7 @@ export interface CurrentShareEntry {
 }
 
 export interface BuyHistoryEntry {
-  accountId: string;            // Account id that brought the share
+  accountId: string;            // Account id that brought the shares
   date: string;                 // Date of when the shares were brought
   quantity: string;             // Number of shares brought
   unitPrice: string;            // Price paid for 1 share at the time of purchase
@@ -88,7 +76,7 @@ export interface BuyHistoryEntry {
 }
 
 export interface SellHistoryEntry {
-  accountId: string;            // Account id that sold the share
+  accountId: string;            // Account id that sold the shares
   buyDate: string;              // Date of when the shares were brought
   sellDate: string;             // Date of when the shares were sold
   quantity: string;             // Number of shares sold
@@ -105,24 +93,25 @@ export interface SellHistoryEntry {
 }
 
 export interface Company {
-  asxcode: string;
-  operatingCountries: Country[];
-  financialStatus: Option[];
-  miningStatus: Option[];
-  resources: Option[];
-  products: Option[];
-  recommendations: Option[];
-  monitor: Option[];
-  reasonsToBuy: string;
-  reasonsNotToBuy: string;
-  positives: string;
-  negatives: string;
-  notes: Note[];
-  dateNotifications: DateNotification[];
-  priceNotifications: PriceNotification[];
-  currentShares: CurrentShareEntry[];
-  buyHistory: BuyHistoryEntry[];
-  sellHistory: SellHistoryEntry[];
+  asxcode: string;                         // ASX code of the company
+  name: string;                            // Full name of the company
+  operatingCountries: Country[];           // Countries where the company operates in
+  financialStatus: Option[];               // User defined financial status options
+  miningStatus: Option[];                  // User defined mining status options
+  resources: Option[];                     // User defined resource options
+  products: Option[];                      // User defined products options
+  recommendations: Option[];               // User defined recommendation options
+  monitor: Option[];                       // User defined monitor options
+  reasonsToBuy: string;                    // Description of reasons why buy the company
+  reasonsNotToBuy: string;                 // Description of reasons why not buy the company
+  positives: string;                       // Description of positives of the company
+  negatives: string;                       // Description of negatives of the company
+  notes: Note[];                           // Notes entries
+  dateNotifications: DateNotification[];   // Date notifications entries
+  priceNotifications: PriceNotification[]; // Price notifications entries
+  currentShares: CurrentShareEntry[];      // Current shares entries
+  buyHistory: BuyHistoryEntry[];           // History of buy trades
+  sellHistory: SellHistoryEntry[];         // History of sell trades
 }
 
 export interface Settings {
@@ -140,19 +129,6 @@ export interface Historical {
   asxcode: string;
   lastUpdated: string;
   historical: HistoricalEntry[];
-}
-
-// Values type for AddCompany()
-// Override dates with type "string" instead of type "Dayjs" (since can't send "Dayjs" types over IPC)
-export interface AddCompanyValues extends Omit<AddCompanyFormValues, "noteDate" | "notificationDate"> {
-  noteDate: string;
-  notificationDate: string;
-}
-
-// Values type for BuyShares() and SellShares()
-// Override dates with type "string" instead of type "Dayjs" (since can't send "Dayjs" types over IPC)
-export interface AddTradeValues extends Omit<AddTradeFormValues, "date"> {
-  date: string;
 }
 
 export interface PortfolioTableRow {

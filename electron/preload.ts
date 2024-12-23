@@ -1,5 +1,6 @@
+import { AddCompanyValues, AddTradeValues, PortfolioFilterValues } from "./api";
 import { contextBridge, ipcRenderer } from "electron";
-import { Key, AddCompanyValues, AddTradeValues, PortfolioFilterValues } from "./types";
+import { Key } from "./types";
 
 contextBridge.exposeInMainWorld("electronAPI", {
   getData: (key: Key) => ipcRenderer.invoke("getData", key),
