@@ -16,6 +16,7 @@ import Settings from "./pages/settings";
 
 // Global components
 import SnackbarProvider from "./pages/global/snackbarProvider";
+import KBarProvider from "./pages/global/kbarProvider";
 import Sidebar from "./pages/global/sidebar";
 import Topbar from "./pages/global/topbar";
 
@@ -28,22 +29,24 @@ const App = () => {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <SnackbarProvider>
-          <CssBaseline />
-          <div className="app">
-            <Topbar collapsed={collapsed} setCollapsed={setCollapsed} />
-            <Sidebar collapsed={collapsed} />
-            <main className="content">
-              <Routes>
-                <Route path="/" element={<Navigate to="/portfolio" replace />} />
-                <Route path="/addCompany" element={<AddCompany />} />
-                <Route path="/addTrade" element={<AddTrade />} />
-                <Route path="/accounts" element={<Accounts />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/settings" element={<Settings />} />
-              </Routes>
-            </main>
-          </div>
+          <KBarProvider>
+            <CssBaseline />
+            <div className="app">
+              <Topbar collapsed={collapsed} setCollapsed={setCollapsed} />
+              <Sidebar collapsed={collapsed} />
+              <main className="content">
+                <Routes>
+                  <Route path="/" element={<Navigate to="/portfolio" replace />} />
+                  <Route path="/addCompany" element={<AddCompany />} />
+                  <Route path="/addTrade" element={<AddTrade />} />
+                  <Route path="/accounts" element={<Accounts />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </main>
+            </div>
+          </KBarProvider>
         </SnackbarProvider>
       </ThemeProvider>
     </ColorModeContext.Provider>
