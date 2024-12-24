@@ -61,7 +61,7 @@ const Positioner = (props: PositionerProps) => {
     fontFamily: "Geist Variable, Arial, sans-serif",
   };
 
-  // On kbar render, load actions from API
+  // Reload actions (triggered when kbar is opened)
   useEffect(() => {
     loadActions();
   }, []);
@@ -105,6 +105,11 @@ const Portal = () => {
 
     setActions(newActions);
   };
+
+  // Initially load actions (only triggered once when app starts)
+  useEffect(() => {
+    loadActions();
+  }, []);
 
   useRegisterActions(actions, [actions]);
 
