@@ -9,7 +9,10 @@ import {
 
 // Yahoo-finance2
 import yahooFinance from "yahoo-finance2";
-import { QuoteField } from "yahoo-finance2/dist/esm/src/modules/quote";
+import {
+  QuoteField,
+  QuoteResponseArray,
+} from "yahoo-finance2/dist/esm/src/modules/quote";
 
 // Dayjs
 import dayjs from "dayjs";
@@ -20,6 +23,7 @@ import {
   AccountOption,
   Company,
   GraphDataPoint,
+  Historical,
   HistoricalEntry,
   Option,
   PortfolioData,
@@ -82,7 +86,16 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
 
   // Don't await the quote API call (we can calculate the data points while request is pending)
   const quoteArrayPromise = yahooFinance.quote(symbolArray, { fields });
-  const historicalData = await getHistoricalData(asxcodeArray);
+
+  // Wait until historical data is fetched
+  let historicalData: Historical[];
+  try {
+    historicalData = await getHistoricalData(asxcodeArray);
+  }
+  catch (error) {
+    writeLog(`[getHistoricalData]: Could not continue as a yahooFinance.chart() failed. [${error.name}]: ${error.message}`);
+    return emptyReturn;
+  }
 
   let dataPointId = 1;
   const dataPointsMap = new Map<string, GraphDataPoint>();
@@ -110,16 +123,16 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
     for (const entry of historical.historical) {
       updateState(state, company, entry.date);
 
-      // Value at the time of the entry
-      const time = dayjs(entry.date).format("DD/MM/YYYY");
+      // Value at the date of the entry
+      const date = dayjs(entry.date).format("DD/MM/YYYY");
       const value = state.units * entry.adjClose;
 
-      if (dataPointsMap.has(time)) {
-        dataPointsMap.get(time).value += value;
+      if (dataPointsMap.has(date)) {
+        dataPointsMap.get(date).value += value;
         continue;
       }
 
-      dataPointsMap.set(time, {
+      dataPointsMap.set(date, {
         id: dataPointId++,
         date: entry.date,
         value,
@@ -171,8 +184,15 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
     }
   }
 
-  // Wait until quote API call is finished
-  const quoteArray = await quoteArrayPromise;
+  // Wait until quote API call is fetched
+  let quoteArray: QuoteResponseArray;
+  try {
+    quoteArray = await quoteArrayPromise;
+  }
+  catch (error) {
+    writeLog(`[getPortfolioData]: Could not continue as yahooFinance.quote() failed. [${error.name}]: ${error.message}`);
+    return emptyReturn;
+  }
 
   // Update data point for today using quote data
   let valueToday = 0;
@@ -189,7 +209,16 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
     valueToday += units * quote.regularMarketPrice;
   }
 
-  dataPointsMap.get(today).value = valueToday;
+  if (dataPointsMap.has(today)) {
+    dataPointsMap.get(today).value = valueToday;
+  }
+  else {
+    dataPointsMap.set(today, {
+      id: dataPointId++,
+      date: dayjs().toDate(),
+      value: valueToday,
+    });
+  }
 
   let combinedValue = 0;
   let combinedPreviousValue = 0;
@@ -358,6 +387,7 @@ const getFilteredCompanies = async (filterValues: PortfolioFilterValues) => {
  *
  * @param asxcodes Array of ASX codes
  * @returns Array containing historical adjusted close prices for all the given ASX codes
+ * @throws If any yahooFinance.chart() call fails.
  */
 const getHistoricalData = async (asxcodes: string[]) => {
   const data = await getData("historicals");
@@ -382,55 +412,55 @@ const getHistoricalData = async (asxcodes: string[]) => {
     interval: "1d" as const,
   };
 
-  // Send chart requests in parallel
-  const responseArray = await Promise.allSettled(needUpdate.map(async (asxcode) => {
+  // Send requests in parallel
+  await Promise.all(needUpdate.map(async (asxcode) => {
     const chart = await yahooFinance.chart(`${asxcode}.AX`, queryOptions);
-    const historical = chart.quotes;
-    return { asxcode, historical };
-  }));
+    const historical = chart.quotes
+      .filter((entry) => new Date(entry.date).getDay() == 1 || dayjs().subtract(1, "year").isBefore(entry.date));
 
-  const lastUpdated = dayjs().format("DD/MM/YYYY hh:mm A");
-  for (const response of responseArray) {
-    if (response.status === "fulfilled") {
-      // Keep daily data for entries <1 year ago, and only weekly data for entries >1 year ago
-      const asxcode = response.value.asxcode;
-      const filteredHistoricals = response.value.historical
-        .filter((entry) => dayjs().diff(entry.date, "year") < 1 || entry.date.getDay() == 1);
+    const historicalMap = new Map<string, HistoricalEntry>();
+    for (const entry of historical) {
+      const date = dayjs(entry.date).format("DD/MM/YYYY");
 
-      const historical: HistoricalEntry[] = [];
-      for (const entry of filteredHistoricals) {
-        const date = dayjs(entry.date).format("DD/MM/YYYY");
-
-        // Check that adjClose field is present
-        if (!("adjclose" in entry)) {
-          writeLog(`[getHistoricalData]: Skipped a historical entry on ${date} for ${asxcode}. Missing 'adjclose' field.`);
-          continue;
-        }
-
-        // Check that there is not already an historical for the date (to prevent duplicate entries for the same day)
-        if (historical.some((hist) => dayjs(hist.date).isSame(entry.date, "day"))) {
-          writeLog(`[getHistoricalData]: Skipped a historical entry on ${date} for ${asxcode}. Entry already exists for this date.`);
-          continue;
-        }
-
-        historical.push({ adjClose: entry.adjclose, date: entry.date });
+      // Check that adjClose field is present
+      if (!("adjclose" in entry)) {
+        writeLog(`[getHistoricalData]: Skipped a historical entry on ${date} for ${asxcode}. Missing 'adjclose' field.`);
+        continue;
       }
 
-      const existingEntry = data.find((entry) => entry.asxcode === response.value.asxcode);
-      if (existingEntry !== undefined) {
-        existingEntry.lastUpdated = lastUpdated;
-        existingEntry.historical = historical;
-      }
-      else {
-        data.push({ asxcode, lastUpdated, historical });
+      // Check that there is not already an historical for the date (to prevent duplicate entries for the same day)
+      if (historicalMap.has(date)) {
+        writeLog(`[getHistoricalData]: Skipped a historical entry on ${date} for ${asxcode}. Entry already exists for this date.`);
+        continue;
       }
 
-      writeLog(`[getHistoricalData]: Successfully updated historical data for ${asxcode}.AX.`);
+      historicalMap.set(date, {
+        adjClose: entry.adjclose,
+        date: entry.date,
+      });
+    }
+
+    // Convert map into array
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const historicalArray = Array.from(historicalMap, ([key, value]) => value);
+
+    // Update data with new historicals
+    const lastUpdated = dayjs().format("DD/MM/YYYY hh:mm A");
+    const existingHistorical = data.find((entry) => entry.asxcode === asxcode);
+    if (existingHistorical !== undefined) {
+      existingHistorical.lastUpdated = lastUpdated;
+      existingHistorical.historical = historicalArray;
     }
     else {
-      writeLog(`[getHistoricalData]: A historical request could not be fulfilled [${response.reason}].`);
+      data.push({
+        asxcode,
+        lastUpdated,
+        historical: historicalArray,
+      });
     }
-  }
+
+    writeLog(`[getHistoricalData]: Successfully updated historical data for ${asxcode}.AX.`);
+  }));
 
   setData("historicals", data);
   return data;
@@ -439,11 +469,11 @@ const getHistoricalData = async (asxcodes: string[]) => {
 /**
  * A helper function that updates the given state object.
  */
-const updateState = (state: State, company: Company, time: Date) => {
+const updateState = (state: State, company: Company, currDate: Date) => {
   // First update using buy history
   while (state.buyIndex < company.buyHistory.length) {
     const entry = company.buyHistory[state.buyIndex];
-    if (!dayjsDate(entry.date).isBefore(time)) {
+    if (!dayjsDate(entry.date).isBefore(currDate)) {
       break;
     }
     state.units += Number(entry.quantity);
@@ -453,7 +483,7 @@ const updateState = (state: State, company: Company, time: Date) => {
   // Then update using sell history
   while (state.sellIndex < company.sellHistory.length) {
     const entry = company.sellHistory[state.sellIndex];
-    if (!dayjsDate(entry.sellDate).isBefore(time)) {
+    if (!dayjsDate(entry.sellDate).isBefore(currDate)) {
       break;
     }
     state.units -= Number(entry.quantity);
