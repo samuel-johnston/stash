@@ -131,6 +131,18 @@ export interface Historical {
   historical: HistoricalEntry[];
 }
 
+export type PortfolioTableRowInternal = Pick<PortfolioTableRow,
+  | "id"
+  | "asxcode"
+  | "units"
+  | "avgBuyPrice"
+  | "purchaseCost"
+  | "firstPurchaseDate"
+  | "lastPurchaseDate"
+> & {
+  previousUnits: number;
+};
+
 export interface PortfolioTableRow {
   id: number;                // ID, eg. 1, 2, 3, ...
   asxcode: string;           // ASX code of the company
