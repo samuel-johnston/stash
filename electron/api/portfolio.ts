@@ -43,6 +43,7 @@ export interface PortfolioFilterValues {
   recommendations: Option[];
 }
 
+// A state essentially keeps track of fields as we iterate through historical entries
 interface State {
   units: number;     // How many units are currently held
   buyIndex: number;  // Current index we are up to in the company's buy history
@@ -112,7 +113,6 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
       continue;
     }
 
-    // Keep a state object that tracks as we iterate through historical entries
     const state: State = {
       units: 0,
       buyIndex: 0,
