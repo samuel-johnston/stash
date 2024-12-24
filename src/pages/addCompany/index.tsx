@@ -1,11 +1,12 @@
 import { Formik, FormikErrors } from "formik";
 import { useEffect, useState } from "react";
+import { enqueueSnackbar } from "notistack";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
 // Helper files
+import { AddCompanyFormValues, initialValues } from "./formValues";
 import OperatingCountriesInput from "./operatingCountries";
-import handleFormSubmit from "./handleFormSubmit";
 import {
   cleanUpValidation,
   greaterThanHighPrice,
@@ -39,29 +40,6 @@ import Header from "../../components/header";
 
 // Types
 import { Country, Option } from "../../../electron/types";
-
-export interface AddCompanyFormValues {
-  asxcode: string;
-  operatingCountries: Country[];
-  financialStatus: Option[];
-  miningStatus: Option[];
-  resources: Option[];
-  products: Option[];
-  recommendations: Option[];
-  monitor: Option[];
-  noteTitle: string;
-  noteDate: dayjs.Dayjs;
-  noteDescription: string;
-  noteToBuy: string;
-  noteNotToBuy: string;
-  notePositives: string;
-  noteNegatives: string;
-  notificationDateTitle: string;
-  notificationDate: dayjs.Dayjs;
-  notificationPriceTitle: string;
-  notificationPriceHigh: string;
-  notificationPriceLow: string;
-}
 
 const AddCompany = () => {
   const isNonMobile = useMediaQuery("(min-width:800px)");
@@ -110,29 +88,6 @@ const AddCompany = () => {
     };
   }, []);
 
-  const initialValues: AddCompanyFormValues = {
-    asxcode: "",
-    operatingCountries: [],
-    financialStatus: [],
-    miningStatus: [],
-    resources: [],
-    products: [],
-    recommendations: [],
-    monitor: [],
-    noteTitle: "",
-    noteDate: dayjs(), // Today's date
-    noteDescription: "",
-    noteToBuy: "",
-    noteNotToBuy: "",
-    notePositives: "",
-    noteNegatives: "",
-    notificationDateTitle: "",
-    notificationDate: dayjs().add(1, "week"), // Date in 1 week
-    notificationPriceTitle: "",
-    notificationPriceHigh: "",
-    notificationPriceLow: "",
-  };
-
   const validationSchema = () =>
     yup.object().shape({
       asxcode: yup
@@ -165,8 +120,10 @@ const AddCompany = () => {
         .test("price-limits", "Lower limit must be below upper limit", greaterThanHighPrice),
     });
 
-  // A helper function. Open accordion's that have errors within them,
-  // when the submit button is pressed.
+  /**
+   * A helper function. Open accordion's that have errors within them,
+   * when the submit button is pressed.
+   */
   const OpenAccordionOnError = (errors: FormikErrors<AddCompanyFormValues>) => {
     // "Add Note" Accordion
     if (!!errors.noteTitle || !!errors.noteDate || !!errors.noteDescription) {
@@ -186,14 +143,27 @@ const AddCompany = () => {
     }
   };
 
+  const handleSubmit = async (values: AddCompanyFormValues) => {
+    // Convert Dayjs objects to strings, since we can't send Dayjs types over IPC
+    const sendValues = {
+      ...values,
+      name: companyName,
+      noteDate: values.noteDate.format("DD/MM/YYYY hh:mm A"),
+      notificationDate: values.notificationDate.format("DD/MM/YYYY hh:mm A"),
+    };
+    await window.electronAPI.addCompany(sendValues);
+    // Show snackbar
+    enqueueSnackbar(`${values.asxcode.toUpperCase()} successfully added!`, { variant: "success" });
+  };
+
   return (
-    <Box m="25px 30px 15px 30px">
+    <Box>
       <Header
         title="Add Company"
         subtitle="Add details, notes and notifications for a new company"
       />
       <Formik
-        onSubmit={handleFormSubmit}
+        onSubmit={handleSubmit}
         initialValues={initialValues}
         validationSchema={validationSchema}
       >
@@ -525,7 +495,6 @@ const AddCompany = () => {
                 id="submit"
                 type="submit"
                 variant="contained"
-                // Open respective accordion's on input error
                 onClick={() => OpenAccordionOnError(errors)}
               >
                 Confirm

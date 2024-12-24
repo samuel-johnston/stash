@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 
 // Helper files
 import { cleanUpValidation, validateASXCode } from "./validation";
+import { AddTradeFormValues, initialValues } from "./formValues";
 import AutoUpdateUnitPrice from "./autoUpdateUnitPrice";
 import ShowAvailableUnits from "./showAvailableUnits";
 import PriceBreakdownHandler from "./priceBreakdown";
@@ -28,23 +29,7 @@ import SelectInput from "../../components/select";
 import Header from "../../components/header";
 
 // Types
-import { AccountOption, Option } from "../../../electron/types";
-
-interface Settings {
-  unitPriceAutoFill: boolean;
-  gstPercent: string;
-  brokerageAutoFill: string;
-}
-
-export interface AddTradeFormValues {
-  asxcode: Option;
-  type: "BUY" | "SELL";
-  account: AccountOption;
-  date: dayjs.Dayjs;
-  quantity: string;
-  unitPrice: string;
-  brokerage: string;
-}
+import { Option, Settings } from "../../../electron/types";
 
 const AddTrade = () => {
   const theme = useTheme();
@@ -96,16 +81,6 @@ const AddTrade = () => {
     };
   }, []);
 
-  const initialValues: AddTradeFormValues = {
-    asxcode: null,
-    type: "BUY",
-    account: null,
-    date: dayjs(),
-    quantity: "",
-    unitPrice: "",
-    brokerage: "",
-  };
-
   const validationSchema = () =>
     yup.object().shape({
       asxcode: yup
@@ -129,12 +104,10 @@ const AddTrade = () => {
     });
 
   return (
-    <Box m="25px 30px 15px 30px">
+    <Box>
       <Header title="Add Trade" subtitle="Record a new trade for an existing company" />
       <Formik
-        onSubmit={(values: AddTradeFormValues) => {
-          handleFormSubmit(values, settings.gstPercent);
-        }}
+        onSubmit={(values: AddTradeFormValues) => handleFormSubmit(values, settings.gstPercent)}
         initialValues={initialValues}
         validationSchema={validationSchema}
       >

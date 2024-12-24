@@ -29,9 +29,9 @@ export const tokens = (mode: PaletteMode): ColorType => ({
           400: "#7a7a7f",
           500: "#3a3a3f", // Scrollbar hover, Borders & Input Outline
           600: "#27272a", // Sidebar selected bg, Scrollbar handle, Dialog Outline
-          700: "#212124", // Sidebar hover bg & card UI
+          700: "#212124", // Sidebar hover bg
           800: "#121212",
-          900: "#0a0a0b", // Sidebar & content bg
+          900: "#0a0a0b", // Main bg
         },
         blueAccent: {
           100: "#bbdefb",

@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import {
   closeSnackbar,
   MaterialDesignContent,
-  SnackbarProvider as NotistackSnackBarProvider,
+  SnackbarProvider,
 } from "notistack";
 
 // Material UI
@@ -15,7 +15,7 @@ interface Props {
   children: ReactNode;
 }
 
-const SnackbarProvider = ({ children }: Props) => {
+const Snackbar = ({ children }: Props) => {
   const theme = useTheme();
 
   const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
@@ -28,11 +28,11 @@ const SnackbarProvider = ({ children }: Props) => {
   }));
 
   return (
-    <NotistackSnackBarProvider
+    <SnackbarProvider
       maxSnack={1}
       autoHideDuration={3500}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      TransitionProps={{ direction: "down" }}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      TransitionProps={{ direction: "up" }}
       Components={{
         success: StyledMaterialDesignContent,
         error: StyledMaterialDesignContent,
@@ -44,8 +44,8 @@ const SnackbarProvider = ({ children }: Props) => {
       )}
     >
       {children}
-    </NotistackSnackBarProvider>
+    </SnackbarProvider>
   );
 };
 
-export default SnackbarProvider;
+export default Snackbar;

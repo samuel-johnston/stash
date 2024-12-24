@@ -6,7 +6,7 @@ import Header from "../../components/header";
 
 const Notifications = () => {
   return (
-    <Box m="25px 30px 15px 30px">
+    <Box>
       <Header
         title="Notifications"
         subtitle="TODO"

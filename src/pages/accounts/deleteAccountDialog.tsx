@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+import { enqueueSnackbar } from "notistack";
 import { Form, Formik } from "formik";
 import { tokens } from "../../theme";
 import * as yup from "yup";
@@ -14,8 +16,6 @@ import Button from "@mui/material/Button";
 
 // Types
 import { Account } from "../../../electron/types";
-import { Dispatch, SetStateAction } from "react";
-import { enqueueSnackbar } from "notistack";
 
 interface Props {
   accountToDelete: Account;
@@ -38,7 +38,6 @@ const DeleteAccountDialog = (props: Props) => {
     setAccountsList,
   } = props;
 
-  // Formik initial values
   const initialValues: DeleteAccountFormValues = {
     name: "",
   };
@@ -49,19 +48,24 @@ const DeleteAccountDialog = (props: Props) => {
       .test("correct-name", `Input does not match "${accountToDelete.name}"`, (value) => value === accountToDelete.name),
   });
 
+  const handleSubmit = async () => {
+    const updatedAccountsList = await window.electronAPI.deleteAccount(accountToDelete.accountId);
+    setAccountsList(updatedAccountsList);
+    // Close dialog
+    setOpen(false);
+    // Show snackbar
+    enqueueSnackbar(`${accountToDelete.name} successfully deleted!`, { variant: "success" });
+  };
+
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
-      <DialogTitle variant="h3" fontWeight={600}>
+      <DialogTitle variant="h4" fontWeight={600}>
         Are You Sure?
       </DialogTitle>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async () => {
-          setAccountsList(await window.electronAPI.deleteAccount(accountToDelete.accountId));
-          setOpen(false);
-          enqueueSnackbar(`${accountToDelete.name} successfully deleted!`, { variant: "success" });
-        }}
+        onSubmit={handleSubmit}
       >
         {({ values, handleChange, touched, errors }) => (
           <Form>

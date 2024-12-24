@@ -3,9 +3,19 @@ import { dayjsDate } from "../utils";
 
 // Types
 import {
-  AddTradeValues,
+  AccountOption,
   CurrentShareEntry,
+  Option,
 } from "../types";
+
+export interface AddTradeValues {
+  asxcode: Option;
+  account: AccountOption;
+  date: string;
+  quantity: string;
+  unitPrice: string;
+  brokerage: string;
+}
 
 /**
  * Returns the number of available shares the account id owns for the given asxcode.

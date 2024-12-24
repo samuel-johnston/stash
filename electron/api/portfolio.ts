@@ -23,12 +23,20 @@ import {
   HistoricalEntry,
   Option,
   PortfolioData,
-  PortfolioFilterValues,
   PortfolioTableRow,
 } from "../types";
 
 yahooFinance.setGlobalConfig({ queue: { concurrency: 16 } });
 dayjs.extend(customParseFormat);
+
+export interface PortfolioFilterValues {
+  account: AccountOption;
+  financialStatus: Option[];
+  miningStatus: Option[];
+  resources: Option[];
+  products: Option[];
+  recommendations: Option[];
+}
 
 /**
  * Gets the data for the graph, table and text components using the given filter values.
