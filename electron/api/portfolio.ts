@@ -23,6 +23,7 @@ import {
   AccountOption,
   Company,
   GraphDataPoint,
+  GraphRange,
   Historical,
   HistoricalEntry,
   Option,
@@ -296,21 +297,15 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
   const totalChange = combinedValue - combinedCost;
   const totalChangePerc = (combinedCost !== 0) ? totalChange / combinedCost * 100 : null;
 
-  const graphData: Record<1 | 3 | 6 | 12 | 60, GraphDataPoint[]> = {
-    1: [],  // last 1 month
-    3: [],  // last 3 months
-    6: [],  // last 6 months
-    12: [], // last 12 months (1 year)
-    60: [], // last 60 months (5 years)
-  };
+  // Convert map into sorted array
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const dataPointsArray = Array.from(dataPointsMap, ([key, value]) => value)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  // Extract the data points from the map into the graphData object
-  let allZero = true;
-  dataPointsMap.forEach((dataPoint) => {
-    if (allZero && dataPoint.value !== 0) {
-      allZero = false;
-    }
+  const graphData: Record<GraphRange, GraphDataPoint[]> = { 1: [], 3: [], 6: [], 12: [], 60: [] };
 
+  // Distribute the data points into the graphData object
+  dataPointsArray.forEach((dataPoint) => {
     [1, 3, 6, 12].forEach((months) => {
       if (dayjs().subtract(months, "month").isBefore(dataPoint.date, "day")) {
         graphData[months].push(dataPoint);
@@ -322,15 +317,6 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
       graphData[60].push(dataPoint);
     }
   });
-
-  // If all data points are 0, don't show points on graph
-  if (allZero) {
-    graphData[1] = [];
-    graphData[3] = [];
-    graphData[6] = [];
-    graphData[12] = [];
-    graphData[60] = [];
-  }
 
   return {
     graph: graphData,
@@ -367,16 +353,15 @@ const getFilteredCompanies = async (filterValues: PortfolioFilterValues) => {
   // Check account is provided
   if (filterValues.account === null) return [];
 
-  const data = await getData("companies");
-  return data.filter((entry) =>
-    filterOption(filterValues.financialStatus, entry.financialStatus)
-    && filterOption(filterValues.miningStatus, entry.miningStatus)
-    && filterOption(filterValues.resources, entry.resources)
-    && filterOption(filterValues.products, entry.products)
-    && filterOption(filterValues.recommendations, entry.recommendations) && (
-      filterValues.account.label === "All Accounts"
-      || entry.currentShares.some((obj) => obj.accountId === filterValues.account.accountId)
-    ),
+  const companies = await getData("companies");
+  return companies.filter((company) =>
+    ((filterValues.account.label === "All Accounts" && company.buyHistory.length > 0)
+      || company.buyHistory.some((entry) => entry.accountId === filterValues.account.accountId))
+    && filterOption(filterValues.financialStatus, company.financialStatus)
+    && filterOption(filterValues.miningStatus, company.miningStatus)
+    && filterOption(filterValues.resources, company.resources)
+    && filterOption(filterValues.products, company.products)
+    && filterOption(filterValues.recommendations, company.recommendations),
   );
 };
 
