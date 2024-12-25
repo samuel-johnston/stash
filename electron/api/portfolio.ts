@@ -44,7 +44,7 @@ export interface PortfolioFilterValues {
   recommendations: Option[];
 }
 
-// A state essentially keeps track of fields as we iterate through historical entries
+// State keeps track of units (and indexes) as we iterate through historical entries
 interface State {
   units: number;     // How many units are currently held
   buyIndex: number;  // Current index we are up to in the company's buy history
@@ -122,7 +122,7 @@ export const getPortfolioData = async (filterValues: PortfolioFilterValues): Pro
 
     // Update data points using historical entries
     for (const entry of historical.historical) {
-      updateState(state, company, entry.date);
+      updateUnitsAtTime(state, company, entry.date);
 
       // Value at the date of the entry
       const date = dayjs(entry.date).format("DD/MM/YYYY");
@@ -452,9 +452,10 @@ const getHistoricalData = async (asxcodes: string[]) => {
 };
 
 /**
- * A helper function that updates the given state object.
+ * A helper function that updates the given `state` object. After call, the `state` object will
+ * have the updated units as of the `currDate`.
  */
-const updateState = (state: State, company: Company, currDate: Date) => {
+const updateUnitsAtTime = (state: State, company: Company, currDate: Date) => {
   // First update using buy history
   while (state.buyIndex < company.buyHistory.length) {
     const entry = company.buyHistory[state.buyIndex];
