@@ -112,8 +112,10 @@ const Graph = (props: Props) => {
     const drawAreaRange = [top + height, top];
     const tickNumber = Math.floor(Math.abs(drawAreaRange[1] - drawAreaRange[0]) / 50);
 
-    // Use d3 to calculate a nice domain
-    const niceDomain = scaleLinear(extremums, drawAreaRange).nice(tickNumber).domain() as [number, number];
+    // Use d3 to calculate a nice domain (set domain to [0, 1] if all values are 0)
+    const niceDomain: [number, number] = extremums[1] === 0
+      ? [0, 1]
+      : scaleLinear(extremums, drawAreaRange).nice(tickNumber).domain() as [number, number];
     const bottomOffset = 0.9 * (niceDomain[1] - niceDomain[0]) / niceDomain[1];
 
     setBottomOffset(bottomOffset);
