@@ -1,20 +1,32 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "allowJs": true,
+    "target": "ESNext",
     "module": "commonjs",
-    "jsx": "react-jsx",
+    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "jsx": "react-jsx",
+    "types": ["./electron/preload.d.ts", "./src/theme.d.ts"],
     "paths": {
-      "*": ["node_modules/*"]
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@data/*": ["./src/data/*"],
+      "@logs": ["./electron/logs"],
+      "@pages/*": ["./src/pages/*"],
+      "@plugins/*": ["./src/plugins/*"],
+      "@queries/*": ["./src/queries/*"],
+      "@storage": ["./electron/api/storage"],
+      "@theme": ["./src/theme"],
+      "@types": ["./electron/types"],
+      "@utils": ["./src/utils"],
     }
-  },
-  "include": ["src/**/*", "electron/*"],
-  "files": ["electron/preload.d.ts"]
+  }
 }

@@ -1,55 +1,51 @@
-import { CssBaseline, Theme, ThemeProvider } from "@mui/material";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { ColorModeContext, useMode } from "./theme";
-import { useState } from "react";
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Fonts
-import "non.geist";
+import 'non.geist';
 
-// Pages
-import Notifications from "./pages/notifications";
-import AddCompany from "./pages/addCompany";
-import Portfolio from "./pages/portfolio";
-import AddTrade from "./pages/addTrade";
-import Accounts from "./pages/accounts";
-import Settings from "./pages/settings";
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Stack from '@mui/material/Stack';
 
-// Global components
-import SnackbarProvider from "./pages/global/snackbarProvider";
-import KBarProvider from "./pages/global/kbarProvider";
-import Sidebar from "./pages/global/sidebar";
-import Topbar from "./pages/global/topbar";
+import { SidebarContextProvider } from '@contexts/SidebarContext';
 
-type UseMode = [Theme, { toggleColorMode: () => void }];
+import SnackbarProvider from '@pages/global/SnackbarProvider';
+import KBarProvider from '@pages/global/kbarProvider';
+import Sidebar from '@pages/global/Sidebar';
+import Topbar from '@pages/global/Topbar';
+
+import Portfolio from '@pages/portfolio';
+import AddTrade from '@pages/addTrade';
+import Accounts from '@pages/accounts';
+import Settings from '@pages/settings';
+
+import theme from './theme';
 
 const App = () => {
-  const [theme, colorMode] = useMode() as UseMode;
-  const [collapsed, setCollapsed] = useState(false);
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <SnackbarProvider>
-          <KBarProvider>
+    <ThemeProvider theme={theme} noSsr disableTransitionOnChange defaultMode="dark">
+      <SnackbarProvider>
+        <KBarProvider>
+          <SidebarContextProvider>
             <CssBaseline />
             <div className="app">
-              <Topbar collapsed={collapsed} setCollapsed={setCollapsed} />
-              <Sidebar collapsed={collapsed} />
-              <main className="content">
-                <Routes>
-                  <Route path="/" element={<Navigate to="/portfolio" replace />} />
-                  <Route path="/addCompany" element={<AddCompany />} />
-                  <Route path="/addTrade" element={<AddTrade />} />
-                  <Route path="/accounts" element={<Accounts />} />
-                  <Route path="/notifications" element={<Notifications />} />
-                  <Route path="/portfolio" element={<Portfolio />} />
-                  <Route path="/settings" element={<Settings />} />
-                </Routes>
-              </main>
+              <Sidebar />
+              <Topbar />
+              <Stack width="100%" sx={{ scrollbarGutter: 'stable', overflowY: 'auto' }}>
+                <main className="content">
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/portfolio" replace />} />
+                    <Route path="/trading/add" element={<AddTrade />} />
+                    <Route path="/accounts" element={<Accounts />} />
+                    <Route path="/portfolio" element={<Portfolio />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Routes>
+                </main>
+              </Stack>
             </div>
-          </KBarProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+          </SidebarContextProvider>
+        </KBarProvider>
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 };
 

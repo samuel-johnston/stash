@@ -1,137 +1,110 @@
-import { useEffect, useState } from "react";
-import { Formik } from "formik";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { RefObject } from 'react';
 
-// Helper files
-import PortfolioValueText from "./portfolioValueText";
-import PortfolioTable from "./portfolioTable";
-import { initialValues } from "./formValues";
-import UpdateData from "./updateData";
+import { GridApi, useGridApiRef } from '@mui/x-data-grid';
+import Box from '@mui/material/Box';
 
-// Material UI
-import Box from "@mui/material/Box";
+import { createTabs } from '@components/Tabs';
+import RHFSelect from '@components/RHFSelect';
+import AreaChart from '@components/AreaChart';
 
-// Components
-import SelectInput from "../../components/select";
-import Graph from "../../components/graph";
+import useAccountOptions from '@queries/useAccountOptions';
+import useOptions from '@queries/useOptions';
 
-// Types
-import { Option, PortfolioData } from "../../../electron/types";
+import { Schema, schema, defaultValues } from './schema';
+import HoldingsTable from './HoldingsTable';
+import ValueDisplay from './ValueDisplay';
+import TableActions from './TableActions';
+import TradesTable from './TradesTable';
+import BuyHistoryTable from './BuyHistoryTable';
+import SellHistoryTable from './SellHistoryTable';
+
+export type TabValues = 'holdings' | 'trades' | 'buyHistory' | 'sellHistory';
 
 const Portfolio = () => {
-  // Dropdown data states
-  const [accountsList, setAccountsList] = useState<Option[]>([]);
-  const [financialStatusList, setFinancialStatusList] = useState<Option[]>([]);
-  const [miningStatusList, setMiningStatusList] = useState<Option[]>([]);
-  const [resourcesList, setResourcesList] = useState<Option[]>([]);
-  const [productsList, setProductsList] = useState<Option[]>([]);
-  const [recommendationList, setRecommendationList] = useState<Option[]>([]);
+  const queryClient = useQueryClient();
 
-  // Portfolio data states
-  const [loading, setLoading] = useState<boolean>(true);
-  const [data, setData] = useState<PortfolioData>({
-    graph: { 1: [], 3: [], 6: [], 12: [], 60: [] },
-    table: [],
-    text: {
-      totalValue: "",
-      dailyChange: "",
-      dailyChangePerc: "",
-      totalChange: "",
-      totalChangePerc: "",
-    },
+  const apiRefs: Record<TabValues, RefObject<GridApi>> = {
+    holdings: useGridApiRef(),
+    trades: useGridApiRef(),
+    buyHistory: useGridApiRef(),
+    sellHistory: useGridApiRef(),
+  };
+
+  const { data: options } = useOptions();
+  const { data: accountOptions } = useAccountOptions({ allAccountsOption: true });
+
+  const { control, getValues, watch } = useForm<Schema>({
+    resolver: zodResolver(schema),
+    defaultValues,
   });
 
-  // On page render, get dropdown data from API
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      const accounts = await window.electronAPI.getData("accounts");
-      const financialStatus = await window.electronAPI.getData("financialStatus");
-      const miningStatus = await window.electronAPI.getData("miningStatus");
-      const resources = await window.electronAPI.getData("resources");
-      const products = await window.electronAPI.getData("products");
-      const recommendations = await window.electronAPI.getData("recommendations");
-      if (isMounted) {
-        // Format accounts as options
-        const newAccountsList: Option[] = accounts.map((element) => ({
-          label: element.name,
-          accountId: element.accountId,
-        })).sort((a, b) => a.label.localeCompare(b.label));
+  const { data: portfolioData, isLoading } = useQuery({
+    queryKey: ['portfolioData'],
+    queryFn: async () => window.electronAPI.getPortfolioData(getValues()),
+  });
 
-        // Add "All Accounts" option to top of list
-        newAccountsList.unshift({ label: "All Accounts" });
-
-        // Update states
-        setAccountsList(newAccountsList);
-        setFinancialStatusList(financialStatus);
-        setMiningStatusList(miningStatus);
-        setResourcesList(resources);
-        setProductsList(products);
-        setRecommendationList(recommendations);
-      }
-    })();
-    // Clean up
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const Tabs = createTabs<TabValues>();
 
   return (
-    <Box>
-      <Formik
-        onSubmit={() => { /* Do nothing on submit */ }}
-        initialValues={initialValues}
-      >
-        {({ values }) => (
-          <Box
-            display="grid"
-            pb="30px"
-            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-          >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              gridColumn="span 4"
-            >
-              {/* Portfolio value, today's change and total change */}
-              <PortfolioValueText
-                loading={loading}
-                data={data.text}
-              />
-              {/* Account select */}
-              <SelectInput
-                label=""
-                name="account"
-                size="small"
-                value={values.account}
-                options={accountsList}
-                sx={{ width: "220px" }}
-              />
-            </Box>
-            {/* Graph of portfolio value over time */}
-            <Graph
-              loading={loading}
-              data={data.graph}
-            />
-            {/* Table showing current shares */}
-            <PortfolioTable
-              loading={loading}
-              data={data.table}
-              financialStatusList={financialStatusList}
-              miningStatusList={miningStatusList}
-              resourcesList={resourcesList}
-              productsList={productsList}
-              recommendationList={recommendationList}
-            />
-            {/* Update data when form values change */}
-            <UpdateData
-              setLoading={setLoading}
-              setData={setData}
-            />
-          </Box>
-        )}
-      </Formik>
-    </Box>
+    <form>
+      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="flex-start" mb="-12px">
+        <ValueDisplay
+          loading={isLoading}
+          data={portfolioData}
+        />
+        <RHFSelect<Schema>
+          name="accountId"
+          control={control}
+          options={accountOptions}
+          onChange={() => queryClient.invalidateQueries({ queryKey: ['portfolioData'] })}
+          sx={{ minWidth: '180px', marginTop: '4px' }}
+        />
+      </Box>
+      <AreaChart
+        loading={isLoading}
+        data={portfolioData?.chart}
+        currency={portfolioData?.currency}
+        defaultRange={3}
+      />
+      <Tabs defaultValue="holdings" mt="10px" pb="25px">
+        <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" mb="18px">
+          <Tabs.List>
+            <Tabs.Trigger value="holdings">Holdings</Tabs.Trigger>
+            <Tabs.Trigger value="trades">Trades</Tabs.Trigger>
+            <Tabs.Trigger value="buyHistory">Buy History</Tabs.Trigger>
+            <Tabs.Trigger value="sellHistory">Sell History</Tabs.Trigger>
+          </Tabs.List>
+          <TableActions accountId={watch('accountId')} apiRefs={apiRefs} />
+        </Box>
+        <Tabs.Content value="holdings">
+          <HoldingsTable
+            apiRef={apiRefs.holdings}
+            rows={portfolioData?.holdings ?? []}
+          />
+        </Tabs.Content>
+        <Tabs.Content value="trades">
+          <TradesTable
+            apiRef={apiRefs.trades}
+            rows={portfolioData?.trades ?? []}
+          />
+        </Tabs.Content>
+        <Tabs.Content value="buyHistory">
+          <BuyHistoryTable
+            apiRef={apiRefs.buyHistory}
+            rows={portfolioData?.buyHistory ?? []}
+          />
+        </Tabs.Content>
+        <Tabs.Content value="sellHistory">
+          <SellHistoryTable
+            apiRef={apiRefs.sellHistory}
+            rows={portfolioData?.sellHistory ?? []}
+          />
+        </Tabs.Content>
+      </Tabs>
+    </form>
   );
 };
 

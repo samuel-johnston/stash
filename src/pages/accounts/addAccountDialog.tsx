@@ -1,114 +1,103 @@
-import { Dispatch, SetStateAction } from "react";
-import { enqueueSnackbar } from "notistack";
-import { Form, Formik } from "formik";
-import * as yup from "yup";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { enqueueSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-// Material UI
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import Button from "@mui/material/Button";
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid2';
 
-// Types
-import { Account } from "../../../electron/types";
+import DialogCloseButton from '@components/DialogCloseButton';
+import RHFTextField from '@components/RHFTextField';
 
 interface Props {
-  accountsList: Account[];
-  newAccountId: string;
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  setAccountsList: Dispatch<SetStateAction<Account[]>>;
+  close: () => void;
 }
 
-interface AddAccountFormValues {
-  name: string;
-  accountId: string;
-}
+const schema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Required' })
+    .refine(
+      async (name) => {
+        const accounts = await window.electronAPI.getData('accounts');
+        return !Array.from(accounts.values()).some((account) => account.name === name);
+      },
+      { message: 'Name already exists' },
+    ),
+});
 
-const AddAccountDialog = (props: Props) => {
-  const {
-    accountsList,
-    newAccountId,
-    open,
-    setOpen,
-    setAccountsList,
-  } = props;
+type Schema = z.infer<typeof schema>;
 
-  const initialValues: AddAccountFormValues = {
-    name: "",
-    accountId: newAccountId,
-  };
+const defaultValues: Schema = {
+  name: '',
+};
 
-  const validationSchema = yup.object().shape({
-    name: yup
-      .string()
-      .test("not-existing", "Name already exists", (value) => !accountsList.some((account) => account.name === value))
-      .required("Name can't be empty"),
+const AddAccountDialog = ({ open, close }: Props) => {
+  const queryClient = useQueryClient();
+
+  const { control, handleSubmit, reset } = useForm<Schema>({
+    mode: 'all',
+    resolver: zodResolver(schema),
+    defaultValues,
   });
 
-  const handleSubmit = async (values: AddAccountFormValues) => {
-    const updatedAccountsList = await window.electronAPI.createAccount(values.name, values.accountId);
-    setAccountsList(updatedAccountsList);
-    // Close dialog
-    setOpen(false);
-    // Show snackbar
-    enqueueSnackbar(`${values.name} successfully created!`, { variant: "success" });
+  const { mutateAsync: createAccount } = useMutation({
+    mutationFn: window.electronAPI.createAccount,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accountData'] });
+    },
+  });
+
+  const onClose = () => {
+    reset();
+    close();
+  };
+
+  const onSubmit = async (values: Schema) => {
+    await createAccount(values.name);
+    enqueueSnackbar(`${values.name} successfully created!`, { variant: 'success' });
+    onClose();
   };
 
   return (
-    <Dialog fullWidth maxWidth="md" open={open} onClose={() => setOpen(false)}>
-      <DialogTitle variant="h4" fontWeight={600} sx={{ paddingBottom: "0px" }}>
-        Add New Account
-      </DialogTitle>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ values, handleChange, touched, errors }) => (
-          <Form>
-            <DialogContent sx={{ pt: "10px", pb: "0px" }}>
-              {/* Account name field */}
-              <Typography variant="h5" fontWeight={500} mt="14px">
+    <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>
+          Add New Account
+          <DialogContentText sx={{ mt: '2px' }}>
+            Create a new account. Click save when you're done.
+          </DialogContentText>
+        </DialogTitle>
+        <DialogContent sx={{ mt: '6px' }}>
+          <Grid container columnSpacing={2}>
+            <Grid size={2} display="flex" alignItems="center" justifyContent="flex-end">
+              <Typography variant="h6">
                 Name
               </Typography>
-              <TextField
+            </Grid>
+            <Grid size={10}>
+              <RHFTextField<Schema>
                 fullWidth
-                size="small"
                 name="name"
-                placeholder="Account Name"
-                value={values.name}
-                onChange={handleChange}
-                sx={{ mt: "8px", ml: "-2px" }}
-                error={touched.name && Boolean(errors.name)}
-                helperText={touched.name && errors.name}
-              />
-              {/* Account id field */}
-              <Typography variant="h5" fontWeight={500} mt="20px">
-                Account ID
-              </Typography>
-              <TextField
-                disabled
-                fullWidth
                 size="small"
-                name="accountId"
-                value={values.accountId}
-                sx={{ mt: "8px", ml: "-2px" }}
+                control={control}
               />
-              <Typography fontSize={14} fontWeight={400} mt="6px" color="secondary">
-                This is the generated ID that will be assigned to your new account.
-              </Typography>
-            </DialogContent>
-            <DialogActions sx={{ pt: "4px" }}>
-              <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" variant="contained">Save</Button>
-            </DialogActions>
-          </Form>
-        )}
-      </Formik>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button type="submit" variant="contained">Save</Button>
+        </DialogActions>
+        <DialogCloseButton onClose={onClose} />
+      </form>
     </Dialog>
   );
 };

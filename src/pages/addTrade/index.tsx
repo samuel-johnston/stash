@@ -1,330 +1,171 @@
-import handleFormSubmit from "./handleFormSubmit";
-import { useEffect, useState } from "react";
-import { tokens } from "../../theme";
-import { Formik } from "formik";
-import * as yup from "yup";
-import dayjs from "dayjs";
+import { Location, useLocation } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { enqueueSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
-// Helper files
-import { cleanUpValidation, validateASXCode } from "./validation";
-import { AddTradeFormValues, initialValues } from "./formValues";
-import AutoUpdateUnitPrice from "./autoUpdateUnitPrice";
-import ShowAvailableUnits from "./showAvailableUnits";
-import PriceBreakdownHandler from "./priceBreakdown";
-import LoadBrokerage from "./loadBrokerage";
+import useTheme from '@mui/material/styles/useTheme';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid2';
+import Box from '@mui/material/Box';
 
-// Material UI
-import CircularProgress from "@mui/material/CircularProgress";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import useTheme from "@mui/material/styles/useTheme";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import RHFNumericTextField from '@components/RHFNumericTextField';
+import RHFDatePicker from '@components/RHFDatePicker';
+import RHFSelect from '@components/RHFSelect';
+import Header from '@components/Header';
 
-// Components
-import NumericTextField from "../../components/numericTextField";
-import DatePicker from "../../components/datePicker";
-import SelectInput from "../../components/select";
-import Header from "../../components/header";
+import useSecurityOptions from '@queries/useSecurityOptions';
+import useAccountOptions from '@queries/useAccountOptions';
 
-// Types
-import { Option, Settings } from "../../../electron/types";
+import { dayjsStringify } from '@utils';
+
+import { Schema, schema, defaultValues } from './schema';
+import PriceBreakdown from './PriceBreakdown';
+import QuantityInput from './QuantityInput';
+import PriceInput from './PriceInput';
+import TypeButton from './TypeButton';
+import RowInput from './RowInput';
 
 const AddTrade = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const isNonMobile = useMediaQuery("(min-width:800px)");
+  const { palette } = useTheme();
 
-  // Core data related states
-  const [settings, setSettings] = useState<Settings>({
-    unitPriceAutoFill: false,
-    gstPercent: "0",
-    brokerageAutoFill: "",
+  const location = useLocation() as Location<{ symbol: string }>;
+  const { symbol } = location.state || {};
+
+  const { control, handleSubmit, trigger, getValues, setValue } = useForm<Schema>({
+    mode: 'all',
+    criteriaMode: 'all',
+    resolver: zodResolver(schema),
+    defaultValues: {
+      ...defaultValues,
+      symbol: symbol ?? '',
+    },
   });
 
-  // ASX Code related states
-  const [loading, setLoading] = useState<boolean>(false);
-  const [companyName, setCompanyName] = useState<string>("");
-  const [unitPrice, setUnitPrice] = useState<string>(undefined);
+  const triggerQuantityValidation = () => {
+    if (getValues('quantity') !== undefined) {
+      trigger('quantity');
+    }
+  };
 
-  // Dropdown data states
-  const [asxCodeList, setAsxCodeList] = useState<Option[]>([]);
-  const [accountsList, setAccountsList] = useState<Option[]>([]);
+  const { data: securityOptions } = useSecurityOptions();
+  const { data: accountOptions } = useAccountOptions();
 
-  // Price breakdown box states
-  const [shareValue, setShareValue] = useState<number>(0);
-  const [brokerage, setBrokerage] = useState<number>(0);
-  const [gst, setGst] = useState<number>(0);
-  const [total, setTotal] = useState<number>(0);
-
-  // A helper function. Used to sort an array by label, alphabetically.
-  const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label);
-
-  // On page render, get dropdown data from API
   useEffect(() => {
-    let isMounted = true;
     (async () => {
-      const settings = await window.electronAPI.getData("settings");
-      const accounts = await window.electronAPI.getData("accounts");
-      const data = await window.electronAPI.getData("companies");
-      if (isMounted) {
-        setSettings(settings);
-        setAccountsList(accounts.map((element) => ({ label: element.name, accountId: element.accountId })).sort(byLabel));
-        setAsxCodeList(data.map((element) => ({ label: element.asxcode })).sort(byLabel));
+      const settings = await window.electronAPI.getData('settings');
+      if (settings.brokerageAutoFill !== undefined) {
+        setValue('brokerage', settings.brokerageAutoFill);
       }
     })();
-    // Clean up
-    return () => {
-      isMounted = false;
-      cleanUpValidation();
-    };
   }, []);
 
-  const validationSchema = () =>
-    yup.object().shape({
-      asxcode: yup
-        .object()
-        .nonNullable("Required")
-        .test("asxcode", "", validateASXCode(setCompanyName, setLoading, setUnitPrice)),
-      account: yup
-        .object()
-        .nonNullable("Required"),
-      date: yup
-        .date()
-        .typeError("Invalid Date")
-        .test("not-future", "Date cannot be in the future", (value) => dayjs().isAfter(value))
-        .required("Required"),
-      quantity: yup
-        .number()
-        .test("non-zero", "Quantity can't be 0", (value) => value !== 0)
-        .required("Requried"),
-      unitPrice: yup.number().required("Requried"),
-      brokerage: yup.number().required("Requried"),
-    });
+  const onSubmit = async (values: Schema) => {
+    // Convert Dayjs objects to strings (can't send Dayjs types over IPC)
+    const sendValues = { ...values, date: dayjsStringify(values.date) };
+    await window.electronAPI.addTrade(sendValues);
+    enqueueSnackbar(`Trade successfully added!`, { variant: 'success' });
+  };
 
   return (
-    <Box>
-      <Header title="Add Trade" subtitle="Record a new trade for an existing company" />
-      <Formik
-        onSubmit={(values: AddTradeFormValues) => handleFormSubmit(values, settings.gstPercent)}
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-      >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <Box
-              display="grid"
-              pb="30px"
-              gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-            >
-              {/* ASX Code Input */}
-              <SelectInput
-                capitaliseInput
-                label="ASX Code"
-                name="asxcode"
-                value={values.asxcode}
-                options={asxCodeList}
-                error={!!touched.asxcode && !!errors.asxcode}
-                helperText={touched.asxcode && errors.asxcode as string}
-                sx={{ gridColumn: `span ${isNonMobile ? 2 : 4}` }}
-              />
-              {/* Loading Icon */}
-              {loading && (
-                <CircularProgress
-                  color="inherit"
-                  size={22}
-                  sx={{
-                    mt: isNonMobile ? "15px" : "0px",
-                    ml: "10px",
-                    gridColumn: isNonMobile ? "span 2" : "span 4",
-                  }}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Header title="Add Trade" subtitle="Record a trade for a security" />
+      <Grid container columns={12} spacing={{ xs: 4, md: 6 }}>
+        <Grid
+          size={{ xs: 12, md: 7 }}
+          border={`1px solid ${palette.grey[500]}`}
+          borderRadius="10px"
+          p="30px"
+        >
+          <Stack rowGap="32px">
+            <RowInput
+              label="Security"
+              InputComponent={() => (
+                <RHFSelect<Schema>
+                  name="symbol"
+                  control={control}
+                  options={securityOptions}
+                  onChange={triggerQuantityValidation}
                 />
               )}
-              {/* Company Name */}
-              {companyName && (
-                <Typography
-                  display="flex"
-                  alignItems="center"
-                  variant="h5"
-                  fontWeight={300}
-                  color="white"
-                  ml="4px"
-                  sx={{
-                    gridColumn: isNonMobile ? "span 2" : "span 4",
-                  }}
-                >
-                  {companyName}
-                </Typography>
-              )}
-            </Box>
-            <Box
-              display="grid"
-              pb="16px"
-              gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-              sx={{
-                "& > div": {
-                  gridColumn: isNonMobile ? undefined : "span 4",
-                },
-              }}
-            >
-              {/* Details Header */}
-              <Typography variant="h4" ml="6px" gridColumn="span 4">
-                Details
-              </Typography>
-              {/* Account Input */}
-              <SelectInput
-                label="Account"
-                name="account"
-                value={values.account}
-                options={accountsList}
-                error={!!touched.account && !!errors.account}
-                helperText={touched.account && errors.account as string}
-                sx={{ gridColumn: "span 2" }}
-              />
-              {/* Date Input */}
-              <DatePicker
-                disableFuture
-                label="Date"
-                name="date"
-                value={values.date}
-                error={!!touched.date && !!errors.date}
-                helperText={touched.date && errors.date as string}
-                sx={{ gridColumn: "span 2" }}
-              />
-              {/* Type Buttons */}
-              <Button
-                variant={values.type === "BUY" ? "contained" : "outlined"}
-                color="success"
-                size="large"
-                onClick={() => handleChange({ target: { name: "type", value: "BUY" } })}
-                sx={{
-                  borderColor: theme.palette.success.main,
-                  gridColumn: isNonMobile ? "span 2" : "span 4",
-                  height: "50px",
-                }}
-              >
-                <Typography variant="h5" fontWeight={500}>BUY</Typography>
-              </Button>
-              <Button
-                variant={values.type === "SELL" ? "contained" : "outlined"}
-                color="error"
-                size="large"
-                onClick={() => handleChange({ target: { name: "type", value: "SELL" } })}
-                sx={{
-                  borderColor: theme.palette.error.main,
-                  gridColumn: isNonMobile ? "span 2" : "span 4",
-                  height: "50px",
-                }}
-              >
-                <Typography variant="h5" fontWeight={500}>SELL</Typography>
-              </Button>
-              {/* Show available units if type is SELL */}
-              <ShowAvailableUnits />
-              {/* Quantity Input */}
-              <NumericTextField
-                name="quantity"
-                label="Quantity"
-                value={values.quantity}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                error={!!touched.quantity && !!errors.quantity}
-                helperText={touched.quantity && errors.quantity}
-                sx={{ gridColumn: "span 4" }}
-              />
-              {/* Unit Price Input */}
-              <NumericTextField
-                adornment="currency"
-                name="unitPrice"
-                label="Unit Price"
-                value={values.unitPrice}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                error={!!touched.unitPrice && !!errors.unitPrice}
-                helperText={touched.unitPrice && errors.unitPrice}
-                sx={{ gridColumn: "span 4" }}
-              />
-              {/* Brokerage Input */}
-              <NumericTextField
-                adornment="currency"
-                name="brokerage"
-                label="Brokerage"
-                value={values.brokerage}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                error={!!touched.brokerage && !!errors.brokerage}
-                helperText={touched.brokerage && errors.brokerage}
-                sx={{ gridColumn: "span 4" }}
-              />
-              {/* Price Breakdown Box */}
-              <Box display="flex" flexDirection="column" gridColumn="span 4">
-                <Divider />
-                {/* Share Value */}
-                <Box display="flex" justifyContent="space-between" p="16px 10px 12px 10px">
-                  <Typography variant="h5">
-                    Shares
-                    {" "}
-                    <span style={{ color: colors.grey[300] }}>
-                      (
-                      {values.quantity ? values.quantity : 0}
-                      {" "}
-                      x $
-                      {values.unitPrice ? values.unitPrice : 0}
-                      )
-                    </span>
-                  </Typography>
-                  <Typography variant="h5">{"$" + shareValue.toFixed(2)}</Typography>
-                </Box>
-                {/* Brokerage */}
-                <Box display="flex" justifyContent="space-between" p="0px 10px 12px 10px">
-                  <Typography variant="h5">Brokerage</Typography>
-                  <Typography variant="h5">{(brokerage < 0 ? "-$" : "$") + Math.abs(brokerage).toFixed(2)}</Typography>
-                </Box>
-                {/* GST */}
-                <Box display="flex" justifyContent="space-between" p="0px 10px 16px 10px">
-                  <Typography variant="h5">
-                    GST
-                    {" "}
-                    <span style={{ color: colors.grey[300] }}>
-                      (
-                      {settings.gstPercent}
-                      %)
-                    </span>
-                  </Typography>
-                  <Typography variant="h5">{(gst < 0 ? "-$" : "$") + Math.abs(gst).toFixed(2)}</Typography>
-                </Box>
-                <Divider />
-                {/* Total */}
-                <Box display="flex" justifyContent="space-between" p="12px 10px 12px 10px">
-                  <Typography variant="h5">Total</Typography>
-                  <Typography variant="h5">{(total < 0 ? "-$" : "$") + Math.abs(total).toFixed(2)}</Typography>
-                </Box>
-                <Divider />
-              </Box>
-            </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" variant="contained">
-                Confirm
-              </Button>
-            </Box>
-            {/* Calculate price breakdown using form values */}
-            <PriceBreakdownHandler
-              gstPercent={settings.gstPercent}
-              setShareValue={setShareValue}
-              setBrokerage={setBrokerage}
-              setGst={setGst}
-              setTotal={setTotal}
             />
-            {/* Load brokerage from settings in storage */}
-            <LoadBrokerage />
-            {/* Automatically set unit price using current market price */}
-            {settings.unitPriceAutoFill && <AutoUpdateUnitPrice unitPrice={unitPrice} />}
-          </form>
-        )}
-      </Formik>
-    </Box>
+            <RowInput
+              label="Account"
+              InputComponent={() => (
+                <RHFSelect<Schema>
+                  name="accountId"
+                  control={control}
+                  options={accountOptions}
+                  onChange={triggerQuantityValidation}
+                />
+              )}
+            />
+            <RowInput
+              label="Type"
+              InputComponent={() => (
+                <Box display="flex" flexDirection="row" justifyContent="space-between" columnGap="24px">
+                  <TypeButton<Schema>
+                    name="type"
+                    control={control}
+                    value="BUY"
+                    onChange={triggerQuantityValidation}
+                  />
+                  <TypeButton<Schema>
+                    name="type"
+                    control={control}
+                    value="SELL"
+                    onChange={triggerQuantityValidation}
+                  />
+                </Box>
+              )}
+            />
+            <RowInput
+              label="Date"
+              InputComponent={() => (
+                <RHFDatePicker<Schema>
+                  disableFuture
+                  name="date"
+                  control={control}
+                />
+              )}
+            />
+            <QuantityInput control={control} />
+            <PriceInput control={control} />
+            <RowInput
+              label="Brokerage"
+              InputComponent={() => (
+                <RHFNumericTextField<Schema>
+                  fullWidth
+                  size="small"
+                  name="brokerage"
+                  control={control}
+                  allowNegative={false}
+                  startAdornment="$"
+                />
+              )}
+            />
+          </Stack>
+        </Grid>
+        <Grid size={{ xs: 12, md: 5 }} mb="24px">
+          <Stack
+            rowGap="20px"
+            border={`1px solid ${palette.grey[500]}`}
+            borderRadius="10px"
+            p="30px"
+          >
+            <Typography variant="h4" fontWeight={400}>
+              Details
+            </Typography>
+            <PriceBreakdown control={control} />
+            <Button type="submit" variant="contained" sx={{ mt: '6px' }}>
+              Confirm
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

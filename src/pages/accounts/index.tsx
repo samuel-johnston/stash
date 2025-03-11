@@ -1,171 +1,145 @@
-import { tokens } from "../../theme";
-import { useEffect, useState } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
-// Helper files
-import RenameAccountDialog from "./renameAccountDialog";
-import DeleteAccountDialog from "./deleteAccountDialog";
-import AddAccountDialog from "./addAccountDialog";
+import useTheme from '@mui/material/styles/useTheme';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid2';
+import Box from '@mui/material/Box';
 
-// Material UI
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import useTheme from "@mui/material/styles/useTheme";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import LoadingScreen from '@components/LoadingScreen';
+import ErrorScreen from '@components/ErrorScreen';
 
-// Components
-import Header from "../../components/header";
-
-// Types
-import { Account } from "../../../electron/types";
+import EditAccountDialog, { Account } from './EditAccountDialog';
+import AddAccountDialog from './AddAccountDialog';
+import GridItem from './GridItem';
 
 const Accounts = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
+  const { palette } = useTheme();
 
-  // On page render, get accounts from API
-  const [accountsList, setAccountsList] = useState<Account[]>([]);
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      const accounts = await window.electronAPI.getData("accounts");
-      if (isMounted) setAccountsList(accounts);
-    })();
-    // Clean up
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // Add account dialog states
-  const [openAddAccountDialog, setOpenAddAccountDialog] = useState<boolean>(false);
-  const [newAccountId, setNewAccountId] = useState<string>("");
-
-  // Rename account dialog states
-  const [openRenameAccountDialog, setOpenRenameAccountDialog] = useState<boolean>(false);
-  const [accountToRename, setAccountToRename] = useState<Account>({
-    name: "",
-    accountId: "",
-    created: "",
+  const { data: accountData, error, status } = useQuery({
+    queryKey: ['accountData'],
+    queryFn: window.electronAPI.getAccountData,
   });
 
-  // Delete account dialog states
-  const [openDeleteAccountDialog, setOpenDeleteAccountDialog] = useState<boolean>(false);
-  const [accountToDelete, setAccountToDelete] = useState<Account>({
-    name: "",
-    accountId: "",
-    created: "",
+  const [openAddAccountDialog, setOpenAddAccountDialog] = useState(false);
+  const [openEditAccountDialog, setOpenEditAccountDialog] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<Account>({
+    name: '',
+    accountId: '',
   });
+
+  if (status === 'pending') return <LoadingScreen />;
+  if (status === 'error') return <ErrorScreen message={error.message} />;
 
   return (
     <Box>
-      {/* Dialogs */}
       <AddAccountDialog
-        accountsList={accountsList}
-        setAccountsList={setAccountsList}
-        newAccountId={newAccountId}
         open={openAddAccountDialog}
-        setOpen={setOpenAddAccountDialog}
+        close={() => setOpenAddAccountDialog(false)}
       />
-      <RenameAccountDialog
-        accountsList={accountsList}
-        accountToRename={accountToRename}
-        setAccountsList={setAccountsList}
-        open={openRenameAccountDialog}
-        setOpen={setOpenRenameAccountDialog}
+      <EditAccountDialog
+        open={openEditAccountDialog}
+        close={() => setOpenEditAccountDialog(false)}
+        selectedAccount={selectedAccount}
       />
-      <DeleteAccountDialog
-        accountToDelete={accountToDelete}
-        setAccountsList={setAccountsList}
-        open={openDeleteAccountDialog}
-        setOpen={setOpenDeleteAccountDialog}
-      />
-      <Header
-        title="Accounts"
-        subtitle="Add, edit or remove accounts"
-      />
-      <Box
-        display="grid"
-        pb="30px"
-        gap="30px"
-        gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-      >
-        {accountsList.map((account) => {
-          return (
-            <Box
-              key={account.name}
-              border="1px solid"
-              borderColor={colors.grey[500]}
-              borderRadius={2}
-              gridColumn="span 4"
+      <Stack rowGap="25px">
+        {accountData!.map((account) => (
+          <Stack
+            key={account.accountId}
+            divider={<Divider />}
+            border={`1px solid ${palette.grey[500]}`}
+            borderRadius="8px"
+          >
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="flex-start"
               p="12px"
             >
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="flex-start"
-              >
-                <Box>
-                  <Typography variant="h4" fontWeight={500}>
-                    {account.name}
-                  </Typography>
-                  <Typography fontWeight={400} color={colors.grey[400]}>
-                    {"Account ID: " + account.accountId}
-                  </Typography>
-                  <Typography fontWeight={400} color={colors.grey[400]} mt="-2px">
-                    {"Created: " + account.created}
-                  </Typography>
-                </Box>
-                <ButtonGroup sx={{ m: "-3px" }}>
-                  {/* Rename account button */}
-                  <Button
-                    variant="text"
-                    sx={{ height: "26px" }}
-                    onClick={() => {
-                      setAccountToRename(account);
-                      setOpenRenameAccountDialog(true);
-                    }}
-                  >
-                    <EditRoundedIcon />
-                  </Button>
-                  {/* Delete account button */}
-                  <Button
-                    variant="text"
-                    sx={{ height: "26px" }}
-                    onClick={() => {
-                      setAccountToDelete(account);
-                      setOpenDeleteAccountDialog(true);
-                    }}
-                  >
-                    <DeleteRoundedIcon />
-                  </Button>
-                </ButtonGroup>
-              </Box>
-            </Box>
-          );
-        })}
-        {/* Add new account button */}
-        <Box
-          border="1px solid"
-          borderColor={colors.grey[500]}
-          borderRadius={2}
-          gridColumn="span 4"
+              <Stack ml="4px" mt="-4px">
+                <Typography fontSize={26} fontWeight={400}>
+                  {account.name}
+                </Typography>
+                <Typography fontSize={14} color="secondary">
+                  {account.accountId}
+                </Typography>
+              </Stack>
+              <Stack direction="row" columnGap="10px">
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    setSelectedAccount({
+                      name: account.name,
+                      accountId: account.accountId,
+                    });
+                    setOpenEditAccountDialog(true);
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button size="small" variant="contained">
+                  Holdings
+                </Button>
+              </Stack>
+            </Stack>
+            <Grid
+              container
+              rowSpacing={1}
+              columnSpacing={4}
+              columns={{ xs: 6, sm: 6, md: 12, lg: 12, xl: 12 }}
+              p="16px"
+              mb="2px"
+            >
+              <GridItem
+                showTriangle
+                label="Today's Change"
+                value={account.todayChange}
+                percent={account.todayChangePerc ?? undefined}
+                order={{ sm: 1, md: 1 }}
+              />
+              <GridItem
+                label="Market Value"
+                value={account.marketValue}
+                style="currency"
+                currency={account.currency}
+                order={{ sm: 4, md: 2 }}
+              />
+              <GridItem
+                showTriangle
+                label="Unrealised Profit/Loss"
+                value={account.unrealisedProfitOrLoss}
+                percent={account.unrealisedProfitOrLossPerc ?? undefined}
+                order={{ sm: 2, md: 3 }}
+              />
+              <GridItem
+                label="Total Cost"
+                value={account.totalCost}
+                style="currency"
+                currency={account.currency}
+                order={{ sm: 5, md: 4 }}
+              />
+              <GridItem
+                showTriangle
+                label="Realised Profit/Loss"
+                value={account.realisedProfitOrLoss}
+                percent={account.realisedProfitOrLossPerc ?? undefined}
+                order={{ sm: 3, md: 5 }}
+              />
+            </Grid>
+          </Stack>
+        ))}
+        <Button
+          disableTouchRipple
+          onClick={() => setOpenAddAccountDialog(true)}
+          sx={{ border: `1px solid ${palette.grey[500]}` }}
         >
-          <Button
-            fullWidth
-            variant="text"
-            sx={{ height: "74px", borderRadius: "6.5px" }}
-            onClick={async () => {
-              setNewAccountId(await window.electronAPI.generateAccountId());
-              setOpenAddAccountDialog(true);
-            }}
-          >
-            <Typography fontSize={50} mt="-6px">+</Typography>
-          </Button>
-        </Box>
-      </Box>
+          Add New Account
+        </Button>
+      </Stack>
     </Box>
   );
 };

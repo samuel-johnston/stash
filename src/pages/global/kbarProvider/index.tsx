@@ -1,130 +1,81 @@
-import { ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { tokens } from "../../../theme";
+import { ReactNode } from 'react';
 import {
-  KBarProvider,
+  KBarAnimator,
   KBarPortal,
   KBarPositioner,
-  KBarAnimator,
+  KBarProvider,
   KBarSearch,
-  Action,
-  createAction,
-  ActionImpl,
-  useRegisterActions,
-} from "kbar";
+} from 'kbar';
 
-// Material UI
-import useTheme from "@mui/material/styles/useTheme";
-import PersonIcon from "@mui/icons-material/Person";
+import useTheme from '@mui/material/styles/useTheme';
+import AddIcon from '@mui/icons-material/Add';
+import Divider from '@mui/material/Divider';
 
-// Helper files
-import RenderResults from "./renderResults";
+import useExistingSecurityActions from './useExistingSecurityActions';
+import useNewSecurityActions from './useNewSecurityActions';
+import Results from './results';
 
-interface ProviderProps {
-  children: ReactNode;
-}
+export const newSecurityActionId = 'add-new-security-action';
 
-interface PositionerProps {
-  loadActions: () => Promise<void>;
-}
+const CommandBar = () => {
+  const { palette } = useTheme();
 
-const Positioner = (props: PositionerProps) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const { loadActions } = props;
+  const { isLoading: existingLoading } = useExistingSecurityActions();
+  const { isLoading: newLoading } = useNewSecurityActions();
+
+  const isLoading = existingLoading || newLoading;
 
   // Backdrop styles
   const positionerStyle = {
-    background: "rgba(0, 0, 0, 0.5)",
+    background: 'rgba(0, 0, 0, 0.5)',
     zIndex: 1300,
   };
 
   // Paper styles
   const animatorStyle = {
-    maxWidth: "600px",
-    width: "100%",
-    background: colors.grey[900],
-    borderRadius: "8px",
-    border: `1px solid ${colors.grey[600]}`,
-    overflow: "hidden",
+    maxWidth: '600px',
+    width: '100%',
+    background: palette.grey[900],
+    borderRadius: '8px',
+    border: `1px solid ${palette.grey[600]}`,
+    overflow: 'hidden',
   };
 
   // Search bar styles
   const searchStyle = {
-    padding: "12px 16px",
-    fontSize: "16px",
-    width: "100%",
-    outline: "none",
-    border: "none",
-    background: "transparent",
-    color: colors.grey[100],
-    fontFamily: "Geist Variable, Arial, sans-serif",
+    padding: '14px 16px',
+    fontSize: '16px',
+    width: '100%',
+    outline: 'none',
+    border: 'none',
+    background: 'transparent',
+    color: palette.grey[100],
+    fontFamily: 'Geist Variable, Arial, sans-serif',
   };
-
-  // Reload actions (triggered when kbar is opened)
-  useEffect(() => {
-    loadActions();
-  }, []);
-
-  return (
-    <KBarPositioner style={positionerStyle}>
-      <KBarAnimator style={animatorStyle}>
-        <KBarSearch style={searchStyle} defaultPlaceholder="Search..." />
-        <RenderResults />
-      </KBarAnimator>
-    </KBarPositioner>
-  );
-};
-
-const Portal = () => {
-  const navigate = useNavigate();
-  const [actions, setActions] = useState<Action[]>([]);
-
-  const loadActions = async () => {
-    const [companies, accounts] = await Promise.all([
-      window.electronAPI.getData("companies"),
-      window.electronAPI.getData("accounts"),
-    ]);
-
-    const companyActions = companies.map((company) => createAction({
-      section: "Companies",
-      name: company.asxcode,
-      subtitle: company.name,
-      perform: (currentActionImpl: ActionImpl) => console.log(currentActionImpl.name),
-    }));
-
-    const accountActions = accounts.map((account) => createAction({
-      section: "Accounts",
-      name: account.name,
-      icon: <PersonIcon />,
-      perform: () => navigate("/accounts"),
-    }));
-
-    const newActions = [...companyActions, ...accountActions]
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    setActions(newActions);
-  };
-
-  // Initially load actions (only triggered once when app starts)
-  useEffect(() => {
-    loadActions();
-  }, []);
-
-  useRegisterActions(actions, [actions]);
 
   return (
     <KBarPortal>
-      <Positioner loadActions={loadActions} />
+      <KBarPositioner style={positionerStyle}>
+        <KBarAnimator style={animatorStyle}>
+          <KBarSearch style={searchStyle} defaultPlaceholder="Search your securities..." />
+          <Divider sx={{ borderColor: palette.grey[800] }} />
+          <Results loading={isLoading} />
+        </KBarAnimator>
+      </KBarPositioner>
     </KBarPortal>
   );
 };
 
-const Provider = (props: ProviderProps) => {
-  const { children } = props;
+const Provider = ({ children }: { children: ReactNode }) => {
+  const initialActions = [{
+    id: newSecurityActionId,
+    name: 'Add a new security...',
+    icon: <AddIcon />,
+  }];
+
   return (
-    <KBarProvider>
-      <Portal />
+    <KBarProvider actions={initialActions}>
+      <CommandBar />
       {children}
     </KBarProvider>
   );
