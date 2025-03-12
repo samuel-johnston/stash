@@ -10,6 +10,7 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 
 import RHFNumericTextField from '@components/RHFNumericTextField';
+import RHFTextField from '@components/RHFTextField';
 import Header from '@components/Header';
 
 import useStoragePath from '@queries/useStoragePath';
@@ -20,7 +21,6 @@ import { Settings } from '@types';
 import { Schema, schema, defaultValues } from './schema';
 import RowLabel from './RowLabel';
 import Row from './Row';
-import RHFTextField from '@components/RHFTextField';
 
 const Settings = () => {
   const { palette } = useTheme();

@@ -13,7 +13,7 @@ import Divider from '@mui/material/Divider';
 
 import useExistingSecurityActions from './useExistingSecurityActions';
 import useNewSecurityActions from './useNewSecurityActions';
-import Results from './results';
+import Results from './Results';
 
 export const newSecurityActionId = 'add-new-security-action';
 
