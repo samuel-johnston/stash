@@ -65,7 +65,13 @@ const Settings = () => {
           <Button
             variant="outlined"
             onClick={window.electronAPI.openStoragePath}
-            sx={{ width: 130 }}
+            sx={{
+              width: 130,
+              borderColor: palette.grey[500],
+              '&:hover': {
+                borderColor: palette.grey[100],
+              },
+            }}
           >
             Open Location
           </Button>
