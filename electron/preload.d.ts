@@ -1,4 +1,4 @@
-import * as api from "./api";
+import * as api from './api';
 
 declare global {
   interface Window {

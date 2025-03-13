@@ -1,174 +1,136 @@
-import { useEffect, useState } from "react";
-import { Formik } from "formik";
-import * as yup from "yup";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { enqueueSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
 
-// Helper files
-import LoadSettings from "./loadSettings";
-import RowLabel from "./rowLabel";
+import useTheme from '@mui/material/styles/useTheme';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 
-// Material UI
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
-import Box from "@mui/material/Box";
+import RHFNumericTextField from '@components/RHFNumericTextField';
+import RHFTextField from '@components/RHFTextField';
+import Header from '@components/Header';
 
-// Components
-import NumericTextField from "../../components/numericTextField";
-import Header from "../../components/header";
+import useStoragePath from '@queries/useStoragePath';
+import useSettings from '@queries/useSettings';
 
-// Types
-import { Settings } from "../../../electron/types";
-import { enqueueSnackbar } from "notistack";
+import { Settings } from '@types';
+
+import { Schema, schema, defaultValues } from './schema';
+import RowLabel from './RowLabel';
+import Row from './Row';
 
 const Settings = () => {
-  const [storagePath, setStoragePath] = useState<string>("");
+  const { palette } = useTheme();
+  const queryClient = useQueryClient();
 
-  // On page render, get storage path from API
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      const path = await window.electronAPI.getStoragePath();
-      if (isMounted) setStoragePath(path);
-    })();
-    // Clean up
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { data: storagePath, isLoading: storagePathLoading } = useStoragePath();
+  const { data: settings } = useSettings();
 
-  const initialValues: Settings = {
-    unitPriceAutoFill: true,
-    gstPercent: "",
-    brokerageAutoFill: "",
+  const { control, handleSubmit } = useForm<Schema>({
+    mode: 'all',
+    resolver: zodResolver(schema),
+    defaultValues,
+    values: settings,
+  });
+
+  const { mutateAsync: saveSettings } = useMutation({
+    mutationFn: async (values: Schema) => window.electronAPI.setData('settings', values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+    },
+  });
+
+  const onSubmit = async (values: Schema) => {
+    await saveSettings(values);
+    enqueueSnackbar('Successfully saved!', { variant: 'success' });
   };
 
-  const validationSchema = () =>
-    yup.object().shape({
-      gstPercent: yup.number().typeError("Invalid Type").required("Required"),
-    });
+  const StyledDivider = () => <Divider sx={{ borderColor: palette.grey[800] }} />;
 
   return (
-    <Box>
-      <Formik
-        onSubmit={async (values: Settings) => {
-          await window.electronAPI.setData("settings", values);
-          enqueueSnackbar("Successfully saved!", { variant: "success" });
-        }}
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-      >
-        {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            {/* Load settings from storage */}
-            <LoadSettings />
-            <Header title="Settings" subtitle="Manage application settings" />
-            {/* STORAGE */}
-            <Typography variant="h4" m="0px 0px 10px 0px">
-              Storage
-            </Typography>
-            <Divider />
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              m="12px 6px 0px 0px"
-            >
-              {/* Left Side */}
-              <RowLabel title="Storage Location" subtitle={storagePath} />
-              {/* Right Side */}
-              <Box>
-                <Button
-                  variant="outlined"
-                  onClick={() => window.electronAPI.openStoragePath()}
-                  sx={{ width: 130 }}
-                >
-                  Open Location
-                </Button>
-              </Box>
-            </Box>
-            {/* BUY SHARES */}
-            <Typography variant="h4" m="30px 0px 10px 0px">
-              Buy Shares
-            </Typography>
-            <Divider />
-            {/* UNIT COST AUTO FILL */}
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              m="12px 6px 0px 0px"
-            >
-              {/* Left Side */}
-              <RowLabel
-                title="Unit Price Auto Fill"
-                subtitle="Automatically prefill forms using the current share price"
-              />
-              {/* Right Side */}
-              <Switch
-                name="unitPriceAutoFill"
-                checked={values.unitPriceAutoFill}
-                onChange={handleChange}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            </Box>
-            {/* GST PERCENT */}
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              m="12px 6px 0px 0px"
-            >
-              {/* Left Side */}
-              <RowLabel
-                title="GST Percentage"
-                subtitle="% of brokerage used to calculate GST"
-              />
-              {/* Right Side */}
-              <NumericTextField
-                adornment="percent"
-                name="gstPercent"
-                size="small"
-                value={values.gstPercent}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                error={!!touched.gstPercent && !!errors.gstPercent}
-                sx={{ width: 130 }}
-              />
-            </Box>
-            {/* BROKERAGE AUTO FILL */}
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              m="12px 6px 0px 0px"
-            >
-              {/* Left Side */}
-              <RowLabel
-                title="Brokerage Auto Fill"
-                subtitle="Automatically prefill forms with this brokerage"
-              />
-              {/* Right Side */}
-              <NumericTextField
-                adornment="currency"
-                name="brokerageAutoFill"
-                size="small"
-                value={values.brokerageAutoFill}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                error={!!touched.brokerageAutoFill && !!errors.brokerageAutoFill}
-                sx={{ width: 130 }}
-              />
-            </Box>
-            <Box display="flex" justifyContent="end" mt="20px" mr="6px">
-              <Button type="submit" variant="contained" sx={{ width: 130 }}>
-                Save Changes
-              </Button>
-            </Box>
-          </form>
-        )}
-      </Formik>
-    </Box>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Header title="Settings" subtitle="Manage application settings" />
+      <StyledDivider />
+      <Stack divider={<StyledDivider />}>
+        <Row>
+          <RowLabel
+            title="Storage Location"
+            subtitle={storagePath}
+            loading={storagePathLoading}
+            skeletonWidth={440}
+          />
+          <Button
+            variant="outlined"
+            onClick={window.electronAPI.openStoragePath}
+            sx={{
+              width: 130,
+              borderColor: palette.grey[500],
+              '&:hover': {
+                borderColor: palette.grey[100],
+              },
+            }}
+          >
+            Open Location
+          </Button>
+        </Row>
+        <Row>
+          <RowLabel
+            title="Currency"
+            subtitle="Show prices and values using this currency"
+          />
+          <RHFTextField<Schema>
+            name="currency"
+            control={control}
+            size="small"
+            sx={{ width: 130 }}
+            slotProps={{
+              htmlInput: {
+                style: {
+                  textTransform: 'uppercase',
+                },
+              },
+            }}
+          />
+        </Row>
+        <Row>
+          <RowLabel
+            title="GST Percentage"
+            subtitle="% of brokerage used to calculate GST"
+          />
+          <RHFNumericTextField<Schema>
+            name="gstPercent"
+            control={control}
+            size="small"
+            endAdornment="%"
+            allowNegative={false}
+            sx={{ width: 130 }}
+          />
+        </Row>
+        <Row>
+          <RowLabel
+            title="Brokerage Auto Fill"
+            subtitle="Automatically prefill trades with this brokerage"
+          />
+          <RHFNumericTextField<Schema>
+            name="brokerageAutoFill"
+            control={control}
+            size="small"
+            startAdornment="$"
+            allowNegative={false}
+            sx={{ width: 130 }}
+          />
+        </Row>
+      </Stack>
+      <StyledDivider />
+      <Box display="flex" justifyContent="end" mt="30px">
+        <Button type="submit" variant="contained" sx={{ width: 130 }}>
+          Save Changes
+        </Button>
+      </Box>
+    </form>
   );
 };
 

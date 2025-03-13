@@ -1,22 +1,33 @@
-import { AddCompanyValues, AddTradeValues, PortfolioFilterValues } from "./api";
-import { contextBridge, ipcRenderer } from "electron";
-import { Key } from "./types";
+import { contextBridge, ipcRenderer } from 'electron';
+import { Account, PortfolioFilterValues, SecurityOption } from './types';
+import { Data, TradeData } from './api';
 
-contextBridge.exposeInMainWorld("electronAPI", {
-  getData: (key: Key) => ipcRenderer.invoke("getData", key),
-  setData: (key: Key, data: object) => ipcRenderer.invoke("setData", key, data),
-  getStoragePath: () => ipcRenderer.invoke("getStoragePath"),
-  openStoragePath: () => ipcRenderer.invoke("openStoragePath"),
-  getVersion: () => ipcRenderer.invoke("getVersion"),
-  quickValidateASXCode: (asxcode: string) => ipcRenderer.invoke("quickValidateASXCode", asxcode),
-  validateASXCode: (asxcode: string, existing: boolean) => ipcRenderer.invoke("validateASXCode", asxcode, existing),
-  addCompany: (values: AddCompanyValues) => ipcRenderer.invoke("addCompany", values),
-  availableShares: (asxcode: string, accountId: string) => ipcRenderer.invoke("availableShares", asxcode, accountId),
-  buyShare: (values: AddTradeValues, gstPercent: string) => ipcRenderer.invoke("buyShare", values, gstPercent),
-  sellShare: (values: AddTradeValues, gstPercent: string) => ipcRenderer.invoke("sellShare", values, gstPercent),
-  getPortfolioData: (filterValues: PortfolioFilterValues) => ipcRenderer.invoke("getPortfolioData", filterValues),
-  generateAccountId: () => ipcRenderer.invoke("generateAccountId"),
-  createAccount: (name: string, accountId: string) => ipcRenderer.invoke("createAccount", name, accountId),
-  renameAccount: (newName: string, accountId: string) => ipcRenderer.invoke("renameAccount", newName, accountId),
-  deleteAccount: (accountId: string) => ipcRenderer.invoke("deleteAccount", accountId),
+contextBridge.exposeInMainWorld('electronAPI', {
+  // api/accounts.ts
+  createAccount: (name: string) => ipcRenderer.invoke('createAccount', name),
+  renameAccount: (account: Account) => ipcRenderer.invoke('renameAccount', account),
+  deleteAccount: (accountId: string) => ipcRenderer.invoke('deleteAccount', accountId),
+  getAccountData: () => ipcRenderer.invoke('getAccountData'),
+
+  // api/portfolio.ts
+  getPortfolioData: (values: PortfolioFilterValues) => ipcRenderer.invoke('getPortfolioData', values),
+
+  // api/securities.ts
+  searchSecurities: (query: string) => ipcRenderer.invoke('searchSecurities', query),
+  getAddSecurityData: () => ipcRenderer.invoke('getAddSecurityData'),
+  addSecurity: (data: SecurityOption) => ipcRenderer.invoke('addSecurity', data),
+
+  // api/storage.ts
+  getData: (key: keyof Omit<Data, 'historicals' | 'exchangeRates'>) => ipcRenderer.invoke('getData', key),
+  setData: (key: keyof Data, data: object) => ipcRenderer.invoke('setData', key, data),
+  getStoragePath: () => ipcRenderer.invoke('getStoragePath'),
+  openStoragePath: () => ipcRenderer.invoke('openStoragePath'),
+  getVersion: () => ipcRenderer.invoke('getVersion'),
+  getHistoricalData: (symbols: string[]) => ipcRenderer.invoke('getHistoricalData', symbols),
+  getExchangeRateData: (currencies: string[]) => ipcRenderer.invoke('getExchangeRateData', currencies),
+
+  // api/trades.ts
+  lastPrice: (symbol: string) => ipcRenderer.invoke('lastPrice', symbol),
+  availableUnits: (symbol: string, accountId: string) => ipcRenderer.invoke('availableUnits', symbol, accountId),
+  addTrade: (data: TradeData) => ipcRenderer.invoke('addTrade', data),
 });

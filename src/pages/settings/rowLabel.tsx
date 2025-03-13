@@ -1,35 +1,30 @@
-import Typography from "@mui/material/Typography";
-import Skeleton from "@mui/material/Skeleton";
-import Box from "@mui/material/Box";
+import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
+import Box from '@mui/material/Box';
 
-interface Props {
+interface RowLabelProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
+  loading?: boolean;
+  skeletonWidth?: number;
 }
 
-/**
- * A helper function that returns a skeleton component with the given width.
- * @param width How many pixels wide
- */
-const skeleton = (width: number) => {
-  return (
-    <Skeleton
-      width={width}
-      animation="wave"
-      sx={{ animationDuration: "0.8s" }}
-    />
-  );
-};
-
-const RowLabel = (props: Props) => {
-  const { title, subtitle } = props;
+const RowLabel = ({ title, subtitle, loading, skeletonWidth }: RowLabelProps) => {
   return (
     <Box>
-      <Typography variant="h6" fontWeight={400} color="primary">
+      <Typography variant="h5" fontWeight={400} color="primary">
         {title}
       </Typography>
       <Typography variant="h6" fontWeight={400} color="secondary">
-        {subtitle === "" ? skeleton(440) : subtitle}
+        {loading
+          ? (
+              <Skeleton
+                width={skeletonWidth ?? 100}
+                animation="wave"
+                sx={{ animationDuration: '0.8s' }}
+              />
+            )
+          : subtitle}
       </Typography>
     </Box>
   );

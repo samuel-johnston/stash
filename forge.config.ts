@@ -1,53 +1,60 @@
-import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
-import type { ForgeConfig } from "@electron-forge/shared-types";
-import { WebpackPlugin } from "@electron-forge/plugin-webpack";
-import { rendererConfig } from "./webpack/webpack.renderer";
-import { mainConfig } from "./webpack/webpack.main";
-import path from "path";
+import type { ForgeConfig } from '@electron-forge/shared-types';
+import { VitePlugin } from '@electron-forge/plugin-vite';
+import { FusesPlugin } from '@electron-forge/plugin-fuses';
+import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import path from 'path';
 
 const config: ForgeConfig = {
   packagerConfig: {
-    name: "Stash",
+    name: 'Stash Investment Tracker',
     asar: true,
-    icon: "./src/assets/icons/app_icon",
-    extraResource: [
-      "./src/assets/data",
-    ],
+    icon: './src/assets/icons/app_icon',
   },
   makers: [
     {
-      name: "@electron-forge/maker-squirrel",
+      name: '@electron-forge/maker-squirrel',
       config: {
-        iconUrl: path.join(__dirname, "/src/assets/icons/installer_icon.ico"),
-        setupIcon: path.join(__dirname, "/src/assets/icons/installer_icon.ico"),
+        iconUrl: path.join(__dirname, '/src/assets/icons/installer_icon.ico'),
+        setupIcon: path.join(__dirname, '/src/assets/icons/installer_icon.ico'),
         skipUpdateIcon: true,
       },
     },
     {
-      name: "@electron-forge/maker-dmg",
+      name: '@electron-forge/maker-dmg',
       config: {
-        icon: path.join(__dirname, "/src/assets/icons/installer_icon.icns"),
+        icon: path.join(__dirname, '/src/assets/icons/installer_icon.icns'),
       },
     },
   ],
   plugins: [
-    new AutoUnpackNativesPlugin({}),
-    new WebpackPlugin({
-      mainConfig,
-      devContentSecurityPolicy: "img-src 'self' https://flagcdn.com",
-      renderer: {
-        config: rendererConfig,
-        entryPoints: [
-          {
-            html: "./src/index.html",
-            js: "./src/renderer.tsx",
-            name: "main_window",
-            preload: {
-              js: "./electron/preload.ts",
-            },
-          },
-        ],
-      },
+    new VitePlugin({
+      build: [
+        {
+          entry: 'electron/main.ts',
+          config: 'vite.config.ts',
+          target: 'main',
+        },
+        {
+          entry: 'electron/preload.ts',
+          config: 'vite.config.ts',
+          target: 'preload',
+        },
+      ],
+      renderer: [
+        {
+          name: 'main_window',
+          config: 'vite.config.ts',
+        },
+      ],
+    }),
+    new FusesPlugin({
+      version: FuseVersion.V1,
+      [FuseV1Options.RunAsNode]: false,
+      [FuseV1Options.EnableCookieEncryption]: true,
+      [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+      [FuseV1Options.EnableNodeCliInspectArguments]: false,
+      [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
+      [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
 };
