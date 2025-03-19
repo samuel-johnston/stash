@@ -46,19 +46,27 @@ const data: Data = {
   },
 };
 
-// Keys which have a `Map` as a value
-const mapKeys = new Set(['accounts', 'securities', 'historicals', 'exchangeRates']);
+// Keys which use a map type. We need to treat these keys differently
+// since we can't store maps directly to JSON.
+const mapKeys = new Set<keyof Data>(['accounts', 'securities', 'historicals', 'exchangeRates']);
 
-// On start up, update data using json files in storage
-Object.keys(data).forEach((key: keyof Data) => {
-  const storageData = storage.getSync(key);
-  // If data was found for this key...
-  if (Array.isArray(storageData) || Object.keys(storageData).length > 0) {
-    // We also need to check if this key should be Map
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data[key] = mapKeys.has(key) ? new Map(Object.entries(storageData)) : storageData as any;
-  }
-});
+/**
+ * Reloads the data from storage into the application.
+ */
+export const reloadData = async () => {
+  Object.keys(data).forEach((key: keyof Data) => {
+    const storageData = storage.getSync(key);
+    // If data was found for this key
+    if (Array.isArray(storageData) || Object.keys(storageData).length > 0) {
+      // If this key should be a map, we need to convert it from an object to a map
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data[key] = mapKeys.has(key) ? new Map(Object.entries(storageData)) : storageData as any;
+    }
+  });
+};
+
+// Load data from storage into the application on startup
+reloadData();
 
 /**
  * Gets the data for a specific key.
@@ -66,6 +74,7 @@ Object.keys(data).forEach((key: keyof Data) => {
  * - Returns data by reference. Modifying the returned value will update the data across all files.
  * - You should call `saveData()` if you have made any changes.
  * - Use `structuredClone()` if you intend to modify the returned value without saving it.
+ * - Use `getHistoricalData()` or `getExchangeRateData()` to get data for historicals or exchange rates.
  *
  * @param key Provided key
  * @returns The data saved for the key
@@ -75,9 +84,7 @@ export const getData = async <K extends keyof Omit<Data, 'historicals' | 'exchan
 };
 
 /**
- * Sets the data for a specific key.
- *
- * Also backups the data for the given key into storage.
+ * Sets the data for a specific key, and backups it up into storage.
  *
  * @param key Provided key
  * @param newData The new data for the key
@@ -85,7 +92,7 @@ export const getData = async <K extends keyof Omit<Data, 'historicals' | 'exchan
 export const setData = async <K extends keyof Data>(key: K, newData: Data[K]) => {
   data[key] = newData;
 
-  // We can't store `Maps` directly to JSON, so convert it to a plain object
+  // We can't store maps directly to JSON, so convert it to a plain object
   const saveData = newData instanceof Map ? Object.fromEntries(newData) : newData;
 
   storage.set(key, saveData, (error) => {

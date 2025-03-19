@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addSecurity: (data: SecurityOption) => ipcRenderer.invoke('addSecurity', data),
 
   // api/storage.ts
+  reloadData: () => ipcRenderer.invoke('reloadData'),
   getData: (key: keyof Omit<Data, 'historicals' | 'exchangeRates'>) => ipcRenderer.invoke('getData', key),
   setData: (key: keyof Data, data: object) => ipcRenderer.invoke('setData', key, data),
   getStoragePath: () => ipcRenderer.invoke('getStoragePath'),
