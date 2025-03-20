@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 interface TabsContextType<T extends string> {
   tabValue: T;
