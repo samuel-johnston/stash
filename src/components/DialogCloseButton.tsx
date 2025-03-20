@@ -2,11 +2,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import useTheme from '@mui/material/styles/useTheme';
 import IconButton from '@mui/material/IconButton';
 
-interface Props {
-  onClose: () => void;
-}
-
-const DialogCloseButton = ({ onClose }: Props) => {
+const DialogCloseButton = ({ onClose }: { onClose: () => void }) => {
   const { palette } = useTheme();
   return (
     <IconButton
