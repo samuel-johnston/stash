@@ -143,10 +143,12 @@ const Settings = () => {
                 title="Reload Files"
                 subtitle="Reload data from storage files into the application"
               />
-              <IconButton onClick={() => {
-                window.electronAPI.reloadData();
-                queryClient.invalidateQueries();
-              }}>
+              <IconButton
+                onClick={() => {
+                  window.electronAPI.reloadData();
+                  queryClient.invalidateQueries();
+                }}
+              >
                 <RefreshIcon style={{ fontSize: 24 }} />
               </IconButton>
             </Row>
