@@ -4,6 +4,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 
+import RefreshIcon from '@mui/icons-material/Refresh';
 import useTheme from '@mui/material/styles/useTheme';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -11,6 +12,7 @@ import Box from '@mui/material/Box';
 import RHFNumericTextField from '@components/RHFNumericTextField';
 import RHFTextField from '@components/RHFTextField';
 import DividedStack from '@components/DividedStack';
+import IconButton from '@mui/material/IconButton';
 import { createTabs } from '@components/Tabs';
 import Header from '@components/Header';
 
@@ -135,6 +137,18 @@ const Settings = () => {
               >
                 Open Location
               </Button>
+            </Row>
+            <Row>
+              <RowLabel
+                title="Reload Files"
+                subtitle="Reload data from storage files into the application"
+              />
+              <IconButton onClick={() => {
+                window.electronAPI.reloadData();
+                queryClient.invalidateQueries();
+              }}>
+                <RefreshIcon style={{ fontSize: 24 }} />
+              </IconButton>
             </Row>
           </DividedStack>
         </Tabs.Content>
