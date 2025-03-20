@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { RefObject } from 'react';
+import { RefObject, useState } from 'react';
 
 import { GridApi, useGridApiRef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
@@ -14,12 +14,12 @@ import useAccountOptions from '@queries/useAccountOptions';
 import useOptions from '@queries/useOptions';
 
 import { Schema, schema, defaultValues } from './schema';
+import SellHistoryTable from './SellHistoryTable';
+import BuyHistoryTable from './BuyHistoryTable';
 import HoldingsTable from './HoldingsTable';
 import ValueDisplay from './ValueDisplay';
 import TableActions from './TableActions';
 import TradesTable from './TradesTable';
-import BuyHistoryTable from './BuyHistoryTable';
-import SellHistoryTable from './SellHistoryTable';
 
 export type TabValues = 'holdings' | 'trades' | 'buyHistory' | 'sellHistory';
 
@@ -46,6 +46,7 @@ const Portfolio = () => {
     queryFn: async () => window.electronAPI.getPortfolioData(getValues()),
   });
 
+  const [tabValue, setTabValue] = useState<TabValues>('holdings');
   const Tabs = createTabs<TabValues>();
 
   return (
@@ -69,7 +70,7 @@ const Portfolio = () => {
         currency={portfolioData?.currency}
         defaultRange={3}
       />
-      <Tabs defaultValue="holdings" mt="10px" pb="25px">
+      <Tabs value={tabValue} setValue={setTabValue} mt="10px" pb="25px">
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" mb="18px">
           <Tabs.List>
             <Tabs.Trigger value="holdings">Holdings</Tabs.Trigger>

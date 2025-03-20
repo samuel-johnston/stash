@@ -1,26 +1,12 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext } from 'react';
 
 interface TabsContextType<T extends string> {
   tabValue: T;
   setTabValue: (value: T) => void;
 };
 
-interface TabsContextProviderProps<T extends string> {
-  defaultValue: T;
-  children?: ReactNode;
-};
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const TabsContext = createContext<TabsContextType<any> | undefined>(undefined);
-
-export const TabsContextProvider = <T extends string>({ defaultValue, children }: TabsContextProviderProps<T>) => {
-  const [tabValue, setTabValue] = useState<T>(defaultValue);
-  return (
-    <TabsContext.Provider value={{ tabValue, setTabValue }}>
-      {children}
-    </TabsContext.Provider>
-  );
-};
+export const TabsContext = createContext<TabsContextType<any> | undefined>(undefined);
 
 export const useTabsContext = <T extends string>() => {
   const context = useContext(TabsContext);
