@@ -28,23 +28,7 @@ export type Data = {
   settings: Settings;
 };
 
-const data: Data = {
-  financialStatus: [],
-  miningStatus: [],
-  monitor: [],
-  products: [],
-  recommendations: [],
-  resources: [],
-  accounts: new Map(),
-  securities: new Map(),
-  historicals: new Map(),
-  exchangeRates: new Map(),
-  settings: {
-    currency: 'AUD',
-    gstPercent: 10,
-    brokerageAutoFill: 10,
-  },
-};
+let data: Data;
 
 // Keys which use a map type. We need to treat these keys differently
 // since we can't store maps directly to JSON.
@@ -54,6 +38,26 @@ const mapKeys = new Set<keyof Data>(['accounts', 'securities', 'historicals', 'e
  * Reloads the data from storage into the application.
  */
 export const reloadData = async () => {
+  // Reset data back to empty
+  data = {
+    financialStatus: [],
+    miningStatus: [],
+    monitor: [],
+    products: [],
+    recommendations: [],
+    resources: [],
+    accounts: new Map(),
+    securities: new Map(),
+    historicals: new Map(),
+    exchangeRates: new Map(),
+    settings: {
+      currency: 'AUD',
+      gstPercent: 10,
+      brokerageAutoFill: 10,
+    },
+  };
+
+  // Fill data with storage values
   Object.keys(data).forEach((key: keyof Data) => {
     const storageData = storage.getSync(key);
     // If data was found for this key
