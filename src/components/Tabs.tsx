@@ -1,4 +1,4 @@
-import { TabsContextProvider, useTabsContext } from '@contexts/TabsContext';
+import { TabsContext, useTabsContext } from '@contexts/TabsContext';
 import Button, { ButtonProps } from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -28,7 +28,8 @@ const createTabsTrigger = <T extends string>() => ({ children, value, sx, ...pro
       id={`tab-${value}`}
       onClick={() => setTabValue(value)}
       sx={{
-        borderRadius: '24px',
+        fontWeight: 500,
+        borderRadius: '18px',
         color: tabValue === value ? palette.grey[900] : palette.grey[100],
         bgcolor: tabValue === value ? palette.grey[100] : palette.grey[600],
         '&:hover': {
@@ -62,17 +63,18 @@ const createTabsContent = <T extends string>() => ({ children, value, ...props }
 };
 
 interface TabsProps<T extends string> extends BoxProps {
-  defaultValue: T;
+  value: T;
+  setValue: (value: T) => void;
   children: ReactNode;
 }
 
 export const createTabs = <T extends string>() => {
-  const Tabs = ({ defaultValue, children, ...props }: TabsProps<T>) => (
-    <TabsContextProvider<T> defaultValue={defaultValue}>
+  const Tabs = ({ value, setValue, children, ...props }: TabsProps<T>) => (
+    <TabsContext.Provider value={{ tabValue: value, setTabValue: setValue }}>
       <Box {...props}>
         {children}
       </Box>
-    </TabsContextProvider>
+    </TabsContext.Provider>
   );
 
   Tabs.List = createTabsList();

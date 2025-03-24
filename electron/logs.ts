@@ -1,21 +1,25 @@
-import storage from 'electron-json-storage';
+import { app } from 'electron';
 import dayjs from 'dayjs';
 import path from 'path';
 import fs from 'fs';
 
-// Ensure log folder exists
-const dirPath = path.join(storage.getDataPath(), 'logs');
+// Ensure log directory exists
+const dirPath = app.getPath('logs');
 if (!fs.existsSync(dirPath)) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+// Number of digits to use for number in file name
+// eg. '2025-03-19_001' uses 3 digits.
+const numDigits = 3;
+
 const today = dayjs().format('YYYY-MM-DD');
-const pattern = new RegExp(`^${today}_(\\d{2}).log$`);
+const todayPattern = new RegExp(`^${today}_(\\d{${numDigits}}).log$`);
 
 // Find the highest number already used in the logs
 let maxNumber = 0;
 for (const filename of fs.readdirSync(dirPath)) {
-  const match = filename.match(pattern);
+  const match = filename.match(todayPattern);
   if (match != null) {
     const num = parseInt(match[1]) || 0;
     if (num > maxNumber) {
@@ -25,7 +29,7 @@ for (const filename of fs.readdirSync(dirPath)) {
 }
 
 // Setup the log file
-const logFilename = `${today}_${String(maxNumber + 1).padStart(2, '0')}.log`;
+const logFilename = `${today}_${String(maxNumber + 1).padStart(numDigits, '0')}.log`;
 const logPath = path.join(dirPath, logFilename);
 fs.writeFileSync(logPath, '');
 const stream = fs.createWriteStream(logPath, { flags: 'a' });
@@ -41,5 +45,5 @@ export const writeLog = (message: string) => {
   stream.write(`[${time}] ${message} \n`);
 };
 
-// Write when the log was made
+// Initial log message
 writeLog(`Log started on ${dayjs().format('dddd, MMMM D, YYYY h:mm A')}`);
