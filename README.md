@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/samuel-johnston/Stash">
-    <img src="src/assets/icons/icon.svg" width="140px" align="center" alt="Stash logo">
+    <img src="src/assets/icons/icon.svg" width="120px" align="center" alt="Stash logo">
   </a>
   <h1 align="center">Stash</h1>
   <h3 align="center">An Investment Tracker App</h3>
