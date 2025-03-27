@@ -1,25 +1,15 @@
-# Stash
+<p align="center">
+  <a href="https://github.com/samuel-johnston/Stash">
+    <img src="src/assets/icons/icon.svg" width="120px" align="center" alt="Stash logo">
+  </a>
+  <h1 align="center">Stash</h1>
+  <h3 align="center">An Investment Tracker App</h3>
+</p>
 
-A stock management application written in TypeScript, using Electron, React & Material UI.
+Stash is a desktop investment tracker app built with [Electron](https://electronjs.org) and [React](https://react.dev). Stash empowers individuals to track their investment portfolios, including stocks, ETFs, and cryptocurrencies, helping them to make data-driven decisions.
 
-![Stash-Portfolio-Screenshot](https://github.com/user-attachments/assets/4e67a295-06cb-4be0-8f2f-9940a84a34a4)
+This software is designed for personal use only.
 
-## Installation
+![image](https://github.com/user-attachments/assets/f8f5e29a-07a4-4bdb-b076-863564894416)
 
-1. Clone the repository
-
-```
-git clone git@github.com:SurferSamuel/Stash.git
-```
-
-2. Install packages
-
-```
-npm install
-```
-
-3. Run the application
-
-```
-npm run start
-```
+Executables for MacOS and Windows can be found under [releases](https://github.com/samuel-johnston/Stash/releases).
