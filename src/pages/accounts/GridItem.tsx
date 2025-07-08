@@ -29,6 +29,10 @@ interface GridItemProps {
    */
   percent?: number;
   /**
+   * Colour text red/green?
+   */
+  coloured?: boolean;
+  /**
    * Show up/down triange before value?
    */
   showTriangle?: boolean;
@@ -41,13 +45,14 @@ const GridItem = ({
   style = 'decimal',
   currency,
   percent,
+  coloured = false,
   showTriangle = false,
   order,
 }: GridItemProps) => {
   const { palette } = useTheme();
 
   const value = numberValue || null;
-  const textColor = style === 'decimal' ? getColor(value) : 'primary';
+  const textColor = coloured ? getColor(value) : 'primary';
 
   let result = numberFormat(style, value, { decimals: 2, showTriangle, currency });
   if (percent !== undefined) {

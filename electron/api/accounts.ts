@@ -241,15 +241,15 @@ class AccountDataAssembler {
       const unrealisedProfitOrLoss = marketValue - totalCost;
 
       const todayChangePerc = marketValue - todayChange !== 0
-        ? Math.abs(todayChange / (marketValue - todayChange))
+        ? todayChange / (marketValue - todayChange)
         : null;
 
       const unrealisedProfitOrLossPerc = totalCost !== 0
-        ? Math.abs(unrealisedProfitOrLoss / totalCost)
+        ? unrealisedProfitOrLoss / totalCost
         : null;
 
       const realisedProfitOrLossPerc = realisedTotal - realisedProfitOrLoss !== 0
-        ? Math.abs(realisedProfitOrLoss / (realisedTotal - realisedProfitOrLoss))
+        ? realisedProfitOrLoss / (realisedTotal - realisedProfitOrLoss)
         : null;
 
       return {
