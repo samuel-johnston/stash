@@ -97,7 +97,7 @@ const Accounts = () => {
               <GridItem
                 showTriangle
                 coloured
-                style='currency'
+                style="currency"
                 currency={account.currency}
                 label="Today's Change"
                 value={account.todayChange}
@@ -114,7 +114,7 @@ const Accounts = () => {
               <GridItem
                 showTriangle
                 coloured
-                style='currency'
+                style="currency"
                 currency={account.currency}
                 label="Unrealised Profit/Loss"
                 value={account.unrealisedProfitOrLoss}

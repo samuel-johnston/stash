@@ -82,16 +82,16 @@ const getColor = (value: number): string => {
 
 const LoadingTypography = ({ loading, skeletonWidth, children, ...props }: LoadingTypography) => loading
   ? (
-    <Skeleton
-      width={skeletonWidth}
-      animation="wave"
-      sx={{ animationDuration: '0.8s' }}
-    />
-  )
+      <Skeleton
+        width={skeletonWidth}
+        animation="wave"
+        sx={{ animationDuration: '0.8s' }}
+      />
+    )
   : (
-    <Typography {...props}>
-      {children}
-    </Typography>
-  );
+      <Typography {...props}>
+        {children}
+      </Typography>
+    );
 
 export default ValueDisplay;
