@@ -254,7 +254,6 @@ const theme = createTheme({
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           '--DataGrid-rowBorderColor': theme.palette.grey[500],
-          '--DataGrid-containerBackground': theme.palette.grey[800],
           '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnSeparator': {
             display: 'none',
           },
@@ -265,6 +264,7 @@ const theme = createTheme({
           fontWeight: 500,
           fontSize: 14.5,
           color: theme.palette.grey[100],
+          backgroundColor: theme.palette.grey[800],
         }),
         'row--lastVisible': ({ theme }) => ({
           borderBottom: `1px solid ${theme.palette.grey[500]}`,
