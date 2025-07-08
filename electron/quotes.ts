@@ -60,7 +60,7 @@ export class QuoteService {
    *
    * @param symbol The symbol to fetch
    * @throws If the quote (or exchange rate quote) could not be found, or has missing fields
-   * @returns The quote and its currency's exchange rates
+   * @returns The quote and its currency's exchange rates (current and previous days)
    */
   public getQuote(symbol: string) {
     const quote = this.quotes.get(symbol);
@@ -74,8 +74,8 @@ export class QuoteService {
       throw new Error(`Quote is missing the following fields: ${missingFields.join(', ')}.`);
     }
 
-    let rate = 1;
-    let previousRate = 1;
+    let exchangeRate = 1;
+    let previousExchangeRate = 1;
 
     if (this.targetCurrency !== quote.currency!) {
       const exchangeQuote = this.quotes.get(`${quote.currency}${this.targetCurrency}=X`);
@@ -91,10 +91,10 @@ export class QuoteService {
         throw new Error(`Exchange quote does not contain 'regularMarketPreviousClose': ${exchangeQuote}`);
       }
 
-      rate = exchangeQuote.regularMarketPrice!;
-      previousRate = exchangeQuote.regularMarketPreviousClose!;
+      exchangeRate = exchangeQuote.regularMarketPrice!;
+      previousExchangeRate = exchangeQuote.regularMarketPreviousClose!;
     }
 
-    return { quote, rate, previousRate };
+    return { quote, exchangeRate, previousExchangeRate };
   }
 }

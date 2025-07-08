@@ -290,10 +290,10 @@ class PortfolioDataAssembler {
       }
 
       let quote: Quote;
-      let rate: number;
-      let previousRate: number;
+      let exchangeRate: number;
+      let previousExchangeRate: number;
       try {
-        ({ quote, rate, previousRate } = this.quoteService.getQuote(security.symbol));
+        ({ quote, exchangeRate, previousExchangeRate } = this.quoteService.getQuote(security.symbol));
       } catch (error) {
         writeLog(`[PortfolioDataAssembler.processHoldingAndDataPointsWithQuotes]: Skipping ${security.symbol}: ${error.message}`);
         continue;
@@ -302,7 +302,6 @@ class PortfolioDataAssembler {
       // Safe deconstruction (fields checked prior in this.getQuote())
       const previousPrice = quote.regularMarketPreviousClose!;
       const lastPrice = quote.regularMarketPrice!;
-      const currency = quote.currency!;
 
       let marketValue = 0;
       let previousValue = 0;
@@ -336,10 +335,10 @@ class PortfolioDataAssembler {
         }
       }
 
-      // Update combined totals (also adjusting for exchange rates)
-      combinedValue += marketValue * rate;
-      combinedPreviousValue += previousValue * previousRate;
-      combinedCost += cost * rate; // TODO USE RATE AT PURCHASE
+      // Update combined totals
+      combinedValue += marketValue * exchangeRate;
+      combinedPreviousValue += previousValue * previousExchangeRate;
+      combinedCost += cost * exchangeRate; // TODO USE RATE AT PURCHASE
 
       // Add the holding row
       if (units > 0) {
@@ -353,6 +352,7 @@ class PortfolioDataAssembler {
           symbol: security.symbol,
           name: security.name,
           currency: security.currency,
+          exchangeRate,
           exchange: security.exchange,
           type: security.type,
           units,
@@ -373,7 +373,7 @@ class PortfolioDataAssembler {
 
     // Calculate the weight of each row
     for (const row of this.result.holdings) {
-      row.weightPerc = row.marketValue / combinedValue;
+      row.weightPerc = row.marketValue * row.exchangeRate / combinedValue;
     }
 
     const today = dayjs().format('YYYY-MM-DD');

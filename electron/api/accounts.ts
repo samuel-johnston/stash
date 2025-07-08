@@ -187,10 +187,10 @@ class AccountDataAssembler {
       }
 
       let quote: Quote;
-      let rate: number;
-      let previousRate: number;
+      let exchangeRate: number;
+      let previousExchangeRate: number;
       try {
-        ({ quote, rate, previousRate } = this.quoteService.getQuote(security.symbol));
+        ({ quote, exchangeRate, previousExchangeRate } = this.quoteService.getQuote(security.symbol));
       } catch (error) {
         writeLog(`[AccountDataAssembler.processDataWithQuotes]: Skipping ${security.symbol}: ${error.message}`);
         continue;
@@ -212,11 +212,11 @@ class AccountDataAssembler {
 
         // If the holding was owned before today, use previous price, otherwise use the original buy price
         accountData.todayChange += dayjsParse(holding.date).isBefore(dayjs(), 'day')
-          ? (lastPrice * quantity * rate) - (previousPrice * quantity * previousRate)
-          : (lastPrice * quantity * rate) - (buyPrice * quantity * previousRate);
+          ? (lastPrice * quantity * exchangeRate) - (previousPrice * quantity * previousExchangeRate)
+          : (lastPrice * quantity * exchangeRate) - (buyPrice * quantity * exchangeRate);
 
-        accountData.marketValue += lastPrice * quantity * rate;
-        accountData.totalCost += (buyPrice * quantity + brokerage + gst) * rate; // TODO USE RATE AT PURCHASE
+        accountData.marketValue += lastPrice * quantity * exchangeRate;
+        accountData.totalCost += (buyPrice * quantity + brokerage + gst) * exchangeRate; // TODO USE RATE AT PURCHASE
       }
     }
   }
