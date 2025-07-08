@@ -8,28 +8,28 @@ import { createTheme } from '@mui/material/styles';
  *
  * 100:
  *  - Primary text
- * 
+ *
  * 200:
- * 
+ *
  * 300:
  *  - Secondary text
- * 
+ *
  * 400:
- * 
+ *
  * 500:
  *  - Primary border
- * 
+ *
  * 600:
  *  - Sidebar selected bg
  *  - Dialog outline
- * 
+ *
  * 700:
  *  - Sidebar hover bg
- * 
+ *
  * 800:
  *  - Table header bg
  *  - Secondary border
- * 
+ *
  * 900:
  *  - Main bg
  */

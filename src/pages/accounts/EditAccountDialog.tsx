@@ -222,18 +222,18 @@ const EditAccountDialog = ({ open, close, selectedAccount }: EditAccountDialogPr
     <Dialog fullWidth maxWidth="xs" open={open} onClose={close} closeAfterTransition={true}>
       {dialogView === 'edit'
         ? (
-          <EditDialogContent
-            close={close}
-            openDeleteDialog={() => setDialogView('delete')}
-            selectedAccount={selectedAccount}
-          />
-        )
+            <EditDialogContent
+              close={close}
+              openDeleteDialog={() => setDialogView('delete')}
+              selectedAccount={selectedAccount}
+            />
+          )
         : (
-          <DeleteDialogContent
-            close={close}
-            selectedAccount={selectedAccount}
-          />
-        )}
+            <DeleteDialogContent
+              close={close}
+              selectedAccount={selectedAccount}
+            />
+          )}
       <DialogCloseButton onClose={close} />
     </Dialog>
   );

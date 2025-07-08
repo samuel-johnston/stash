@@ -93,13 +93,13 @@ const Sidebar = () => {
             {/* Hide logo when collapsed */}
             {!collapsed
               ? (
-                <Box display="flex" alignItems="center" gap="10px" ml="4px">
-                  <LogoIcon style={{ width: '30px', height: '30px' }} />
-                  <Typography variant="h3" fontWeight={500} color="primary">
-                    Stash
-                  </Typography>
-                </Box>
-              )
+                  <Box display="flex" alignItems="center" gap="10px" ml="4px">
+                    <LogoIcon style={{ width: '30px', height: '30px' }} />
+                    <Typography variant="h3" fontWeight={500} color="primary">
+                      Stash
+                    </Typography>
+                  </Box>
+                )
               : <></>}
             {/* Open/collapse sidebar */}
             <IconButton disableTouchRipple onClick={() => toggleSidebar()} sx={{ mr: '20px' }}>
