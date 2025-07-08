@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import { RefObject, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { GridApi, useGridApiRef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
@@ -27,10 +27,10 @@ const Portfolio = () => {
   const queryClient = useQueryClient();
 
   const apiRefs: Record<TabValues, RefObject<GridApi>> = {
-    holdings: useGridApiRef(),
-    trades: useGridApiRef(),
-    buyHistory: useGridApiRef(),
-    sellHistory: useGridApiRef(),
+    holdings: useGridApiRef() as RefObject<GridApi>,
+    trades: useGridApiRef() as RefObject<GridApi>,
+    buyHistory: useGridApiRef() as RefObject<GridApi>,
+    sellHistory: useGridApiRef() as RefObject<GridApi>,
   };
 
   const { data: options } = useOptions();

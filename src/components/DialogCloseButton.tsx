@@ -1,5 +1,5 @@
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import useTheme from '@mui/material/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 
 const DialogCloseButton = ({ onClose }: { onClose: () => void }) => {

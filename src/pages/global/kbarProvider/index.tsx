@@ -7,7 +7,7 @@ import {
   KBarSearch,
 } from 'kbar';
 
-import useTheme from '@mui/material/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 

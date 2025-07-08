@@ -298,7 +298,7 @@ const theme = createTheme({
         },
       },
     },
-    MuiPickersPopper: {
+    MuiPickerPopper: {
       styleOverrides: {
         paper: ({ theme }) => ({
           backgroundColor: theme.palette.grey[900],

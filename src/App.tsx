@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 
 import { SidebarContextProvider } from '@contexts/SidebarContext';
 
-import SnackbarProvider from '@pages/global/SnackbarProvider';
+import SnackbarProvider from '@pages/global/snackbarProvider';
 import KBarProvider from '@pages/global/kbarProvider';
 import Sidebar from '@pages/global/Sidebar';
 import Topbar from '@pages/global/Topbar';

@@ -13,7 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 import DialogCloseButton from '@components/DialogCloseButton';
 import RHFTextField from '@components/RHFTextField';
@@ -222,18 +222,18 @@ const EditAccountDialog = ({ open, close, selectedAccount }: EditAccountDialogPr
     <Dialog fullWidth maxWidth="xs" open={open} onClose={close} closeAfterTransition={true}>
       {dialogView === 'edit'
         ? (
-            <EditDialogContent
-              close={close}
-              openDeleteDialog={() => setDialogView('delete')}
-              selectedAccount={selectedAccount}
-            />
-          )
+          <EditDialogContent
+            close={close}
+            openDeleteDialog={() => setDialogView('delete')}
+            selectedAccount={selectedAccount}
+          />
+        )
         : (
-            <DeleteDialogContent
-              close={close}
-              selectedAccount={selectedAccount}
-            />
-          )}
+          <DeleteDialogContent
+            close={close}
+            selectedAccount={selectedAccount}
+          />
+        )}
       <DialogCloseButton onClose={close} />
     </Dialog>
   );
