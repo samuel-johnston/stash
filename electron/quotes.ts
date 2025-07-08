@@ -60,7 +60,7 @@ export class QuoteService {
    *
    * @param symbol The symbol to fetch
    * @throws If the quote (or exchange rate quote) could not be found, or has missing fields
-   * @returns The quote and its currency's exchange rates (current and previous days)
+   * @returns The quote and its currency's exchange rates (current and previous day's)
    */
   public getQuote(symbol: string) {
     const quote = this.quotes.get(symbol);
