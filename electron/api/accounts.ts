@@ -91,7 +91,8 @@ export const deleteAccount = async (accountId: string) => {
   await setData('securities', securities);
 };
 
-class AccountDataAssembler extends QuoteService {
+class AccountDataAssembler {
+  private quoteService = new QuoteService();
   private securities: Map<string, Security>;
   private accounts: Map<string, Account>;
   private accountDataMap = new Map<string, AccountDataInternal>();
@@ -101,7 +102,13 @@ class AccountDataAssembler extends QuoteService {
    * Assembes an array of `AccountData` objects.
    */
   public async assemble() {
-    this.setTargetCurrency((await getData('settings')).currency);
+    await this.performAssemble();
+    return this.getResult();
+  }
+
+  private async performAssemble() {
+    await this.quoteService.init();
+
     this.securities = await getData('securities');
     this.accounts = await getData('accounts');
 
@@ -118,25 +125,23 @@ class AccountDataAssembler extends QuoteService {
     }
 
     // Ignore symbols with no data
-    const securitySymbols = Array.from(this.securities.values())
+    const symbols = Array.from(this.securities.values())
       .filter((security) => security.buyHistory.length > 0 || security.sellHistory.length > 0 || security.holdings.length > 0)
       .map((security) => security.symbol);
 
     // If no symbols, can return early
-    if (securitySymbols.length === 0) {
-      return this.getResult();
-    }
+    if (symbols.length === 0) return;
 
     // Fetch historical data for all securities
     try {
-      this.historicals = await getHistoricalData(securitySymbols);
+      this.historicals = await getHistoricalData(symbols);
     } catch (error) {
       writeLog(`[AccountDataAssembler.assemble()]: Could not continue as a yahooFinance.chart() failed: ${error.message}`);
-      return this.getResult();
+      return;
     }
 
     const currencyCodes = new Set(this.historicals.values().map((historical) => historical.currency));
-    const quoteDataRequest = this.requestQuoteData(securitySymbols, Array.from(currencyCodes));
+    const quoteDataRequest = this.quoteService.requestQuoteData(symbols, Array.from(currencyCodes));
 
     // While quote data is fetching, we can process realised profit/loss since it doesn't rely on quote data.
     this.processRealisedProfitOrLoss();
@@ -146,12 +151,10 @@ class AccountDataAssembler extends QuoteService {
       await quoteDataRequest;
     } catch (error) {
       writeLog(`[AccountDataAssembler.assemble()]: Could not continue as yahooFinance.quote() failed: ${error.message}`);
-      return this.getResult();
+      return;
     }
 
     this.processDataWithQuotes();
-
-    return this.getResult();
   }
 
   /**
@@ -187,7 +190,7 @@ class AccountDataAssembler extends QuoteService {
       let rate: number;
       let previousRate: number;
       try {
-        ({ quote, rate, previousRate } = this.getQuote(security.symbol));
+        ({ quote, rate, previousRate } = this.quoteService.getQuote(security.symbol));
       } catch (error) {
         writeLog(`[AccountDataAssembler.processDataWithQuotes]: Skipping ${security.symbol}: ${error.message}`);
         continue;
@@ -223,6 +226,7 @@ class AccountDataAssembler extends QuoteService {
    * Calculates the remaining fields necessary for the `AccountData` type.
    */
   private getResult(): AccountData[] {
+    const currency = this.quoteService.getTargetCurrency();
     return Array.from(this.accountDataMap.values()).map((entry) => {
       const {
         name,
@@ -259,7 +263,7 @@ class AccountDataAssembler extends QuoteService {
         realisedProfitOrLossPerc,
         marketValue,
         totalCost,
-        currency: this.getTargetCurrency(),
+        currency,
       };
     }).sort((a, b) => a.name.localeCompare(b.name));
   }
