@@ -29,18 +29,18 @@ export const getPortfolioData = async (values: PortfolioFilterValues) => {
   return await assembler.assemble();
 };
 
-class PortfolioDataAssembler extends QuoteService {
+/**
+ * Class responsible for assembling the `PortfolioData` object.
+ */
+class PortfolioDataAssembler {
+  private quoteService = new QuoteService();
   private values: PortfolioFilterValues;
-
   private idGen: IdGenerator;
-
   private securities: Map<string, Security>;
   private accounts: Map<string, Account>;
   private historicals: Map<string, Historical>;
   private exchangeRates: Map<string, ExchangeRate>;
-
   private dataPoints: ChartDataPoint[] = [];
-
   private result: PortfolioData = {
     chart: [],
     holdings: [],
@@ -56,7 +56,6 @@ class PortfolioDataAssembler extends QuoteService {
   };
 
   constructor(values: PortfolioFilterValues) {
-    super();
     this.values = values;
   }
 
@@ -64,35 +63,52 @@ class PortfolioDataAssembler extends QuoteService {
    * Assembles the `PortfolioData` object.
    */
   public async assemble() {
-    await this.initialiseSecurities();
+    await this.performAssemble();
+    return this.result;
+  }
 
-    if (this.securities.size === 0) {
-      return this.result;
+  private async performAssemble() {
+    await this.quoteService.init();
+
+    this.securities = new Map<string, Security>();
+    for (const security of (await getData('securities')).values()) {
+      // Only add security if it matches all filter values
+      if (
+        this.values.countries.every((value) => security.countries.some((country) => country.name === value))
+        && this.values.financialStatus.every((value) => security.financialStatus.includes(value))
+        && this.values.miningStatus.every((value) => security.miningStatus.includes(value))
+        && this.values.resources.every((value) => security.resources.includes(value))
+        && this.values.products.every((value) => security.products.includes(value))
+        && this.values.recommendations.every((value) => security.recommendations.includes(value))
+      ) {
+        this.securities.set(security.symbol, security);
+      }
     }
 
-    this.setTargetCurrency((await getData('settings')).currency);
+    if (this.securities.size === 0) return;
+
     this.accounts = await getData('accounts');
     this.idGen = new IdGenerator();
 
-    const securitySymbols = Array.from(this.securities.keys());
+    const symbols = Array.from(this.securities.keys());
 
     // Fetch historical data for all securities
     try {
-      this.historicals = await getHistoricalData(securitySymbols);
+      this.historicals = await getHistoricalData(symbols);
     } catch (error) {
       writeLog(`[PortfolioDataAssembler.assemble()]: Could not continue as a yahooFinance.chart() failed: ${error.message}`);
-      return this.result;
+      return;
     }
 
     const currencyCodes = new Set(this.historicals.values().map((historical) => historical.currency));
-    const quoteDataRequest = this.requestQuoteData(securitySymbols, Array.from(currencyCodes));
+    const quoteDataRequest = this.quoteService.requestQuoteData(symbols, Array.from(currencyCodes));
 
     // Fetch exchange rate data for all required currencies
     try {
       this.exchangeRates = await getExchangeRateData(Array.from(currencyCodes));
     } catch (error) {
       writeLog(`[PortfolioDataAssembler.assemble()]: Could not continue as a yahooFinance.chart() failed: ${error.message}`);
-      return this.result;
+      return;
     }
 
     this.initialiseDataPoints();
@@ -107,7 +123,7 @@ class PortfolioDataAssembler extends QuoteService {
 
       // Get exchange rate entries if currency needs converting
       let exchangeRateEntries: ExchangeRateEntry[] | undefined;
-      if (historical.currency !== this.getTargetCurrency()) {
+      if (historical.currency !== this.quoteService.getTargetCurrency()) {
         const exchangeRate = this.exchangeRates.get(historical.currency);
         if (exchangeRate === undefined || exchangeRate.entries.length === 0) {
           writeLog(`[PortfolioDataAssembler.assemble()]: Skipped ${security.symbol}. Missing/empty exchange rate data for ${historical.currency}.`);
@@ -127,33 +143,10 @@ class PortfolioDataAssembler extends QuoteService {
       await quoteDataRequest;
     } catch (error) {
       writeLog(`[PortfolioDataAssembler.assemble()]: Could not continue as yahooFinance.quote() failed: ${error.message}`);
-      return this.result;
+      return;
     }
 
     this.processHoldingAndDataPointsWithQuotes();
-
-    return this.result;
-  }
-
-  /**
-   * Initialises the securities map. Only adds securities that match the given filter values `this.values`.
-   */
-  private async initialiseSecurities() {
-    const securities = await getData('securities');
-    this.securities = new Map<string, Security>();
-
-    for (const security of securities.values()) {
-      if (
-        this.values.countries.every((value) => security.countries.some((country) => country.name === value))
-        && this.values.financialStatus.every((value) => security.financialStatus.includes(value))
-        && this.values.miningStatus.every((value) => security.miningStatus.includes(value))
-        && this.values.resources.every((value) => security.resources.includes(value))
-        && this.values.products.every((value) => security.products.includes(value))
-        && this.values.recommendations.every((value) => security.recommendations.includes(value))
-      ) {
-        this.securities.set(security.symbol, security);
-      }
-    }
   }
 
   /**
@@ -297,10 +290,10 @@ class PortfolioDataAssembler extends QuoteService {
       }
 
       let quote: Quote;
-      let rate: number;
-      let previousRate: number;
+      let exchangeRate: number;
+      let previousExchangeRate: number;
       try {
-        ({ quote, rate, previousRate } = this.getQuote(security.symbol));
+        ({ quote, exchangeRate, previousExchangeRate } = this.quoteService.getQuote(security.symbol));
       } catch (error) {
         writeLog(`[PortfolioDataAssembler.processHoldingAndDataPointsWithQuotes]: Skipping ${security.symbol}: ${error.message}`);
         continue;
@@ -309,7 +302,6 @@ class PortfolioDataAssembler extends QuoteService {
       // Safe deconstruction (fields checked prior in this.getQuote())
       const previousPrice = quote.regularMarketPreviousClose!;
       const lastPrice = quote.regularMarketPrice!;
-      const currency = quote.currency!;
 
       let marketValue = 0;
       let previousValue = 0;
@@ -343,10 +335,10 @@ class PortfolioDataAssembler extends QuoteService {
         }
       }
 
-      // Update combined totals (also adjusting for exchange rates)
-      combinedValue += marketValue * rate;
-      combinedPreviousValue += previousValue * previousRate;
-      combinedCost += cost * rate; // TODO USE RATE AT PURCHASE
+      // Update combined totals
+      combinedValue += marketValue * exchangeRate;
+      combinedPreviousValue += previousValue * previousExchangeRate;
+      combinedCost += cost * exchangeRate; // TODO USE RATE AT PURCHASE
 
       // Add the holding row
       if (units > 0) {
@@ -360,6 +352,7 @@ class PortfolioDataAssembler extends QuoteService {
           symbol: security.symbol,
           name: security.name,
           currency: security.currency,
+          exchangeRate,
           exchange: security.exchange,
           type: security.type,
           units,
@@ -380,7 +373,7 @@ class PortfolioDataAssembler extends QuoteService {
 
     // Calculate the weight of each row
     for (const row of this.result.holdings) {
-      row.weightPerc = row.marketValue / combinedValue;
+      row.weightPerc = row.marketValue * row.exchangeRate / combinedValue;
     }
 
     const today = dayjs().format('YYYY-MM-DD');
@@ -405,7 +398,7 @@ class PortfolioDataAssembler extends QuoteService {
     this.result.todayChangePerc = (combinedPreviousValue !== 0) ? this.result.todayChange / combinedPreviousValue : null;
     this.result.profitOrLoss = combinedValue - combinedCost;
     this.result.profitOrLossPerc = (combinedCost !== 0) ? this.result.profitOrLoss / combinedCost : null;
-    this.result.currency = this.getTargetCurrency();
+    this.result.currency = this.quoteService.getTargetCurrency();
   }
 }
 

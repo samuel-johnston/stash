@@ -25,6 +25,7 @@ const HoldingsTable = ({ apiRef, rows }: HoldingsTableProps) => (
       columns: {
         columnVisibilityModel: {
           type: false,
+          exchangeRate: false,
           exchange: false,
           purchaseCost: false,
           firstPurchase: false,
@@ -85,6 +86,14 @@ const columns: GridColDef[] = [
     minWidth: 100,
     flex: 1,
     renderHeader,
+  },
+  {
+    field: 'exchangeRate',
+    headerName: 'FX Rate',
+    minWidth: 90,
+    flex: 1,
+    renderHeader,
+    valueFormatter: (value: number) => numberFormat('decimal', value, { decimals: 4 }),
   },
   {
     field: 'type',

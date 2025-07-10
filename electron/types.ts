@@ -145,6 +145,7 @@ export type HoldingRow = {
   symbol: string;                  // Symbol of the security
   name: string;                    // Name of the security
   currency: string;                // Currency of the prices (eg. "AUD", "USD", etc.)
+  exchangeRate: number;            // Exchange rate of currency to target currency
   exchange: string;                // Exchange where the security is listed (eg. "ASX", "LSE", etc.)
   type: string;                    // Type of the security (eg. "Equity", "ETF", etc.)
   units: number;                   // Number of units owned

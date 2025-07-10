@@ -53,7 +53,7 @@ const ValueDisplay = ({ loading, data }: ValueDisplayProps) => {
           fontWeight={700}
           color={getColor(todayChange)}
         >
-          {numberFormat('decimal', todayChange, { decimals: 2, showTriangle: true }) + (todayChangePerc !== null ? ` (${numberFormat('percent', todayChangePerc, { decimals: 2 })})` : '')}
+          {numberFormat('currency', todayChange, { decimals: 2, showTriangle: true, currency }) + (todayChangePerc !== null ? ` (${numberFormat('percent', todayChangePerc, { decimals: 2 })})` : '')}
         </LoadingTypography>
       </Stack>
       {/* Total profit/loss container */}
@@ -68,7 +68,7 @@ const ValueDisplay = ({ loading, data }: ValueDisplayProps) => {
           fontWeight={700}
           color={getColor(profitOrLoss)}
         >
-          {numberFormat('decimal', profitOrLoss, { decimals: 2, showTriangle: true }) + (profitOrLossPerc !== null ? ` (${numberFormat('percent', profitOrLossPerc, { decimals: 2 })})` : '')}
+          {numberFormat('currency', profitOrLoss, { decimals: 2, showTriangle: true, currency }) + (profitOrLossPerc !== null ? ` (${numberFormat('percent', profitOrLossPerc, { decimals: 2 })})` : '')}
         </LoadingTypography>
       </Stack>
     </Stack>

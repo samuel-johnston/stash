@@ -1,11 +1,10 @@
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import { Dayjs } from 'dayjs';
 
 import { DesktopDateTimePicker, DesktopDateTimePickerProps } from '@mui/x-date-pickers/DesktopDateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-type RHFDatePickerProps<T extends FieldValues> = Omit<DesktopDateTimePickerProps<Dayjs>, 'name'> & {
+type RHFDatePickerProps<T extends FieldValues> = Omit<DesktopDateTimePickerProps, 'name'> & {
   name: Path<T>;
   control: Control<T>;
 };

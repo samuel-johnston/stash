@@ -6,34 +6,32 @@ import { createTheme } from '@mui/material/styles';
 /**
  * Palette usage:
  *
- * ________________________________
- * 100
+ * 100:
  *  - Primary text
- * ________________________________
- * 200
- * ________________________________
- * 300
+ *
+ * 200:
+ *
+ * 300:
  *  - Secondary text
- * ________________________________
- * 400
- * ________________________________
- * 500
+ *
+ * 400:
+ *
+ * 500:
  *  - Primary border
- * ________________________________
- * 600
+ *
+ * 600:
  *  - Sidebar selected bg
  *  - Dialog outline
- * ________________________________
- * 700
+ *
+ * 700:
  *  - Sidebar hover bg
- * ________________________________
- * 800
+ *
+ * 800:
  *  - Table header bg
  *  - Secondary border
- * ________________________________
- * 900
+ *
+ * 900:
  *  - Main bg
- * ________________________________
  */
 
 const theme = createTheme({
@@ -256,7 +254,6 @@ const theme = createTheme({
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           '--DataGrid-rowBorderColor': theme.palette.grey[500],
-          '--DataGrid-containerBackground': theme.palette.grey[800],
           '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnSeparator': {
             display: 'none',
           },
@@ -267,6 +264,7 @@ const theme = createTheme({
           fontWeight: 500,
           fontSize: 14.5,
           color: theme.palette.grey[100],
+          backgroundColor: theme.palette.grey[800],
         }),
         'row--lastVisible': ({ theme }) => ({
           borderBottom: `1px solid ${theme.palette.grey[500]}`,
@@ -298,7 +296,7 @@ const theme = createTheme({
         },
       },
     },
-    MuiPickersPopper: {
+    MuiPickerPopper: {
       styleOverrides: {
         paper: ({ theme }) => ({
           backgroundColor: theme.palette.grey[900],

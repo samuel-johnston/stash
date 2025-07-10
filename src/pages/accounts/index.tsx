@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import useTheme from '@mui/material/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 
 import LoadingScreen from '@components/LoadingScreen';
@@ -96,6 +96,9 @@ const Accounts = () => {
             >
               <GridItem
                 showTriangle
+                coloured
+                style="currency"
+                currency={account.currency}
                 label="Today's Change"
                 value={account.todayChange}
                 percent={account.todayChangePerc ?? undefined}
@@ -110,6 +113,9 @@ const Accounts = () => {
               />
               <GridItem
                 showTriangle
+                coloured
+                style="currency"
+                currency={account.currency}
                 label="Unrealised Profit/Loss"
                 value={account.unrealisedProfitOrLoss}
                 percent={account.unrealisedProfitOrLossPerc ?? undefined}

@@ -1,7 +1,7 @@
 import { Control, useWatch } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 
-import useTheme from '@mui/material/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';

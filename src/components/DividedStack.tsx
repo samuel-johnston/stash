@@ -1,5 +1,5 @@
 import Stack, { StackProps } from '@mui/material/Stack';
-import useTheme from '@mui/material/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 
 const DividedStack = ({ children, ...props }: Omit<StackProps, 'divider'>) => {

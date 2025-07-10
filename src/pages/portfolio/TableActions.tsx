@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 import { Checkbox, IconButton } from '@mui/material';
 import { GridApi } from '@mui/x-data-grid';

@@ -6,8 +6,8 @@ import {
   SnackbarProvider,
 } from 'notistack';
 
-import useTheme from '@mui/material/styles/useTheme';
 import CloseIcon from '@mui/icons-material/Close';
+import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 
 interface Props {

@@ -13,7 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 import DialogCloseButton from '@components/DialogCloseButton';
 import RHFTextField from '@components/RHFTextField';

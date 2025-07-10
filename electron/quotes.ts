@@ -1,5 +1,6 @@
 import { Quote, QuoteField } from 'yahoo-finance2/dist/esm/src/modules/quote';
 import yahooFinance from 'yahoo-finance2';
+import { getData } from '@storage';
 import { writeLog } from '@logs';
 
 const quoteFields: QuoteField[] = ['regularMarketPrice', 'regularMarketPreviousClose', 'currency', 'exchange'];
@@ -11,23 +12,27 @@ export class QuoteService {
   private quotes: Map<string, Quote>;
   private targetCurrency = 'AUD';
 
-  protected getTargetCurrency() {
+  public async init() {
+    this.targetCurrency = (await getData('settings')).currency;
+  }
+
+  public getTargetCurrency() {
     return this.targetCurrency;
   }
 
-  protected setTargetCurrency(targetCurrency: string) {
+  public setTargetCurrency(targetCurrency: string) {
     this.targetCurrency = targetCurrency;
   }
 
   /**
    * Requests quote data for the given security symbols and currency codes.
+   * Use `.getQuote()` method to access the retrieved quote data.
    *
    * @param securitySymbols Array of security symbols, eg. `["NVDA", "CBA.AX"]`
    * @param currencyCodes Array of currency codes, eg. `["AUD", "USD"]`
    * @throws If the yahooFinance.quote() request fails
-   * @returns A map with key = symbol, value = quote data
    */
-  protected async requestQuoteData(securitySymbols: string[], currencyCodes: string[]) {
+  public async requestQuoteData(securitySymbols: string[], currencyCodes: string[]) {
     const symbols = new Set(securitySymbols);
 
     // Don't include the target currency in the currency codes
@@ -55,9 +60,9 @@ export class QuoteService {
    *
    * @param symbol The symbol to fetch
    * @throws If the quote (or exchange rate quote) could not be found, or has missing fields
-   * @returns The quote and its currency's exchange rates
+   * @returns The quote and its currency's exchange rates (current and previous day's)
    */
-  protected getQuote(symbol: string) {
+  public getQuote(symbol: string) {
     const quote = this.quotes.get(symbol);
     if (quote === undefined) {
       throw new Error('Could not find quote.');
@@ -69,8 +74,8 @@ export class QuoteService {
       throw new Error(`Quote is missing the following fields: ${missingFields.join(', ')}.`);
     }
 
-    let rate = 1;
-    let previousRate = 1;
+    let exchangeRate = 1;
+    let previousExchangeRate = 1;
 
     if (this.targetCurrency !== quote.currency!) {
       const exchangeQuote = this.quotes.get(`${quote.currency}${this.targetCurrency}=X`);
@@ -86,10 +91,10 @@ export class QuoteService {
         throw new Error(`Exchange quote does not contain 'regularMarketPreviousClose': ${exchangeQuote}`);
       }
 
-      rate = exchangeQuote.regularMarketPrice!;
-      previousRate = exchangeQuote.regularMarketPreviousClose!;
+      exchangeRate = exchangeQuote.regularMarketPrice!;
+      previousExchangeRate = exchangeQuote.regularMarketPreviousClose!;
     }
 
-    return { quote, rate, previousRate };
+    return { quote, exchangeRate, previousExchangeRate };
   }
 }
